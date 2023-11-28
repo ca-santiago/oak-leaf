@@ -10,7 +10,7 @@ export default function Home() {
   if (isLoading) return <div>Loading...</div>;
 
   if (error) return <div>Error loading, please refresh the pager</div>;
-  if (!user) return <LoginButton />;
+  if (!user) return <a href="/api/auth/login">Login</a>;
 
   return (
     <div>
