@@ -11,7 +11,6 @@ async function ManagerPage() {
     accessToken,
   } = session!;
   const res = await getProfileData(sub);
-
   const habits = await getHabits(accessToken!);
 
   const displayName = res?.preferredName || name || "";
@@ -19,10 +18,11 @@ async function ManagerPage() {
   return (
     <div>
       {displayName && <div>Hello {displayName}</div>}
-      <Image src={picture} alt="yo" height={100} width={100} />
+      <Image src={picture} alt="yo" height={100} width={100} priority />
       <a href="/api/auth/logout">Logout</a>
+      <div>Habits?</div>
       <section id="habits-section">
-        <Habits data={habits.data} />
+        <Habits token={accessToken!} data={habits.data} />
       </section>
     </div>
   );
