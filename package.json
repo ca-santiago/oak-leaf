@@ -12,9 +12,13 @@
     "@auth0/nextjs-auth0": "^3.3.0",
     "@prisma/client": "^5.6.0",
     "joi": "^17.11.0",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "next": "14.0.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-activity-calendar": "^2.2.0",
+    "react-dom": "^18",
+    "react-tooltip": "^5.25.0"
   },
   "devDependencies": {
     "@types/node": "^20",

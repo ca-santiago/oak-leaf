@@ -6,7 +6,8 @@ export const getHabits = async (token: string) => {
     headers: {
       Authorization: "Bearer " + token,
     },
-  })
-    .then((data) => data.json())
-    .catch((err) => console.log(err.trace));
+    next: {
+      revalidate: 1,
+    },
+  }).then((data) => data.json());
 };
