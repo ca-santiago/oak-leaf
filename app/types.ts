@@ -17,6 +17,7 @@ export interface Incidence {
   createdAt: string;
   dateRanges: string;
   endDate: string;
+  yearRange: string;
 }
 
 export interface Habit_Completions extends Habit {

@@ -17,7 +17,7 @@ export const setCompletion = async (
     },
   })
     .then((data) => data.json())
-    .catch((err) => console.log(err.messsage));
+    .catch((err) => console.log(err.message));
 };
 
 export const createCompletion = async (

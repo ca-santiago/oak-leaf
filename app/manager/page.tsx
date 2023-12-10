@@ -11,12 +11,10 @@ async function ManagerPage() {
   const { name, picture, sub } = user;
 
   // const res = await getProfileData(sub);
-  // const habits = await getHabits(accessToken!);
-  const habits2 = await getHabitsV2(accessToken!, "2023");
+  const habits = await getHabitsV2(accessToken!, "2023");
 
   // console.log(session);
-
-  // console.log({ habits2 });
+  console.log(habits);
 
   return (
     <div className="bg-[#f4f6f9]">
@@ -24,7 +22,7 @@ async function ManagerPage() {
       <Image src={picture} alt="yo" height={100} width={100} priority />
       <a href="/api/auth/logout">Logout</a>
       <section id="habits-section" className="w-1/3 max-w-6xl bg-blue-50">
-        <HabitsIncidences data={habits2} token={accessToken!} />
+        <HabitsIncidences data={habits} token={accessToken!} />
         {/* <Habits token={accessToken!} data={habits.data} /> */}
       </section>
     </div>
