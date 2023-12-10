@@ -66,11 +66,7 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
     deserializeStringToArray(getDateRangesByYear(yearRange, habit.incidences))
   );
 
-  const lastRef = React.useRef();
-
   React.useEffect(() => {
-    // const newRanges = getInci(yearRange, habit.incidences);
-    // setDateRanges(deserializeStringToArray(newRanges));
     const newIncidence = getIncidenceByYear(yearRange, habit.incidences);
     setIncidence(newIncidence);
     window.scrollTo();
@@ -162,7 +158,7 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
             })
           }
           eventHandlers={{
-            onClick: (e) => handleActivityClick,
+            onClick: () => handleActivityClick,
           }}
           blockSize={13}
           blockRadius={3}
