@@ -111,10 +111,12 @@ export function removeDateFromRanges(
   return output;
 }
 
+const validDateRange = new RegExp(/^(\d{4}-\d{2}-\d{2}):(\d{4}-\d{2}-\d{2})$/);
+
 export function serializeArrayToString(arr: string[]): string {
   return arr.join(",");
 }
 
 export function deserializeStringToArray(str: string): string[] {
-  return str.split(",");
+  return str.split(",").filter((d) => validDateRange.test(d));
 }

@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { Tooltip as ReactTooltip } from "react-tooltip";
@@ -6,9 +7,9 @@ import moment from "moment-timezone";
 import { createCompletion, setCompletion } from "./completions";
 import {
   Completion,
-  Habit,
   Habit_Completions,
   Habit_Incidences,
+  Incidence,
 } from "../types";
 import {
   deserializeStringToArray,
@@ -16,6 +17,7 @@ import {
   removeDateFromRanges,
   serializeArrayToString,
 } from "@/helpers/dateRange";
+import { createIncidence, updateIndigence } from "./incidence";
 
 interface HabitsProps {
   data: Habit_Completions[];
@@ -180,35 +182,6 @@ export const Habits = ({ data, token }: HabitsProps) => {
   );
 };
 
-function mapDateRangeStringToArray(dateRange: string): string[] {
-  const [startDate, endDate] = dateRange.split(":");
-  const datesArray = [];
-
-  const currentDate = new Date(startDate);
-  const lastDate = new Date(endDate);
-
-  while (currentDate <= lastDate) {
-    datesArray.push(currentDate.toISOString().split("T")[0]);
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return datesArray;
-}
-
-function mapDateRangeToArray(startDate: string, endDate: string): string[] {
-  const datesArray = [];
-
-  const currentDate = new Date(startDate);
-  const lastDate = new Date(endDate);
-
-  while (currentDate <= lastDate) {
-    datesArray.push(currentDate.toISOString().split("T")[0]);
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return datesArray;
-}
-
 function mapDateRangeToActivityArray(
   startDate: string,
   endDate: string
@@ -230,15 +203,43 @@ function mapDateRangeToActivityArray(
   return datesArray;
 }
 
+// Returns empty string if no matching dataRange was found
+const getDateRangesByYear = (year: string, incidences: Incidence[]): string => {
+  const exist = incidences.find((i) => i.yearRange);
+  return exist ? exist.dateRanges : "";
+};
+
+// Returns a copy of the found incidence
+const getIncidenceByYear = (
+  year: string,
+  incidences: Incidence[]
+): Incidence | null => {
+  const exist = incidences.find((i) => i.yearRange === year);
+  return exist ? { ...exist } : null;
+};
+
 const HabitIncidence = ({ habit, token }: HabitIncidenceDetailsProps) => {
-  const [yearRange, setYearRange] = React.useState(moment().year());
-  const [incidences, setIncidences] = React.useState<string[]>(
-    // Taking first element for now, cuz I know this arr will contain just one element for now
-    deserializeStringToArray(habit.incidences[0].dateRanges || "")
+  const [yearRange, setYearRange] = React.useState<string>(
+    moment().year().toString()
   );
 
+  const [incidence, setIncidence] = React.useState<Incidence | null>(
+    getIncidenceByYear(yearRange, habit.incidences)
+  );
+
+  const [dateRanges, setDateRanges] = React.useState<string[]>(
+    deserializeStringToArray(getDateRangesByYear(yearRange, habit.incidences))
+  );
+
+  React.useEffect(() => {
+    // const newRanges = getInci(yearRange, habit.incidences);
+    // setDateRanges(deserializeStringToArray(newRanges));
+    const newIncidence = getIncidenceByYear(yearRange, habit.incidences);
+    setIncidence(newIncidence);
+  }, [yearRange]);
+
   const activities: Activity[] = React.useMemo(() => {
-    const dateArr: Activity[][] = incidences.map((i) => {
+    const dateArr: Activity[][] = dateRanges.map((i) => {
       const [start, end] = i.split(":");
       return mapDateRangeToActivityArray(start, end);
     });
@@ -270,15 +271,36 @@ const HabitIncidence = ({ habit, token }: HabitIncidenceDetailsProps) => {
     }
 
     return flatten;
-  }, [incidences, yearRange]);
+  }, [dateRanges, yearRange]);
 
   const handleActivityClick = (ac: Activity) => {
     const formatted = moment(ac.date).tz(moment.tz.guess()).format(dateFormat);
+    const newRanges = ac.count
+      ? removeDateFromRanges(dateRanges, formatted)
+      : mergeNewDateRanges(dateRanges, formatted);
 
-    if (ac.count) {
-      setIncidences((prev) => removeDateFromRanges(prev, formatted));
+    // Need to revert this if saving fails
+    setDateRanges(newRanges);
+
+    if (incidence) {
+      // Update
+      updateIndigence({
+        token,
+        dateRanges: serializeArrayToString(newRanges),
+        incidenceId: incidence.id,
+        yearRange,
+      }).then(() => {
+        // Just for testing
+        // setDateRanges(newRanges);
+      });
     } else {
-      setIncidences((prev) => mergeNewDateRanges(prev, formatted));
+      // Create
+      createIncidence({
+        dateRanges: serializeArrayToString(newRanges),
+        habitId: habit.id,
+        token,
+        yearRange,
+      });
     }
   };
 
@@ -288,7 +310,7 @@ const HabitIncidence = ({ habit, token }: HabitIncidenceDetailsProps) => {
         {habit.habitName}
       </h4>
       <ReactTooltip id="react-tooltip" />
-      <div className="mt-3 text-slate-500">
+      <div className="mt-3 text-slate-500 select-none outline-none">
         <div className="w-fit">
           <ActivityCalendar
             // hideMonthLabels
@@ -298,7 +320,7 @@ const HabitIncidence = ({ habit, token }: HabitIncidenceDetailsProps) => {
             renderBlock={(block, activity) =>
               React.cloneElement(block, {
                 "data-tooltip-id": "react-tooltip",
-                "data-tooltip-html": moment(activity.date).format("MMM Do YY"),
+                "data-tooltip-html": moment(activity.date).format("Do MMM YY"),
               })
             }
             eventHandlers={{
