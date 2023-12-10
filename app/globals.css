@@ -19,3 +19,12 @@
 body {
   color: rgb(var(--foreground-rgb));
 }
+
+.no-scrollbar div::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
