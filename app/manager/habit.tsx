@@ -311,7 +311,7 @@ const HabitIncidence = ({ habit, token }: HabitIncidenceDetailsProps) => {
         {habit.habitName}
       </h4>
       <ReactTooltip id="react-tooltip" />
-      <div className="mt-3 text-slate-500 select-none outline-none">
+      <div className="mt-3 text-slate-500 select-none overflow-hidden no-scrollbar flex-row-reverse">
         <ActivityCalendar
           // hideMonthLabels
           // showWeekdayLabels
