@@ -66,11 +66,14 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
     deserializeStringToArray(getDateRangesByYear(yearRange, habit.incidences))
   );
 
+  const lastRef = React.useRef();
+
   React.useEffect(() => {
     // const newRanges = getInci(yearRange, habit.incidences);
     // setDateRanges(deserializeStringToArray(newRanges));
     const newIncidence = getIncidenceByYear(yearRange, habit.incidences);
     setIncidence(newIncidence);
+    window.scrollTo();
   }, [yearRange]);
 
   const activities: Activity[] = React.useMemo(() => {
@@ -140,12 +143,12 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
   };
 
   return (
-    <div className="m-3 p-3 border-2 bg-white border-slate-300 rounded-lg flex flex-col w-ful">
+    <div className="m-3 p-3 border-2 bg-white border-slate-300 rounded-lg flex flex-col max-w-full w-fit">
       <h4 className="ml-1.5 text-slate-600 font-semibold text-lg mt-1">
         {habit.habitName}
       </h4>
       <Tooltip id="react-tooltip" />
-      <div className="mt-3 text-slate-500 select-none overflow-hidden no-scrollbar flex-row-reverse">
+      <div className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full">
         <ActivityCalendar
           // hideMonthLabels
           // showWeekdayLabels
@@ -161,7 +164,7 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
           eventHandlers={{
             onClick: (e) => handleActivityClick,
           }}
-          blockSize={16}
+          blockSize={13}
           blockRadius={3}
           blockMargin={3}
           weekStart={0}
