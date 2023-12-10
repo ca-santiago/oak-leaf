@@ -18,6 +18,7 @@ import {
   serializeArrayToString,
 } from "@/helpers/dateRange";
 import { createIncidence, updateIndigence } from "./incidence";
+import { FaPlusSquare } from "react-icons/fa";
 
 interface HabitsProps {
   data: Habit_Completions[];
@@ -305,52 +306,77 @@ const HabitIncidence = ({ habit, token }: HabitIncidenceDetailsProps) => {
   };
 
   return (
-    <div className="m-3 px-4 pb-5 border-2 bg-white border-slate-300 rounded-lg w-fit flex flex-col">
+    <div className="m-3 px-4 pb-5 border-2 bg-white border-slate-300 rounded-lg flex flex-col">
       <h4 className="ml-1 text-slate-700 font-semibold text-lg mt-2">
         {habit.habitName}
       </h4>
       <ReactTooltip id="react-tooltip" />
       <div className="mt-3 text-slate-500 select-none outline-none">
-        <div className="w-fit">
-          <ActivityCalendar
-            // hideMonthLabels
-            // showWeekdayLabels
-            hideColorLegend
-            maxLevel={1}
-            renderBlock={(block, activity) =>
-              React.cloneElement(block, {
-                "data-tooltip-id": "react-tooltip",
-                "data-tooltip-html": moment(activity.date).format("Do MMM YY"),
-              })
-            }
-            eventHandlers={{
-              onClick: (e) => handleActivityClick,
-            }}
-            blockSize={16}
-            blockRadius={3}
-            blockMargin={3}
-            weekStart={0}
-            fontSize={14}
-            hideTotalCount
-            colorScheme="light"
-            theme={{
-              light: ["#f0f0f0", "#4A4"],
-              dark: ["#f0f0f0", "#3cc9ae14"],
-            }}
-            data={activities}
-          />
-        </div>
+        <ActivityCalendar
+          // hideMonthLabels
+          // showWeekdayLabels
+          hideColorLegend
+          maxLevel={1}
+          renderBlock={(block, activity) =>
+            React.cloneElement(block, {
+              "data-tooltip-id": "react-tooltip",
+              "data-tooltip-html": moment(activity.date).format("Do MMM YY"),
+              className: "outline-none cursor-pointer",
+            })
+          }
+          eventHandlers={{
+            onClick: (e) => handleActivityClick,
+          }}
+          blockSize={16}
+          blockRadius={3}
+          blockMargin={3}
+          weekStart={0}
+          fontSize={14}
+          hideTotalCount
+          colorScheme="light"
+          theme={{
+            light: ["#f0f0f0", "#4A4"],
+            dark: ["#f0f0f0", "#3cc9ae14"],
+          }}
+          data={activities}
+        />
       </div>
     </div>
   );
 };
 
 export const HabitsIncidences = ({ data, token }: HabitsIncidencesProps) => {
+  const [isAdding, setIsAdding] = React.useState(false);
+  const [value, setValue] = React.useState("");
+
   return (
-    <>
-      {data.map((item) => (
-        <HabitIncidence key={item.id} habit={item} token={token} />
-      ))}
-    </>
+    <div>
+      <div className="m-3">
+        <div className=" flex text-blue-500 gap-4 items-center">
+          <FaPlusSquare
+            className="cursor-pointer"
+            size={28}
+            onClick={() => setIsAdding(true)}
+          />
+          {isAdding ? (
+            <input
+              className="p-1 px-2 rounded-md text-slate-400 outline-none border-2 border-slate-300 bg-white text-base font-semibold"
+              placeholder="Title"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+            />
+          ) : (
+            <p className="font-semibold text-lg text-slate-400 select-none">
+              Add
+            </p>
+          )}
+        </div>
+      </div>
+      <div>
+        {data.map((item) => (
+          <HabitIncidence key={item.id} habit={item} token={token} />
+        ))}
+      </div>
+    </div>
   );
 };

@@ -18,6 +18,7 @@
     "react": "^18",
     "react-activity-calendar": "^2.2.0",
     "react-dom": "^18",
+    "react-icons": "^4.12.0",
     "react-tooltip": "^5.25.0"
   },
   "devDependencies": {
