@@ -3,6 +3,7 @@ export interface Habit {
   habitName: string;
   description?: string;
   createdAt: string;
+  incidences: Incidence[];
 }
 
 export interface Completion {
@@ -20,10 +21,3 @@ export interface Incidence {
   yearRange: string;
 }
 
-export interface Habit_Completions extends Habit {
-  completions: Completion[];
-}
-
-export interface Habit_Incidences extends Habit {
-  incidences: Incidence[];
-}

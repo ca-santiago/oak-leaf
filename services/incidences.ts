@@ -1,4 +1,4 @@
-import { API_CONFIG } from "@/services/api";
+import { API_CONFIG } from "./api";
 
 interface CreateIncidenceArgs {
   token: string;
