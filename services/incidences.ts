@@ -40,7 +40,6 @@ export const updateIndigence = async ({
   dateRanges,
   yearRange,
 }: UpdateIndigenceArgs) => {
-  console.log(API_CONFIG);
   return fetch(`${API_CONFIG.incidencesUrl}/${incidenceId}`, {
     method: "PUT",
     body: JSON.stringify({
