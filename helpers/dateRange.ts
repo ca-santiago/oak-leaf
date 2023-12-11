@@ -1,3 +1,6 @@
+import { Incidence } from "@/core/types";
+import { Activity } from "react-activity-calendar";
+
 export function mergeNewDateRanges(
   dateRanges: string[],
   givenDate: string
@@ -120,3 +123,59 @@ export function serializeArrayToString(arr: string[]): string {
 export function deserializeStringToArray(str: string): string[] {
   return str.split(",").filter((d) => validDateRange.test(d));
 }
+
+export function mapDateRangeToActivityArray(
+  startDate: string,
+  endDate: string
+): Activity[] {
+  const datesArray: Activity[] = [];
+
+  const currentDate = new Date(startDate);
+  const lastDate = new Date(endDate);
+
+  while (currentDate <= lastDate) {
+    datesArray.push({
+      count: 1,
+      date: currentDate.toISOString().split("T")[0],
+      level: 2,
+    });
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return datesArray;
+}
+
+// Returns empty string if no matching dataRange was found
+export const getDateRangesByYear = (
+  year: string,
+  incidences: Incidence[]
+): string => {
+  const exist = incidences.find((i) => i.yearRange === year);
+  return exist ? exist.dateRanges : "";
+};
+
+// Returns a copy of the found incidence
+export const getIncidenceByYear = (
+  year: string,
+  incidences: Incidence[]
+): Incidence | null => {
+  const exist = incidences.find((i) => i.yearRange === year);
+  return exist ? { ...exist } : null;
+};
+
+/**
+ * Find if given date exists in ranges
+ */
+export const findDateInRanges = (
+  dateToFind: string,
+  dateRanges: string[]
+): boolean => {
+     const dateArr: Activity[][] = dateRanges.map((i) => {
+      const [start, end] = i.split(":");
+      return mapDateRangeToActivityArray(start, end);
+    });
+
+    const flatten = dateArr.flat();
+    const exist = flatten.find(d => dateToFind === d.date);
+    return !!exist;
+};

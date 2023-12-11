@@ -1,4 +1,5 @@
 import {
+  findDateInRanges,
   mergeNewDateRanges,
   removeDateFromRanges,
 } from "../dateRange";
@@ -195,3 +196,50 @@ describe("removeGivenDateFromRanges - Performance Testing", () => {
     }
   );
 });
+
+
+describe('findDateRange', () => {
+  test('date exists', () => {
+    const dateRanges = [
+      '2023-12-01:2023-12-01',
+      '2023-12-03:2023-12-06',
+      '2023-12-08:2023-12-10',
+    ];
+    const givenDate = '2023-12-01';
+    const result = findDateInRanges(givenDate, dateRanges);
+    expect(result).toEqual(true);
+  });
+
+  test('date doest not exist', () => {
+    const dateRanges = [
+      '2023-12-01:2023-12-01',
+      '2023-12-03:2023-12-06',
+      '2023-12-08:2023-12-10',
+    ];
+    const givenDate = '2023-12-11';
+    const result = findDateInRanges(givenDate, dateRanges);
+    expect(result).toEqual(false);
+  });
+
+  test.concurrent("performance", () => {
+        const dateRanges = [
+      '2023-12-01:2023-12-01',
+      '2023-12-03:2023-12-06',
+      '2023-12-08:2023-12-10',
+    ];
+    const givenDate = '2023-12-11';
+
+    const startTime = performance.now();
+    const result = findDateInRanges(givenDate, dateRanges);
+         const endTime = performance.now();
+
+      const executionTime = endTime - startTime;
+      console.log(
+        `Execution time for findDateInRanges: ${executionTime} milliseconds`
+      );
+
+      // To automatically pass the test, adjust the threshold as needed
+      const threshold = 0.5; // Adjust the threshold for acceptable performance time
+      expect(executionTime).toBeLessThan(threshold);
+  });
+})
