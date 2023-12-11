@@ -1,5 +1,7 @@
 "use client";
 
+import { VERSION } from "@/core/constants";
+
 interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
@@ -15,6 +17,7 @@ export default function Error({ error, reset }: ErrorProps) {
       >
         Try again
       </button>
+      <div className="fixed bottom-3 right-4">v{VERSION}</div>
     </div>
   );
 }
