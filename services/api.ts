@@ -1,7 +1,7 @@
 const baseURL =
-  process.env.ENV === "prod" ? process.env.API_URL : "http://localhost:3003";
-
-console.log(baseURL);
+  process.env.NODE_ENV === "production"
+    ? process.env.API_URL
+    : "http://localhost:3003";
 
 export const API_CONFIG = {
   baseURL,
