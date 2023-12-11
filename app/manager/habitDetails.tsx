@@ -190,7 +190,7 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
           </div>
         )}
         <ActivityCalendar
-          hideMonthLabels
+          // hideMonthLabels
           loading={loading}
           // showWeekdayLabels
           hideColorLegend
