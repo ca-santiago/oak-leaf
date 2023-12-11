@@ -1,11 +1,11 @@
 {
   "name": "client",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "ENV=prod next start",
+    "start": "NODE_ENV=production next start",
     "lint": "next lint",
     "test": "jest"
   },
