@@ -48,7 +48,7 @@ export const HabitsList = ({ data, token }: HabitsIncidencesProps) => {
         <div>
           <div className="w-96 bg-white shadow rounded-md flex flex-col gap-3 p-3">
             <h4 className="text-slate-600 font-semibold ml-0.5">
-              Let's start a new habit
+              Let&apos;s start a new habit
             </h4>
             <input
               placeholder="Name *"

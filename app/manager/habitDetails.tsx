@@ -70,9 +70,12 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
-    const newIncidence = getIncidenceByYear(yearRange, habit.incidences);
-    setIncidence(newIncidence);
-  }, [yearRange]);
+    const foundIncidence = getIncidenceByYear(yearRange, habit.incidences);
+    if (foundIncidence) setIncidence(foundIncidence);
+    else {
+      // Fetch incidence
+    }
+  }, [yearRange, habit.incidences]);
 
   const activities: Activity[] = React.useMemo(() => {
     const dateArr: Activity[][] = dateRanges.map((i) => {
@@ -120,8 +123,6 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
     // Need to revert this if saving fails
     setDateRanges(newRanges);
     setLoading(true);
-
-    console.log({ incidence });
 
     if (incidence) {
       // Update
@@ -184,7 +185,8 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
             React.cloneElement(block, {
               "data-tooltip-id": "react-tooltip",
               "data-tooltip-html": moment(activity.date).format("Do MMM YY"),
-              className: "outline-none border-none cursor-pointer overflow-hidden",
+              className:
+                "outline-none border-none cursor-pointer overflow-hidden",
             })
           }
           eventHandlers={{
