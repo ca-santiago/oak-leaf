@@ -43,7 +43,7 @@ export const HabitsList = ({ data, token }: HabitsIncidencesProps) => {
   };
 
   return (
-    <div className="w-full md:w-4/6 lg:w-3/4 mx-auto mt-6">
+    <div className="w-full md:w-4/6 lg:w-3/4 mx-auto mt-6 pb-10">
       <Modal open={showModal} onClose={() => setShowModal(false)}>
         <div>
           <div className="w-96 bg-white shadow rounded-md flex flex-col gap-3 p-3">

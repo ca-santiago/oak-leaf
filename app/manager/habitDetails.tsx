@@ -1,5 +1,9 @@
 import {
   deserializeStringToArray,
+  findDateInRanges,
+  getDateRangesByYear,
+  getIncidenceByYear,
+  mapDateRangeToActivityArray,
   mergeNewDateRanges,
   removeDateFromRanges,
   serializeArrayToString,
@@ -11,53 +15,20 @@ import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";
 import { Tooltip } from "react-tooltip";
 import React from "react";
-import { boolean } from "joi";
+
+import { FaSquareCheck } from "react-icons/fa6";
+import { BiLoaderAlt } from "react-icons/bi";
 
 interface HabitDetailsProps {
   habit: Habit;
   token: string;
 }
 
-function mapDateRangeToActivityArray(
-  startDate: string,
-  endDate: string
-): Activity[] {
-  const datesArray: Activity[] = [];
-
-  const currentDate = new Date(startDate);
-  const lastDate = new Date(endDate);
-
-  while (currentDate <= lastDate) {
-    datesArray.push({
-      count: 1,
-      date: currentDate.toISOString().split("T")[0],
-      level: 1,
-    });
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return datesArray;
-}
-
-// Returns empty string if no matching dataRange was found
-const getDateRangesByYear = (year: string, incidences: Incidence[]): string => {
-  const exist = incidences.find((i) => i.yearRange);
-  return exist ? exist.dateRanges : "";
-};
-
-// Returns a copy of the found incidence
-const getIncidenceByYear = (
-  year: string,
-  incidences: Incidence[]
-): Incidence | null => {
-  const exist = incidences.find((i) => i.yearRange === year);
-  return exist ? { ...exist } : null;
-};
-
 export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
   const [yearRange, setYearRange] = React.useState<string>(
     moment().year().toString()
   );
+  const today = moment().tz(moment.tz.guess()).format(DATE_FORMAT);
 
   const [incidence, setIncidence] = React.useState<Incidence | null>(
     getIncidenceByYear(yearRange, habit.incidences)
@@ -68,6 +39,14 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
   );
 
   const [loading, setLoading] = React.useState(false);
+  const [saving, setSaving] = React.useState(false);
+
+  const [todayCompleted, setTodayCompleted] = React.useState(
+    findDateInRanges(
+      moment.tz(moment.tz.guess()).format(DATE_FORMAT),
+      dateRanges
+    )
+  );
 
   React.useEffect(() => {
     const foundIncidence = getIncidenceByYear(yearRange, habit.incidences);
@@ -76,6 +55,50 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
       // Fetch incidence
     }
   }, [yearRange, habit.incidences]);
+
+  const saveRanges = (
+    incidence: Incidence | null,
+    newRanges: string[],
+    oldRanges: string[]
+  ) => {
+    setSaving(true);
+    if (incidence) {
+      updateIndigence({
+        token,
+        dateRanges: serializeArrayToString(newRanges),
+        incidenceId: incidence.id,
+        yearRange,
+      })
+        .then(() => {
+          setDateRanges(newRanges);
+          setTodayCompleted(findDateInRanges(today, newRanges));
+        })
+        .catch((err) => {
+          // Revert if saving fails
+          setDateRanges(oldRanges);
+        })
+        .finally(() => {
+          setSaving(false);
+        });
+    } else {
+      createIncidence({
+        dateRanges: serializeArrayToString(newRanges),
+        habitId: habit.id,
+        token,
+        yearRange,
+      })
+        .then(({ data }) => {
+          setSaving(false);
+          setIncidence(data);
+        })
+        .catch((err) => {
+          setDateRanges(dateRanges);
+        })
+        .finally(() => {
+          setSaving(false);
+        });
+    }
+  };
 
   const activities: Activity[] = React.useMemo(() => {
     const dateArr: Activity[][] = dateRanges.map((i) => {
@@ -113,7 +136,7 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
   }, [dateRanges, yearRange]);
 
   const handleActivityClick = (ac: Activity) => {
-    if (loading) return;
+    if (loading || saving) return;
 
     const formatted = moment(ac.date).tz(moment.tz.guess()).format(DATE_FORMAT);
     const newRanges = ac.count
@@ -122,55 +145,45 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
 
     // Need to revert this if saving fails
     setDateRanges(newRanges);
-    setLoading(true);
+    saveRanges(incidence, newRanges, dateRanges);
+  };
 
-    if (incidence) {
-      // Update
-      updateIndigence({
-        token,
-        dateRanges: serializeArrayToString(newRanges),
-        incidenceId: incidence.id,
-        yearRange,
-      })
-        .then(() => {
-          // Just for testing
-          // setDateRanges(newRanges);
-        })
-        .catch((err) => {
-          // Revert if saving fails
-          setDateRanges(dateRanges);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      // Create
-      createIncidence({
-        dateRanges: serializeArrayToString(newRanges),
-        habitId: habit.id,
-        token,
-        yearRange,
-      })
-        .then(({ data }) => {
-          setLoading(false);
-          setIncidence(data);
-        })
-        .catch((err) => {
-          setDateRanges(dateRanges);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+  const toggleDay = () => {
+    const today = moment().tz(moment.tz.guess()).format(DATE_FORMAT);
+    const newRanges = todayCompleted
+      ? removeDateFromRanges(dateRanges, today)
+      : mergeNewDateRanges(dateRanges, today);
+    setTodayCompleted(!todayCompleted);
+    setDateRanges(newRanges);
+
+    saveRanges(incidence, newRanges, dateRanges);
   };
 
   return (
-    <div className="p-3 border-2 bg-white border-slate-300 rounded-lg flex flex-col max-w-full w-fit overflow-hidden">
-      <h4 className="ml-1.5 text-slate-600 font-semibold text-lg mt-1">
-        {habit.habitName}
-      </h4>
+    <div className="p-3 shadow-line bg-white rounded-lg flex flex-col max-w-full w-fit overflow-hidden">
+      <div className="flex justify-between items-center">
+        <div>
+          <div className="flex flex-row gap-2 items-center text-slate-600">
+            {/* <PiPlaceholderDuotone size={28} /> */}
+            <h4 className="font-semibold text-lg">{habit.habitName}</h4>
+          </div>
+          {habit.description && (
+            <p className="text-slate-500 text-sm">{habit.description}</p>
+          )}
+        </div>
+        {saving ? (
+          <BiLoaderAlt size={28} className="animate-spin" color="#e4f1df" />
+        ) : (
+          <FaSquareCheck
+            size={28}
+            className="text-slate-400 cursor-pointer hover:text-slate-500"
+            color={todayCompleted ? "#66c970" : "#e4f1df"}
+            onClick={toggleDay}
+          />
+        )}
+      </div>
       <Tooltip id="react-tooltip" />
-      <div className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full">
+      <div className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full overflow-hidden">
         {loading && (
           <div className="fixed bg-black/20 inset-0 flex items-center justify-center">
             <div>Saving...</div>
@@ -178,9 +191,10 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
         )}
         <ActivityCalendar
           hideMonthLabels
+          loading={loading}
           // showWeekdayLabels
           hideColorLegend
-          maxLevel={1}
+          maxLevel={2}
           renderBlock={(block, activity) =>
             React.cloneElement(block, {
               "data-tooltip-id": "react-tooltip",
@@ -193,14 +207,14 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
             onClick: () => handleActivityClick,
           }}
           blockSize={13}
-          blockRadius={3}
+          blockRadius={4}
           blockMargin={3}
           weekStart={0}
           fontSize={14}
           hideTotalCount
           colorScheme="light"
           theme={{
-            light: ["#f0f0f0", "#4A4"],
+            light: ["#e4f1df", "#66c970"],
             dark: ["#f0f0f0", "#3cc9ae14"],
           }}
           data={activities}
