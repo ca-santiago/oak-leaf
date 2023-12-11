@@ -24,8 +24,7 @@ export const createIncidence = async ({
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
     },
-  })
-    .then((data) => data.json())
+  }).then((data) => data.json());
 };
 
 interface UpdateIndigenceArgs {
@@ -41,6 +40,7 @@ export const updateIndigence = async ({
   dateRanges,
   yearRange,
 }: UpdateIndigenceArgs) => {
+  console.log(API_CONFIG);
   return fetch(`${API_CONFIG.incidencesUrl}/${incidenceId}`, {
     method: "PUT",
     body: JSON.stringify({
@@ -51,6 +51,5 @@ export const updateIndigence = async ({
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
     },
-  })
-    .then((data) => data.json())
+  }).then((data) => data.json());
 };
