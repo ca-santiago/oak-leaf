@@ -139,14 +139,14 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
   };
 
   return (
-    <div className="m-3 p-3 border-2 bg-white border-slate-300 rounded-lg flex flex-col max-w-full w-fit">
+    <div className="p-3 border-2 bg-white border-slate-300 rounded-lg flex flex-col max-w-full w-fit overflow-hidden">
       <h4 className="ml-1.5 text-slate-600 font-semibold text-lg mt-1">
         {habit.habitName}
       </h4>
       <Tooltip id="react-tooltip" />
       <div className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full">
         <ActivityCalendar
-          // hideMonthLabels
+          hideMonthLabels
           // showWeekdayLabels
           hideColorLegend
           maxLevel={1}
