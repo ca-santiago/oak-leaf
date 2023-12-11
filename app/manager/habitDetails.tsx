@@ -11,6 +11,7 @@ import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";
 import { Tooltip } from "react-tooltip";
 import React from "react";
+import { boolean } from "joi";
 
 interface HabitDetailsProps {
   habit: Habit;
@@ -66,10 +67,11 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
     deserializeStringToArray(getDateRangesByYear(yearRange, habit.incidences))
   );
 
+  const [loading, setLoading] = React.useState(false);
+
   React.useEffect(() => {
     const newIncidence = getIncidenceByYear(yearRange, habit.incidences);
     setIncidence(newIncidence);
-    window.scrollTo();
   }, [yearRange]);
 
   const activities: Activity[] = React.useMemo(() => {
@@ -108,6 +110,8 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
   }, [dateRanges, yearRange]);
 
   const handleActivityClick = (ac: Activity) => {
+    if (loading) return;
+
     const formatted = moment(ac.date).tz(moment.tz.guess()).format(DATE_FORMAT);
     const newRanges = ac.count
       ? removeDateFromRanges(dateRanges, formatted)
@@ -115,6 +119,9 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
 
     // Need to revert this if saving fails
     setDateRanges(newRanges);
+    setLoading(true);
+
+    console.log({ incidence });
 
     if (incidence) {
       // Update
@@ -123,10 +130,18 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
         dateRanges: serializeArrayToString(newRanges),
         incidenceId: incidence.id,
         yearRange,
-      }).then(() => {
-        // Just for testing
-        // setDateRanges(newRanges);
-      });
+      })
+        .then(() => {
+          // Just for testing
+          // setDateRanges(newRanges);
+        })
+        .catch((err) => {
+          // Revert if saving fails
+          setDateRanges(dateRanges);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
       // Create
       createIncidence({
@@ -134,7 +149,17 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
         habitId: habit.id,
         token,
         yearRange,
-      });
+      })
+        .then(({ data }) => {
+          setLoading(false);
+          setIncidence(data);
+        })
+        .catch((err) => {
+          setDateRanges(dateRanges);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   };
 
@@ -145,6 +170,11 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
       </h4>
       <Tooltip id="react-tooltip" />
       <div className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full">
+        {loading && (
+          <div className="fixed bg-black/20 inset-0 flex items-center justify-center">
+            <div>Saving...</div>
+          </div>
+        )}
         <ActivityCalendar
           hideMonthLabels
           // showWeekdayLabels
@@ -154,7 +184,7 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
             React.cloneElement(block, {
               "data-tooltip-id": "react-tooltip",
               "data-tooltip-html": moment(activity.date).format("Do MMM YY"),
-              className: "outline-none cursor-pointer overflow-hidden",
+              className: "outline-none border-none cursor-pointer overflow-hidden",
             })
           }
           eventHandlers={{

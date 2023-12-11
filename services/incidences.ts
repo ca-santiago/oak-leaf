@@ -26,7 +26,6 @@ export const createIncidence = async ({
     },
   })
     .then((data) => data.json())
-    .catch((err) => console.log(err.message));
 };
 
 interface UpdateIndigenceArgs {
@@ -54,5 +53,4 @@ export const updateIndigence = async ({
     },
   })
     .then((data) => data.json())
-    .catch((err) => console.log(err));
 };
