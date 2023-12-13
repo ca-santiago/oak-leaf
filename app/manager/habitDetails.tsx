@@ -13,11 +13,11 @@ import { Habit, Incidence } from "../../core/types";
 import moment from "moment-timezone";
 import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";
-import { Tooltip } from "react-tooltip";
 import React from "react";
 
 import { FaSquareCheck } from "react-icons/fa6";
 import { BiLoaderAlt } from "react-icons/bi";
+import { ColorsMapping, IconMapping } from "@/core/mappings";
 
 interface HabitDetailsProps {
   habit: Habit;
@@ -159,46 +159,50 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
     saveRanges(incidence, newRanges, dateRanges);
   };
 
+  const colorSchema = ColorsMapping[habit.colorKey];
+  const Icon = IconMapping[habit.iconKey];
+
   return (
     <div className="p-3 shadow-line bg-white rounded-lg flex flex-col max-w-full w-fit overflow-hidden">
       <div className="flex justify-between items-center">
         <div>
           <div className="flex flex-row gap-2 items-center text-slate-600">
-            {/* <PiPlaceholderDuotone size={28} /> */}
+            <Icon.Icon size={Icon.size} />
             <h4 className="font-semibold text-lg">{habit.habitName}</h4>
           </div>
           {habit.description && (
-            <p className="text-slate-500 text-sm">{habit.description}</p>
+            <p className="text-slate-400 text-xs font-medium">
+              {habit.description}
+            </p>
           )}
         </div>
         {saving ? (
-          <BiLoaderAlt size={28} className="animate-spin" color="#e4f1df" />
+          <BiLoaderAlt
+            size={28}
+            className="animate-spin"
+            color={colorSchema.base}
+          />
         ) : (
           <FaSquareCheck
             size={28}
             className="text-slate-400 cursor-pointer hover:text-slate-500"
-            color={todayCompleted ? "#66c970" : "#e4f1df"}
+            color={todayCompleted ? `${colorSchema.active}` : colorSchema.base}
             onClick={toggleDay}
           />
         )}
       </div>
-      <Tooltip id="react-tooltip" />
+      {/* <Tooltip id="react-tooltip" /> */}
       <div className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full overflow-hidden">
-        {loading && (
-          <div className="fixed bg-black/20 inset-0 flex items-center justify-center">
-            <div>Saving...</div>
-          </div>
-        )}
         <ActivityCalendar
-          // hideMonthLabels
+          hideMonthLabels
           loading={loading}
           // showWeekdayLabels
           hideColorLegend
           maxLevel={2}
           renderBlock={(block, activity) =>
             React.cloneElement(block, {
-              "data-tooltip-id": "react-tooltip",
-              "data-tooltip-html": moment(activity.date).format("Do MMM YY"),
+              // "data-tooltip-id": "react-tooltip",
+              // "data-tooltip-html": moment(activity.date).format("Do MMM YY"),
               className:
                 "outline-none border-none cursor-pointer overflow-hidden",
             })
@@ -214,8 +218,7 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
           hideTotalCount
           colorScheme="light"
           theme={{
-            light: ["#e4f1df", "#66c970"],
-            dark: ["#f0f0f0", "#3cc9ae14"],
+            light: [colorSchema.base, colorSchema.active],
           }}
           data={activities}
         />

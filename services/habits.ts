@@ -19,6 +19,8 @@ interface CreateHabitArgs {
   token: string;
   name: string;
   description: string;
+  colorKey: string;
+  iconKey: string;
 }
 
 export const createHabit = async (args: CreateHabitArgs) => {
@@ -30,9 +32,17 @@ export const createHabit = async (args: CreateHabitArgs) => {
     },
     body: JSON.stringify({
       habitName: args.name,
+      colorKey: args.colorKey,
+      iconKey: args.iconKey,
       description: args.description || undefined,
     }),
   })
-    .then((data) => data.json())
+    .then((data) => {
+      if (data.status === 200) {
+        return data.json();
+      } else {
+        throw new Error(data.status.toString());
+      }
+    })
     .then(({ data }) => data);
 };

@@ -4,6 +4,9 @@ export interface Habit {
   description?: string;
   createdAt: string;
   incidences: Incidence[];
+
+  iconKey: string;
+  colorKey: string;
 }
 
 export interface Completion {

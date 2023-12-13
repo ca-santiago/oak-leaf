@@ -9,13 +9,13 @@ export const Modal = ({ children, onClose, open }: ModalProps) => {
     <div
       className={`
         fixed inset-0 flex justify-center items-center transition-colors
-        ${open ? "visible bg-black/20" : "invisible"} 
+        ${open ? "visible bg-black/30" : "invisible"}
     `}
+      onClick={() => onClose()}
     >
-      <div>
-        <button onClick={() => onClose()}>Close</button>
+      <div onClick={(e) => e.stopPropagation()} className="z-50">
+        {children}
       </div>
-      <div>{children}</div>
     </div>
   );
 };
