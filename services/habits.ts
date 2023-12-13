@@ -11,7 +11,10 @@ export const getHabits = async (
       Authorization: "Bearer " + token,
     },
   })
-    .then((data) => data.json())
+    .then((res) => {
+      console.log(res);
+      return res.json();
+    })
     .then(({ data }) => data);
 };
 
