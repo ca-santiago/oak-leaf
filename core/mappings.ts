@@ -20,6 +20,10 @@ import { BiCycling } from "react-icons/bi";
 import { BiSolidBatteryCharging } from "react-icons/bi";
 import { BsFillBriefcaseFill } from "react-icons/bs";
 import { TbLetterCase } from "react-icons/tb";
+import { RiBoxingLine } from "react-icons/ri";
+import { RiCalendarCheckFill } from "react-icons/ri";
+import { RiCapsuleFill } from "react-icons/ri";
+import { TbMoodSearch } from "react-icons/tb";
 
 export interface IconMapping {
   [key: string]: {
@@ -111,6 +115,22 @@ export const IconMapping: IconMapping = {
   },
   letterCase: {
     Icon: TbLetterCase,
+    size: 20,
+  },
+  box: {
+    Icon: RiBoxingLine,
+    size: 20,
+  },
+  capsule: {
+    Icon: RiCapsuleFill,
+    size: 20,
+  },
+  calendar: {
+    Icon: RiCalendarCheckFill,
+    size: 20,
+  },
+  moodSearch: {
+    Icon: TbMoodSearch,
     size: 20,
   },
 };
