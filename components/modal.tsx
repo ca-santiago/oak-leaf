@@ -13,7 +13,7 @@ export const Modal = ({ children, onClose, open }: ModalProps) => {
     `}
       onClick={() => onClose()}
     >
-      <div onClick={(e) => e.stopPropagation()} className="z-50">
+      <div onClick={(e) => e?.stopPropagation()} className="z-50">
         {children}
       </div>
     </div>
