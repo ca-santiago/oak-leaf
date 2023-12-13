@@ -17,7 +17,7 @@ async function ManagerPage() {
   // console.log(habits);
 
   return (
-    <div className="bg-[#f4f6f9] min-h-screen">
+    <div className="bg-[#ebeff4] min-h-screen">
       <AccountHeader session={session!} />
       <HabitsList data={habits} token={accessToken!} />
       <VersionLabel />
