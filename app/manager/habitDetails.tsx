@@ -168,10 +168,10 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
         <div>
           <div className="flex flex-row gap-2 items-center text-slate-600">
             <Icon.Icon size={Icon.size} />
-            <h4 className="font-semibold text-lg">{habit.habitName}</h4>
+            <h4 className="font-semibold text-lg notranslate">{habit.habitName}</h4>
           </div>
           {habit.description && (
-            <p className="text-slate-400 text-xs font-medium">
+            <p className="text-slate-400 text-xs font-medium notranslate">
               {habit.description}
             </p>
           )}
