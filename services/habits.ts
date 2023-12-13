@@ -12,7 +12,7 @@ export const getHabits = async (
     },
   })
     .then((res) => {
-      console.log(res);
+      // console.log(res);
       return res.json();
     })
     .then(({ data }) => data);

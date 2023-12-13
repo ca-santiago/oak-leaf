@@ -159,8 +159,9 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
     saveRanges(incidence, newRanges, dateRanges);
   };
 
-  const colorSchema = ColorsMapping[habit.colorKey];
-  const Icon = IconMapping[habit.iconKey];
+  const colorSchema =
+    ColorsMapping[habit.colorKey] || ColorsMapping.defaultColorSchema;
+  const Icon = IconMapping[habit.iconKey] || IconMapping.default;
 
   return (
     <div className="p-3 shadow-line bg-white rounded-lg flex flex-col max-w-full w-fit overflow-hidden">
@@ -168,7 +169,9 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
         <div>
           <div className="flex flex-row gap-2 items-center text-slate-600">
             <Icon.Icon size={Icon.size} />
-            <h4 className="font-semibold text-lg notranslate">{habit.habitName}</h4>
+            <h4 className="font-semibold text-lg notranslate">
+              {habit.habitName}
+            </h4>
           </div>
           {habit.description && (
             <p className="text-slate-400 text-xs font-medium notranslate">
@@ -186,7 +189,9 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
           <FaSquareCheck
             size={28}
             className="text-slate-400 cursor-pointer hover:text-slate-500"
-            color={todayCompleted ? `${colorSchema.active}` : colorSchema.base}
+            color={
+              todayCompleted ? `${colorSchema.active}` : `${colorSchema.base}`
+            }
             onClick={toggleDay}
           />
         )}
