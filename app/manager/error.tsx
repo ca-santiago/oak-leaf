@@ -1,6 +1,5 @@
 "use client";
-
-import { VERSION } from "@/core/constants";
+import { VersionLabel } from "@/components/versionLabel";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -9,7 +8,7 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   return (
-    <div className="mx-auto w-80 flex flex-col items-centera">
+    <div className="mx-auto w-80 flex flex-col items-center">
       <h2 className="text-center">Something went wrong!</h2>
       <button
         className="p-2 rounded-md text-white bg-blue-500"
@@ -17,7 +16,7 @@ export default function Error({ error, reset }: ErrorProps) {
       >
         Try again
       </button>
-      <div className="fixed bottom-3 right-4">v{VERSION}</div>
+      <VersionLabel />
     </div>
   );
 }
