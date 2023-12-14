@@ -9,7 +9,7 @@ import {
   serializeArrayToString,
 } from "@/helpers/dateRange";
 import { createIncidence, updateIndigence } from "@/services/incidences";
-import { Habit, Incidence } from "../../core/types";
+import { Habit, Incidence } from "../core/types";
 import moment from "moment-timezone";
 import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";

@@ -1,6 +1,7 @@
 import { Session } from "@auth0/nextjs-auth0";
 import { LogOutBtn } from "./logoutBtn";
 import Image from "next/image";
+import Link from "next/link";
 
 interface AccountHeaderProps {
   session: Session;
@@ -14,7 +15,9 @@ export const AccountHeader = ({ session }: AccountHeaderProps) => {
         <div className="rounded-md overflow-hidden">
           <Image src={picture} alt="yo" height={40} width={40} priority />
         </div>
-        <div className="font-semibold text-sm text-slate-700">{name}</div>
+        <Link href="/profile">
+          <div className="font-semibold text-sm text-slate-700">{name}</div>
+        </Link>
       </div>
       <LogOutBtn />
     </div>

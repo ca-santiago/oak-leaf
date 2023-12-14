@@ -8,4 +8,5 @@ export const API_CONFIG = {
   habitsUrl: `${baseURL}/habits`,
   completionsUrl: `${baseURL}/completions`,
   incidencesUrl: `${baseURL}/incidences`,
+  accountsUrl: `${baseURL}/accounts`,
 };
