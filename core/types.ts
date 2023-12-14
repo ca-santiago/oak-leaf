@@ -24,3 +24,15 @@ export interface Incidence {
   yearRange: string;
 }
 
+export interface Account {
+  contactEmail: string;
+  createdAt: string;
+  externalId: string;
+  id: string;
+  imageUri: string;
+  planEndDate: string;
+  planInitDate: string;
+  planType: string;
+  preferredName: string;
+  updatedAt: string;
+}

@@ -1,6 +1,6 @@
 import { getHabits } from "@/services/habits";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { HabitsList } from "./habitsList";
+import { HabitsList } from "../../components/habitsList";
 import { AccountHeader } from "@/components/accountHeader";
 import { VERSION } from "@/core/constants";
 import { VersionLabel } from "@/components/versionLabel";
