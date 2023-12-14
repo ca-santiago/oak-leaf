@@ -1,21 +1,7 @@
 import { AccountDetails } from "@/components/account/details";
 import { AccountHeader } from "@/components/accountHeader";
-import { Account } from "@/core/types";
-import { API_CONFIG } from "@/services/api";
+import { getAccountInfo } from "@/services/accounts";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
-import Link from "next/link";
-
-const getAccountInfo = (token: string): Promise<Account> => {
-  return fetch(`${API_CONFIG.accountsUrl}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then(({ data }) => data)
-    .catch((err) => console.log(err));
-};
 
 const Profile = async () => {
   const session = await getSession();
