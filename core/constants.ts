@@ -18,7 +18,7 @@ type Plans = {
 
 export const defaultPlan: PlanDefinition = {
   type: "basic",
-  maxHabits: 10,
+  maxHabits: 4,
   cost: 0,
   currency: "USD",
 }
