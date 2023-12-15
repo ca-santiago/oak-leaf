@@ -1,5 +1,4 @@
 "use client";
-import { VersionLabel } from "@/components/versionLabel";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -16,7 +15,6 @@ export default function Error({ error, reset }: ErrorProps) {
       >
         Try again
       </button>
-      <VersionLabel />
     </div>
   );
 }

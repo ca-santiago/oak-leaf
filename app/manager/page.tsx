@@ -2,7 +2,6 @@ import { getHabits } from "@/services/habits";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { HabitsList } from "../../components/habitsList";
 import { AccountHeader } from "@/components/accountHeader";
-import { VERSION } from "@/core/constants";
 import { VersionLabel } from "@/components/versionLabel";
 
 async function ManagerPage() {
@@ -20,7 +19,6 @@ async function ManagerPage() {
     <div className="bg-[#ebeff4] min-h-screen">
       <AccountHeader session={session!} />
       <HabitsList data={habits} token={accessToken!} />
-      <VersionLabel />
     </div>
   );
 }
