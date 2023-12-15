@@ -48,6 +48,21 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
     )
   );
 
+  const scrollToToday = () => {
+    const el = document
+      .getElementById(`${habit.id}`)
+      ?.querySelector("svg.react-activity-calendar__calendar");
+
+    if (el?.parentElement) {
+      el.parentElement.scrollLeft = el.scrollWidth;
+    }
+  };
+
+  React.useEffect(() => {
+    if (moment(today).month() < 7) return;
+    scrollToToday();
+  }, []);
+
   React.useEffect(() => {
     const foundIncidence = getIncidenceByYear(yearRange, habit.incidences);
     if (foundIncidence) setIncidence(foundIncidence);
@@ -149,7 +164,6 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
   };
 
   const toggleDay = () => {
-    const today = moment().tz(moment.tz.guess()).format(DATE_FORMAT);
     const newRanges = todayCompleted
       ? removeDateFromRanges(dateRanges, today)
       : mergeNewDateRanges(dateRanges, today);
@@ -197,7 +211,10 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
         )}
       </div>
       {/* <Tooltip id="react-tooltip" /> */}
-      <div className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full overflow-hidden">
+      <div
+        id={habit.id}
+        className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full overflow-hidden"
+      >
         <ActivityCalendar
           hideMonthLabels
           loading={loading}
