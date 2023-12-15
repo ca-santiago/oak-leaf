@@ -18,8 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <UserProvider>
-        <body className={inter.className}>{children}</body>
-        <VersionLabel />
+        <body className={inter.className}>
+          <>
+            {children}
+            <VersionLabel />
+          </>
+        </body>
       </UserProvider>
     </html>
   );

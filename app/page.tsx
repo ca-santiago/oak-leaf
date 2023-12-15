@@ -21,7 +21,6 @@ export default async function Home() {
         >
           Login
         </a>
-        <div className="fixed bottom-3 right-4">v{VERSION}</div>
       </div>
     );
 
