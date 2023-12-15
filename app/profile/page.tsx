@@ -10,7 +10,7 @@ const Profile = async () => {
   const res = await getAccountInfo(accessToken!);
 
   return (
-    <div className="min-h-screen bg-[#ebeff4]">
+    <div className="min-h-screen bg-lightblue">
       <AccountHeader session={session!} />
       <AccountDetails data={res} />
     </div>
