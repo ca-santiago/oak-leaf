@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import { Modal } from "./modal";
 import { FaPlusSquare } from "react-icons/fa";
@@ -9,46 +8,65 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { PLANS, defaultPlan } from "@/core/constants";
 import Link from "next/link";
+import { useManagerContext } from "@/context/manager";
 
 const IconList = Object.entries(IconMapping);
 const ColorList = Object.entries(ColorsMapping);
 
 interface HabitCreatorProps {
-  token: string;
   startOpen: boolean;
   onHabitCreate: (habit: Habit) => any;
-  account: Account;
-  habits: Habit[];
+}
+
+interface HabitCreatorState {
+  showModal: boolean;
+  habitName: string;
+  habitDescription: string;
+  colorKey: string;
+  iconKey: string;
+  isBusy: boolean;
 }
 
 export const HabitCreator = ({
-  token,
   startOpen,
   onHabitCreate,
-  account,
-  habits,
 }: HabitCreatorProps) => {
-  const [showModal, setShowModal] = React.useState(startOpen);
-  const [habitName, setHabitName] = React.useState("");
-  const [habitDescription, setHabitDescription] = React.useState("");
-  const [iconKey, setIconKey] = React.useState("");
-  const [colorKey, setColor] = React.useState("");
-  const [isBusy, setIsBusy] = React.useState(false);
+  const {
+    state: { account, selectedHabit, habits, token },
+  } = useManagerContext();
+
+  const [state, setState] = React.useState<HabitCreatorState>({
+    habitName: "",
+    habitDescription: "",
+    colorKey: "",
+    iconKey: "",
+    isBusy: false,
+    showModal: startOpen || !!selectedHabit,
+  });
+
+  const { habitName, habitDescription, colorKey, iconKey, isBusy, showModal } =
+    state;
+
   const plan = PLANS[account.planType] || defaultPlan;
 
   const restoreState = () => {
-    setIsBusy(false);
-    setShowModal(false);
-    setHabitName("");
-    setHabitDescription("");
-    setIconKey("");
-    setColor("");
+    setState({
+      isBusy: false,
+      showModal: false,
+      habitName: "",
+      habitDescription: "",
+      colorKey: "",
+      iconKey: "",
+    });
   };
 
   const onCreateClick = () => {
     if (!canCreate || isBusy) return;
 
-    setIsBusy(true);
+    setState((prev) => ({
+      ...prev,
+      isBusy: true,
+    }));
 
     createHabit({
       name: habitName,
@@ -74,7 +92,10 @@ export const HabitCreator = ({
   };
 
   const handleIconClick = (key: string) => {
-    setIconKey(key);
+    setState((prev) => ({
+      ...prev,
+      iconKey: key,
+    }));
   };
 
   const handleOnClose = () => {
@@ -84,7 +105,10 @@ export const HabitCreator = ({
   };
 
   const handleColorClick = (key: string) => {
-    setColor(key);
+    setState((prev) => ({
+      ...prev,
+      colorKey: key,
+    }));
   };
 
   const onHabitsLimit = habits.length >= plan.maxHabits;
@@ -96,9 +120,9 @@ export const HabitCreator = ({
       <FaPlusSquare
         className="cursor-pointer text-sky-600"
         size={28}
-        onClick={() => setShowModal(true)}
+        onClick={() => setState((prev) => ({ ...prev, showModal: true }))}
       />
-      <Modal open={showModal} onClose={handleOnClose}>
+      <Modal open={showModal || !!selectedHabit} onClose={handleOnClose}>
         <div>
           <div className="w-96 bg-white shadow rounded-md flex flex-col gap-3 p-3">
             <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-xl">
@@ -109,7 +133,9 @@ export const HabitCreator = ({
               <input
                 type="text"
                 value={habitName}
-                onChange={(e) => setHabitName(e.target.value)}
+                onChange={(e) =>
+                  setState((prev) => ({ ...prev, habitName: e.target.value }))
+                }
                 className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 p-1 px-2 w-full mt-1"
               />
             </div>
@@ -117,7 +143,12 @@ export const HabitCreator = ({
               <h4 className="text-xs text-slate-500 mb-0">Description</h4>
               <textarea
                 value={habitDescription}
-                onChange={(e) => setHabitDescription(e.target.value)}
+                onChange={(e) =>
+                  setState((prev) => ({
+                    ...prev,
+                    habitDescription: e.target.value,
+                  }))
+                }
                 className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 text-sm p-1 px-2 min-h-[32px] max-h-72 w-full mt-1"
               />
             </div>
