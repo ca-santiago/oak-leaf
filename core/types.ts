@@ -1,3 +1,5 @@
+import { Dispatch } from "react";
+
 export interface Habit {
   id: string;
   habitName: string;
