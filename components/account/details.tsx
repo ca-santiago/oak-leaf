@@ -8,7 +8,6 @@ interface AccountDetailsProps {
 }
 
 export const AccountDetails = ({ data }: AccountDetailsProps) => {
-  const {} = data;
   return (
     <div className="mt-2 flex flex-col items-center">
       <div>

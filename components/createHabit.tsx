@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Modal } from "./modal";
+import { Modal } from "./modal/modal";
 import { FaPlusSquare } from "react-icons/fa";
 import { createHabit, updateHabit } from "@/services/habits";
 import { Account, Habit } from "@/core/types";
