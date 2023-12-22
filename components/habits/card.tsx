@@ -16,7 +16,7 @@ import { DATE_FORMAT } from "@/core/constants";
 import React from "react";
 
 import { MdEdit } from "react-icons/md";
-import { FaSquareCheck, FaTrash } from "react-icons/fa6";
+import { FaSquareCheck } from "react-icons/fa6";
 import { BsTrash2Fill } from "react-icons/bs";
 import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
