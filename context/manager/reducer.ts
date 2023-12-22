@@ -1,6 +1,7 @@
 import React from "react";
 import {
   CleanSelectedHabitAction,
+  RemoveHabitAction,
   SetHabitsAction,
   SetInitStateAction,
   SetSelectedHabitAction,
@@ -18,7 +19,9 @@ export type ManagerReducerAction =
   | SetHabitsAction
   | SetInitStateAction
   | SetSelectedHabitAction
-  | CleanSelectedHabitAction;
+  | CleanSelectedHabitAction
+  | RemoveHabitAction;
+
 export type ManagerReducer = React.Reducer<ManagerState, ManagerReducerAction>;
 
 export const managerReducer: ManagerReducer = (state, action): ManagerState => {
@@ -42,6 +45,12 @@ export const managerReducer: ManagerReducer = (state, action): ManagerState => {
       return {
         ...state,
         selectedHabit: null,
+      };
+    }
+    case "REMOVE_HABIT": {
+      return {
+        ...state,
+        habits: state.habits.filter((h) => h.id !== action.payload),
       };
     }
     default:

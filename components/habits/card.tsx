@@ -15,18 +15,26 @@ import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";
 import React from "react";
 
-import { FaPen, FaSquareCheck } from "react-icons/fa6";
-import { BiLoaderAlt, BiTrash } from "react-icons/bi";
+import { MdEdit } from "react-icons/md";
+import { FaSquareCheck, FaTrash } from "react-icons/fa6";
+import { BsTrash2Fill } from "react-icons/bs";
+import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
-import { BsGear } from "react-icons/bs";
+import { deleteHabit } from "@/services/habits";
 
 interface HabitDetailsProps {
   habit: Habit;
   token: string;
   onEditClick: (evt: Event) => any;
+  onDelete: () => any;
 }
 
-export const HabitDetails = ({ habit, token, onEditClick }: HabitDetailsProps) => {
+export const HabitDetails = ({
+  habit,
+  token,
+  onEditClick,
+  onDelete,
+}: HabitDetailsProps) => {
   const [yearRange, setYearRange] = React.useState<string>(
     moment().year().toString()
   );
@@ -175,6 +183,22 @@ export const HabitDetails = ({ habit, token, onEditClick }: HabitDetailsProps) =
     saveRanges(incidence, newRanges, dateRanges);
   };
 
+  const handleDeleteClick = () => {
+    if (loading || saving) return;
+
+    setSaving(true);
+
+    deleteHabit({
+      habitId: habit.id,
+      token,
+    })
+      .then(() => onDelete())
+      .catch((err) => console.log(err))
+      .finally(() => {
+        setSaving(false);
+      });
+  };
+
   const colorSchema =
     ColorsMapping[habit.colorKey] || ColorsMapping.defaultColorSchema;
   const Icon = IconMapping[habit.iconKey] || IconMapping.default;
@@ -249,13 +273,17 @@ export const HabitDetails = ({ habit, token, onEditClick }: HabitDetailsProps) =
         </div>
       </div>
       <div className="absolute bottom-3 right-0 translate-x-2 hover:translate-x-10 duration-150 ease-in-out select-none">
-        <div className="h-8 w-10 hover:h-fit py-2 bg-slate-500 duration-150 hover:bg-slate-600 flex items-center justify-center rounded-r-md pl-2 pr-2 cursor-pointer">
-          <div className="flex flex-col overflow-hidden gap-2">
-            <BiTrash size={20} className="text-red-300" />
-            <FaPen
+        <div className="w-10 hover:h-fit bg-slate-500 duration-150 ease-in-out hover:bg-slate-600 flex items-center justify-center rounded-r-md cursor-pointer py-2">
+          <div className="flex flex-col gap-2">
+            <BsTrash2Fill
+              onClick={handleDeleteClick}
+              size={20}
+              className="text-red-400 rounded-full hover:bg-slate-500 p-1 w-fit h-fit"
+            />
+            <MdEdit
               onClick={onEditClick}
               size={18}
-              className="text-slate-50"
+              className="text-slate-50 rounded-full hover:bg-slate-500 p-1 w-fit h-fit"
             />
           </div>
         </div>
