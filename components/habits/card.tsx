@@ -21,6 +21,7 @@ import { BsTrash2Fill } from "react-icons/bs";
 import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { deleteHabit } from "@/services/habits";
+import { ConfirmationModal } from "../modal/confirmation";
 
 interface HabitDetailsProps {
   habit: Habit;
@@ -50,6 +51,7 @@ export const HabitDetails = ({
 
   const [loading, setLoading] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
+  const [showConfirmation, setShowConfirmation] = React.useState(false);
 
   const [todayCompleted, setTodayCompleted] = React.useState(
     findDateInRanges(
@@ -183,9 +185,8 @@ export const HabitDetails = ({
     saveRanges(incidence, newRanges, dateRanges);
   };
 
-  const handleDeleteClick = () => {
-    if (loading || saving) return;
-
+  const _delete = () => {
+    setLoading(true);
     setSaving(true);
 
     deleteHabit({
@@ -197,6 +198,12 @@ export const HabitDetails = ({
       .finally(() => {
         setSaving(false);
       });
+  };
+
+  const handleDeleteClick = () => {
+    if (loading || saving) return;
+
+    setShowConfirmation(true);
   };
 
   const colorSchema =
@@ -237,8 +244,19 @@ export const HabitDetails = ({
     </div>
   );
 
+  const handleConfirmClick = () => {
+    setShowConfirmation(false);
+    _delete();
+  };
+
   return (
     <div className="w-fit relative">
+      <ConfirmationModal
+        onCancel={() => setShowConfirmation(false)}
+        onConfirm={handleConfirmClick}
+        title={`Are you sure you want to delete this habit?`}
+        show={showConfirmation}
+      />
       <div className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full w-fit relative">
         <CardHeader />
         <div
