@@ -15,16 +15,18 @@ import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";
 import React from "react";
 
-import { FaSquareCheck } from "react-icons/fa6";
-import { BiLoaderAlt } from "react-icons/bi";
+import { FaPen, FaSquareCheck } from "react-icons/fa6";
+import { BiLoaderAlt, BiTrash } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
+import { BsGear } from "react-icons/bs";
 
 interface HabitDetailsProps {
   habit: Habit;
   token: string;
+  onEditClick: (evt: Event) => any;
 }
 
-export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
+export const HabitDetails = ({ habit, token, onEditClick }: HabitDetailsProps) => {
   const [yearRange, setYearRange] = React.useState<string>(
     moment().year().toString()
   );
@@ -177,73 +179,86 @@ export const HabitDetails = ({ habit, token }: HabitDetailsProps) => {
     ColorsMapping[habit.colorKey] || ColorsMapping.defaultColorSchema;
   const Icon = IconMapping[habit.iconKey] || IconMapping.default;
 
-  return (
-    <div className="p-3 shadow-line bg-white rounded-lg flex flex-col max-w-full w-fit overflow-hidden">
-      <div className="flex justify-between items-center">
-        <div>
-          <div className="flex flex-row gap-2 items-center text-slate-600">
-            <Icon.Icon size={Icon.size} />
-            <h4 className="font-semibold text-lg notranslate">
-              {habit.habitName}
-            </h4>
-          </div>
-          {habit.description && (
-            <p className="text-slate-400 text-xs font-medium notranslate">
-              {habit.description}
-            </p>
-          )}
+  const CardHeader = () => (
+    <div className="flex justify-between items-start">
+      <div>
+        <div className="flex flex-row gap-2 items-center text-slate-600">
+          <Icon.Icon size={Icon.size} />
+          <h4 className="font-semibold text-lg notranslate">
+            {habit.habitName}
+          </h4>
         </div>
-        {saving ? (
-          <BiLoaderAlt
-            size={28}
-            className="animate-spin"
-            color={colorSchema.base}
-          />
-        ) : (
-          <FaSquareCheck
-            size={28}
-            className="text-slate-400 cursor-pointer hover:text-slate-500"
-            color={
-              todayCompleted ? `${colorSchema.active}` : `${colorSchema.base}`
-            }
-            onClick={toggleDay}
-          />
+        {habit.description && (
+          <p className="text-slate-400 text-xs font-medium notranslate">
+            {habit.description}
+          </p>
         )}
       </div>
-      {/* <Tooltip id="react-tooltip" /> */}
-      <div
-        id={habit.id}
-        className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full overflow-hidden"
-      >
-        <ActivityCalendar
-          hideMonthLabels
-          loading={loading}
-          // showWeekdayLabels
-          hideColorLegend
-          maxLevel={2}
-          renderBlock={(block, activity) =>
-            React.cloneElement(block, {
-              // "data-tooltip-id": "react-tooltip",
-              // "data-tooltip-html": moment(activity.date).format("Do MMM YY"),
-              className:
-                "outline-none border-none cursor-pointer overflow-hidden",
-            })
-          }
-          eventHandlers={{
-            onClick: () => handleActivityClick,
-          }}
-          blockSize={13}
-          blockRadius={4}
-          blockMargin={3}
-          weekStart={0}
-          fontSize={14}
-          hideTotalCount
-          colorScheme="light"
-          theme={{
-            light: [colorSchema.base, colorSchema.active],
-          }}
-          data={activities}
+      {saving ? (
+        <BiLoaderAlt
+          size={28}
+          className="animate-spin"
+          color={colorSchema.base}
         />
+      ) : (
+        <FaSquareCheck
+          size={28}
+          className="text-slate-400 cursor-pointer hover:text-slate-500"
+          color={
+            todayCompleted ? `${colorSchema.active}` : `${colorSchema.base}`
+          }
+          onClick={toggleDay}
+        />
+      )}
+    </div>
+  );
+
+  return (
+    <div className="w-fit relative">
+      <div className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full w-fit relative">
+        <CardHeader />
+        <div
+          id={habit.id}
+          className="mt-3 text-slate-500 select-none no-scrollbar w-fit max-w-full overflow-hidden"
+        >
+          <ActivityCalendar
+            hideMonthLabels
+            loading={loading}
+            hideColorLegend
+            maxLevel={2}
+            renderBlock={(block) =>
+              React.cloneElement(block, {
+                className: "cursor-pointer overflow-hidden",
+              })
+            }
+            eventHandlers={{
+              onClick: () => handleActivityClick,
+            }}
+            blockSize={13}
+            blockRadius={4}
+            blockMargin={3}
+            weekStart={0}
+            fontSize={14}
+            hideTotalCount
+            colorScheme="light"
+            theme={{
+              light: [colorSchema.base, colorSchema.active],
+            }}
+            data={activities}
+          />
+        </div>
+      </div>
+      <div className="absolute bottom-3 right-0 translate-x-2 hover:translate-x-10 duration-150 ease-in-out select-none">
+        <div className="h-8 w-10 hover:h-fit py-2 bg-slate-500 duration-150 hover:bg-slate-600 flex items-center justify-center rounded-r-md pl-2 pr-2 cursor-pointer">
+          <div className="flex flex-col overflow-hidden gap-2">
+            <BiTrash size={20} className="text-red-300" />
+            <FaPen
+              onClick={onEditClick}
+              size={18}
+              className="text-slate-50"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

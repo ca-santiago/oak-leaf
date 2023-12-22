@@ -1,5 +1,10 @@
 import React from "react";
-import { SetHabitsAction, SetInitStateAction } from "./actions";
+import {
+  CleanSelectedHabitAction,
+  SetHabitsAction,
+  SetInitStateAction,
+  SetSelectedHabitAction,
+} from "./actions";
 import { Account, Habit } from "@/core/types";
 
 export interface ManagerState {
@@ -9,7 +14,11 @@ export interface ManagerState {
   selectedHabit: Habit | null;
 }
 
-export type ManagerReducerAction = SetHabitsAction | SetInitStateAction;
+export type ManagerReducerAction =
+  | SetHabitsAction
+  | SetInitStateAction
+  | SetSelectedHabitAction
+  | CleanSelectedHabitAction;
 export type ManagerReducer = React.Reducer<ManagerState, ManagerReducerAction>;
 
 export const managerReducer: ManagerReducer = (state, action): ManagerState => {
@@ -23,6 +32,18 @@ export const managerReducer: ManagerReducer = (state, action): ManagerState => {
       return {
         ...action.payload,
       };
+    case "SET_SELECTED_HABIT": {
+      return {
+        ...state,
+        selectedHabit: action.payload,
+      };
+    }
+    case "CLEAN_SELECTED_HABIT": {
+      return {
+        ...state,
+        selectedHabit: null,
+      };
+    }
     default:
       return state;
   }

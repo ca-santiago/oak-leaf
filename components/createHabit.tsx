@@ -2,13 +2,14 @@
 import React from "react";
 import { Modal } from "./modal";
 import { FaPlusSquare } from "react-icons/fa";
-import { createHabit } from "@/services/habits";
+import { createHabit, updateHabit } from "@/services/habits";
 import { Account, Habit } from "@/core/types";
 import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { PLANS, defaultPlan } from "@/core/constants";
 import Link from "next/link";
 import { useManagerContext } from "@/context/manager";
+import { cleanSelectedHabit } from "@/context/manager/actions";
 
 const IconList = Object.entries(IconMapping);
 const ColorList = Object.entries(ColorsMapping);
@@ -16,6 +17,7 @@ const ColorList = Object.entries(ColorsMapping);
 interface HabitCreatorProps {
   startOpen: boolean;
   onHabitCreate: (habit: Habit) => any;
+  onHabitUpdate: (habit: Habit) => any;
 }
 
 interface HabitCreatorState {
@@ -30,10 +32,14 @@ interface HabitCreatorState {
 export const HabitCreator = ({
   startOpen,
   onHabitCreate,
+  onHabitUpdate,
 }: HabitCreatorProps) => {
   const {
     state: { account, selectedHabit, habits, token },
+    dispatch,
   } = useManagerContext();
+
+  const isEditing = !!selectedHabit;
 
   const [state, setState] = React.useState<HabitCreatorState>({
     habitName: "",
@@ -58,15 +64,45 @@ export const HabitCreator = ({
       colorKey: "",
       iconKey: "",
     });
+    dispatch(cleanSelectedHabit());
   };
 
-  const onCreateClick = () => {
+  const handleCtaClick = () => {
     if (!canCreate || isBusy) return;
 
     setState((prev) => ({
       ...prev,
       isBusy: true,
     }));
+
+    if (selectedHabit) {
+      updateHabit({
+        habitId: selectedHabit.id,
+        name: habitName,
+        description: habitDescription,
+        colorKey,
+        iconKey,
+        token,
+      })
+        .then(() => {
+          onHabitUpdate({
+            habitName,
+            id: selectedHabit.id,
+            createdAt: selectedHabit.createdAt,
+            incidences: selectedHabit.incidences,
+            colorKey,
+            iconKey,
+            description: habitDescription,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          restoreState();
+        });
+      return;
+    }
 
     createHabit({
       name: habitName,
@@ -101,6 +137,7 @@ export const HabitCreator = ({
   const handleOnClose = () => {
     if (isBusy) return;
 
+    dispatch(cleanSelectedHabit());
     restoreState();
   };
 
@@ -112,24 +149,34 @@ export const HabitCreator = ({
   };
 
   const onHabitsLimit = habits.length >= plan.maxHabits;
-  const canCreate =
-    habitName.length > 2 && colorKey && iconKey && !onHabitsLimit;
+  const isValidHabit = habitName.length > 2 && colorKey && iconKey;
+  const canCreate = isValidHabit && (isEditing ? true : !onHabitsLimit);
+
+  React.useEffect(() => {
+    if (selectedHabit) {
+      setState((prev) => ({
+        ...prev,
+        showModal: true,
+        ...selectedHabit,
+      }));
+    } else restoreState();
+  }, [selectedHabit]);
 
   return (
-    <div>
+    <div className="z-50">
       <FaPlusSquare
         className="cursor-pointer text-sky-600"
         size={28}
         onClick={() => setState((prev) => ({ ...prev, showModal: true }))}
       />
-      <Modal open={showModal || !!selectedHabit} onClose={handleOnClose}>
+      <Modal open={showModal} onClose={handleOnClose}>
         <div>
           <div className="w-96 bg-white shadow rounded-md flex flex-col gap-3 p-3">
             <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-xl">
-              Let&apos;s start a new habit
+              {isEditing ? "Let's configure it" : "Let's start a new habit"}
             </h4>
             <div className="mt-2">
-              <h4 className="text-xs text-slate-500">Name</h4>
+              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">Name</h4>
               <input
                 type="text"
                 value={habitName}
@@ -140,7 +187,7 @@ export const HabitCreator = ({
               />
             </div>
             <div>
-              <h4 className="text-xs text-slate-500 mb-0">Description</h4>
+              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">Description</h4>
               <textarea
                 value={habitDescription}
                 onChange={(e) =>
@@ -154,7 +201,7 @@ export const HabitCreator = ({
             </div>
 
             <div>
-              <h4 className="text-xs text-slate-500">Icons</h4>
+              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">Icons</h4>
               <div className="flex gap-2 flex-wrap mt-2">
                 {IconList.map(([key, { Icon, size }]) => {
                   if (key === "default") return null;
@@ -181,7 +228,7 @@ export const HabitCreator = ({
             </div>
 
             <div>
-              <h4 className="text-xs text-slate-500">Colors</h4>
+              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">Colors</h4>
               <div className="flex gap-2 flex-wrap mt-2">
                 {ColorList.map(([key, { active }]) => {
                   if (key === "default") return null;
@@ -214,17 +261,19 @@ export const HabitCreator = ({
                 w-fit text-white rounded-md p-2 px-3 ml-auto mt-5
                 ${canCreate ? "bg-blue-500" : "bg-blue-200"}
               `}
-              onClick={onCreateClick}
+              onClick={handleCtaClick}
               disabled={!canCreate || isBusy}
             >
               {isBusy ? (
                 <BiLoaderAlt size={20} className="animate-spin bg-blue-500" />
+              ) : isEditing ? (
+                "Save"
               ) : (
                 "Create"
               )}
             </button>
 
-            {onHabitsLimit && (
+            {onHabitsLimit && !isEditing && (
               <div className="text-slate-500 text-sm mt-2">
                 <p>
                   Your current plan does not allow more than {plan.maxHabits}{" "}
