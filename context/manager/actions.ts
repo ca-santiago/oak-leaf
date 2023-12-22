@@ -11,6 +11,15 @@ export interface SetInitStateAction {
   payload: ManagerState;
 }
 
+export interface SetSelectedHabitAction {
+  type: "SET_SELECTED_HABIT";
+  payload: Habit;
+}
+
+export interface CleanSelectedHabitAction {
+  type: "CLEAN_SELECTED_HABIT";
+}
+
 export function setHabits(params: Habit[]): SetHabitsAction {
   return {
     type: "SET_HABITS",
@@ -22,5 +31,18 @@ export function setInitState(s: ManagerState): SetInitStateAction {
   return {
     type: "SET_INIT_STATE",
     payload: s,
+  };
+}
+
+export function setSelectedHabit(h: Habit): SetSelectedHabitAction {
+  return {
+    type: "SET_SELECTED_HABIT",
+    payload: h,
+  };
+}
+
+export function cleanSelectedHabit(): CleanSelectedHabitAction {
+  return {
+    type: "CLEAN_SELECTED_HABIT",
   };
 }
