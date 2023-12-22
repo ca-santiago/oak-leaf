@@ -4,7 +4,7 @@ import { Habit } from "@/core/types";
 import { HabitDetails } from "./card";
 import { HabitCreator } from "../createHabit";
 import { useManagerContext } from "../../context/manager";
-import { setHabits, setSelectedHabit } from "@/context/manager/actions";
+import { removeHabit, setHabits, setSelectedHabit } from "@/context/manager/actions";
 
 export const HabitsList = () => {
   const { state, dispatch } = useManagerContext();
@@ -29,6 +29,7 @@ export const HabitsList = () => {
         {habits.map((item) => (
           <HabitDetails
             onEditClick={() => dispatch(setSelectedHabit(item))}
+            onDelete={() => dispatch(removeHabit(item.id))}
             key={item.id}
             habit={item}
             token={token}

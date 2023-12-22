@@ -16,6 +16,11 @@ export interface SetSelectedHabitAction {
   payload: Habit;
 }
 
+export interface RemoveHabitAction {
+  type: "REMOVE_HABIT";
+  payload: string;
+}
+
 export interface CleanSelectedHabitAction {
   type: "CLEAN_SELECTED_HABIT";
 }
@@ -24,6 +29,13 @@ export function setHabits(params: Habit[]): SetHabitsAction {
   return {
     type: "SET_HABITS",
     payload: params,
+  };
+}
+
+export function removeHabit(hId: string): RemoveHabitAction {
+  return {
+    type: "REMOVE_HABIT",
+    payload: hId,
   };
 }
 

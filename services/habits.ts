@@ -58,7 +58,7 @@ interface DeleteHabitArgs {
 
 export const deleteHabit = async (args: DeleteHabitArgs) => {
   return fetch(`${API_CONFIG.habitsUrl}/${args.habitId}`, {
-    method: "POST",
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + args.token,
