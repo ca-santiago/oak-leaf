@@ -14,9 +14,9 @@ async function PlansPage() {
   }
 
   return (
-    <div className="min-h-screen bg-lightblue pt-32">
+    <div className="min-h-screen bg-lightblue pt-10 md:pt-32">
       <div className="mx-auto flex justify-center items-center">
-        <div className="w-1/3">
+        <div className="w-full md:w-2/3 lg:w-1/3 mx-3 md:mx-0">
           <h1 className="text-5xl font-semibold text-slate-800 text-center">
             {/* Get the best plan to beat your goals */}
             Our plans, your growth story.
@@ -31,7 +31,7 @@ async function PlansPage() {
           </p>
         </div>
       </div>
-      <div className="px-5 md:mx-auto w-full lg:w-2/3 mt-24 xl:w-3/5 flex flex-col md:flex-row gap-5">
+      <div className="px-5 md:mx-auto w-full lg:w-2/3 mt-14 md:mt-24 xl:w-3/5 flex flex-col md:flex-row gap-5">
         {_plans.map((plan) => (
           <PlanCard
             plan={extendedPlanDefs[plan.type]}
