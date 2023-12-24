@@ -8,7 +8,13 @@ export const getAccountInfo = (token: string): Promise<Account> => {
       Authorization: `Bearer ${token}`,
     },
   })
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      } else {
+        throw new Error(res.statusText);
+      }
+    })
     .then(({ data }) => data)
     .catch((err) => console.log(err));
 };
