@@ -36,7 +36,7 @@ async function PlansPage() {
           <PlanCard
             plan={extendedPlanDefs[plan.type]}
             key={plan.type}
-            currentPlan={account ? plan.type === 'total' : false}
+            currentPlan={account ? plan.type === account.planType : false}
           />
         ))}
       </div>
