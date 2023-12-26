@@ -202,8 +202,8 @@ export const HabitCreator = ({
         onClick={() => setState((prev) => ({ ...prev, showModal: true }))}
       />
       <Modal open={showModal} onClose={handleOnClose}>
-        <div>
-          <div className="w-96 bg-white shadow rounded-md flex flex-col gap-3 p-3">
+        <div className="px-2 md:px-0">
+          <div className="w-full md:w-96 bg-white shadow rounded-md flex flex-col gap-3 p-3">
             <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-xl">
               {isEditing ? "Let's configure it" : "Let's start a new habit"}
             </h4>
