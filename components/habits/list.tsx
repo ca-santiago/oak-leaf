@@ -18,9 +18,14 @@ export const HabitsList = () => {
     dispatch(setHabits(habits.map((x) => (x.id === h.id ? h : x))));
   };
 
+  const handleDeleteClick = (h: Habit) => {
+    dispatch(setHabits(habits.filter((x) => x.id !== h.id)));
+  }
+
   return (
     <div className="w-full md:w-4/6 lg:w-3/4 mx-auto mt-6 pb-10 px-3 md:px-0">
       <HabitCreator
+        onDelete={handleDeleteClick}
         onHabitCreate={handleHabitCreated}
         onHabitUpdate={handleHabitUpdate}
         startOpen={habits.length < 1}
