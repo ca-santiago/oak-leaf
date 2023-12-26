@@ -33,7 +33,10 @@ export const HabitsList = () => {
       <div className="w-full flex flex-col gap-3 mt-3">
         {habits.map((item) => (
           <HabitDetails
-            onEditClick={() => dispatch(setSelectedHabit(item))}
+            onEditClick={() => {
+              console.log('Dispatching onEditClick')
+              dispatch(setSelectedHabit(item))
+            }}
             onDelete={() => dispatch(removeHabit(item.id))}
             key={item.id}
             habit={item}

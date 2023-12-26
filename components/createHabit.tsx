@@ -191,7 +191,7 @@ export const HabitCreator = ({
         showModal: true,
         ...selectedHabit,
       }));
-    } else restoreState();
+    }
   }, [selectedHabit]);
 
   return (
@@ -201,7 +201,7 @@ export const HabitCreator = ({
         size={28}
         onClick={() => setState((prev) => ({ ...prev, showModal: true }))}
       />
-      <Modal open={showModal} onClose={handleOnClose}>
+      <Modal open={showModal || !!selectedHabit} onClose={handleOnClose}>
         <div className="px-2 md:px-0">
           <div className="w-full md:w-96 bg-white shadow rounded-md flex flex-col gap-3 p-3">
             <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-xl">
