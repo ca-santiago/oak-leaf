@@ -13,7 +13,7 @@ import { Habit, Incidence } from "../../core/types";
 import moment from "moment-timezone";
 import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";
-import React, { MouseEventHandler, SyntheticEvent } from "react";
+import React from "react";
 
 import { MdEdit } from "react-icons/md";
 import { FaSquareCheck } from "react-icons/fa6";
@@ -22,8 +22,6 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { deleteHabit } from "@/services/habits";
 import { ConfirmationModal } from "../modal/confirmation";
-import { IconType } from "react-icons";
-import { stopPropagationCurry } from "@/helpers/events";
 
 interface HabitDetailsProps {
   habit: Habit;
@@ -240,7 +238,7 @@ export const HabitDetails = ({
           color={
             todayCompleted ? `${colorSchema.active}` : `${colorSchema.base}`
           }
-          onClick={stopPropagationCurry(toggleDay)}
+          onClick={toggleDay}
         />
       )}
     </div>
@@ -266,7 +264,10 @@ export const HabitDetails = ({
         show={showConfirmation}
       />
       <div
-        onClick={stopPropagationCurry(handleCardClick)}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleCardClick();
+        }}
         className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full relative"
       >
         <CardHeader />
@@ -285,10 +286,7 @@ export const HabitDetails = ({
               })
             }
             eventHandlers={{
-              onClick: (e) => (ac) => {
-                e.stopPropagation();
-                handleActivityClick(ac);
-              },
+              onClick: () => handleActivityClick,
             }}
             blockSize={13}
             blockRadius={4}
@@ -308,12 +306,12 @@ export const HabitDetails = ({
         <div className="w-10 hover:h-fit bg-slate-500 duration-150 ease-in-out hover:bg-slate-600 flex items-center justify-center rounded-r-md cursor-pointer py-2">
           <div className="flex flex-col gap-2">
             <BsTrash2Fill
-              onClick={stopPropagationCurry(handleDeleteClick)}
+              onClick={handleDeleteClick}
               size={20}
               className="text-red-400 rounded-full hover:bg-slate-500 p-1 w-fit h-fit"
             />
             <MdEdit
-              onClick={stopPropagationCurry(onEditClick())}
+              onClick={onEditClick}
               size={18}
               className="text-slate-50 rounded-full hover:bg-slate-500 p-1 w-fit h-fit"
             />
