@@ -23,7 +23,7 @@ interface HabitCreatorProps {
 interface HabitCreatorState {
   showModal: boolean;
   habitName: string;
-  habitDescription: string;
+  description: string;
   colorKey: string;
   iconKey: string;
   isBusy: boolean;
@@ -43,14 +43,14 @@ export const HabitCreator = ({
 
   const [state, setState] = React.useState<HabitCreatorState>({
     habitName: "",
-    habitDescription: "",
+    description: "",
     colorKey: "",
     iconKey: "",
     isBusy: false,
     showModal: startOpen || !!selectedHabit,
   });
 
-  const { habitName, habitDescription, colorKey, iconKey, isBusy, showModal } =
+  const { habitName, description, colorKey, iconKey, isBusy, showModal } =
     state;
 
   const plan = PLANS[account.planType] || defaultPlan;
@@ -60,7 +60,7 @@ export const HabitCreator = ({
       isBusy: false,
       showModal: false,
       habitName: "",
-      habitDescription: "",
+      description: "",
       colorKey: "",
       iconKey: "",
     });
@@ -79,7 +79,7 @@ export const HabitCreator = ({
       updateHabit({
         habitId: selectedHabit.id,
         name: habitName,
-        description: habitDescription,
+        description,
         colorKey,
         iconKey,
         token,
@@ -92,7 +92,7 @@ export const HabitCreator = ({
             incidences: selectedHabit.incidences,
             colorKey,
             iconKey,
-            description: habitDescription,
+            description,
           });
         })
         .catch((err) => {
@@ -106,7 +106,7 @@ export const HabitCreator = ({
 
     createHabit({
       name: habitName,
-      description: habitDescription,
+      description,
       iconKey,
       colorKey,
       token,
@@ -176,7 +176,9 @@ export const HabitCreator = ({
               {isEditing ? "Let's configure it" : "Let's start a new habit"}
             </h4>
             <div className="mt-2">
-              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">Name</h4>
+              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+                Name
+              </h4>
               <input
                 type="text"
                 value={habitName}
@@ -187,13 +189,15 @@ export const HabitCreator = ({
               />
             </div>
             <div>
-              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">Description</h4>
+              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+                Description
+              </h4>
               <textarea
-                value={habitDescription}
+                value={description}
                 onChange={(e) =>
                   setState((prev) => ({
                     ...prev,
-                    habitDescription: e.target.value,
+                    description: e.target.value,
                   }))
                 }
                 className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 text-sm p-1 px-2 min-h-[32px] max-h-72 w-full mt-1"
@@ -201,7 +205,9 @@ export const HabitCreator = ({
             </div>
 
             <div>
-              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">Icons</h4>
+              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+                Icons
+              </h4>
               <div className="flex gap-2 flex-wrap mt-2">
                 {IconList.map(([key, { Icon, size }]) => {
                   if (key === "default") return null;
@@ -228,7 +234,9 @@ export const HabitCreator = ({
             </div>
 
             <div>
-              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">Colors</h4>
+              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+                Colors
+              </h4>
               <div className="flex gap-2 flex-wrap mt-2">
                 {ColorList.map(([key, { active }]) => {
                   if (key === "default") return null;
