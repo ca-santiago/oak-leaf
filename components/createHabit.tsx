@@ -2,7 +2,7 @@
 import React from "react";
 import { Modal } from "./modal/modal";
 import { FaPlusSquare } from "react-icons/fa";
-import { createHabit, updateHabit } from "@/services/habits";
+import { createHabit, deleteHabit, updateHabit } from "@/services/habits";
 import { Account, Habit } from "@/core/types";
 import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
@@ -10,6 +10,7 @@ import { PLANS, defaultPlan } from "@/core/constants";
 import Link from "next/link";
 import { useManagerContext } from "@/context/manager";
 import { cleanSelectedHabit } from "@/context/manager/actions";
+import { ConfirmationModal } from "./modal/confirmation";
 
 const IconList = Object.entries(IconMapping);
 const ColorList = Object.entries(ColorsMapping);
@@ -18,6 +19,7 @@ interface HabitCreatorProps {
   startOpen: boolean;
   onHabitCreate: (habit: Habit) => any;
   onHabitUpdate: (habit: Habit) => any;
+  onDelete?: (habit: Habit) => any;
 }
 
 interface HabitCreatorState {
@@ -33,6 +35,7 @@ export const HabitCreator = ({
   startOpen,
   onHabitCreate,
   onHabitUpdate,
+  onDelete,
 }: HabitCreatorProps) => {
   const {
     state: { account, selectedHabit, habits, token },
@@ -49,6 +52,7 @@ export const HabitCreator = ({
     isBusy: false,
     showModal: startOpen || !!selectedHabit,
   });
+  const [showConfirmation, setShowConfirmation] = React.useState(false);
 
   const { habitName, description, colorKey, iconKey, isBusy, showModal } =
     state;
@@ -67,7 +71,7 @@ export const HabitCreator = ({
     dispatch(cleanSelectedHabit());
   };
 
-  const handleCtaClick = () => {
+  const handleSaveUpdate = () => {
     if (!canCreate || isBusy) return;
 
     setState((prev) => ({
@@ -127,6 +131,34 @@ export const HabitCreator = ({
       });
   };
 
+  const handleConfirmClick = (h: Habit) => {
+    if (!canCreate || isBusy) return;
+
+    setShowConfirmation(false);
+    setState((prev) => ({
+      ...prev,
+      isBusy: true,
+    }));
+
+    // Perform delete
+
+    deleteHabit({
+      habitId: h.id,
+      token,
+    })
+      .then(() => {
+        restoreState();
+        onDelete?.(h);
+      })
+      .catch((err) => {
+        setState((prev) => ({
+          ...prev,
+          isBusy: false,
+        }));
+        console.log(err);
+      });
+  };
+
   const handleIconClick = (key: string) => {
     setState((prev) => ({
       ...prev,
@@ -181,6 +213,7 @@ export const HabitCreator = ({
               </h4>
               <input
                 type="text"
+                name="habitName"
                 value={habitName}
                 onChange={(e) =>
                   setState((prev) => ({ ...prev, habitName: e.target.value }))
@@ -193,6 +226,7 @@ export const HabitCreator = ({
                 Description
               </h4>
               <textarea
+                name="habitDescription"
                 value={description}
                 onChange={(e) =>
                   setState((prev) => ({
@@ -264,22 +298,44 @@ export const HabitCreator = ({
                 })}
               </div>
             </div>
-            <button
-              className={`
-                w-fit text-white rounded-md p-2 px-3 ml-auto mt-5
-                ${canCreate ? "bg-blue-500" : "bg-blue-200"}
-              `}
-              onClick={handleCtaClick}
-              disabled={!canCreate || isBusy}
-            >
-              {isBusy ? (
-                <BiLoaderAlt size={20} className="animate-spin bg-blue-500" />
-              ) : isEditing ? (
-                "Save"
-              ) : (
-                "Create"
+
+            <div className="flex gap-2 justify-end items-center">
+              {
+                <Modal open={isBusy} onClose={() => {}}>
+                  <BiLoaderAlt size={28} className="animate-spin text-white" />
+                </Modal>
+              }
+
+              {isEditing && (
+                <div>
+                  <ConfirmationModal
+                    onCancel={() => setShowConfirmation(false)}
+                    onConfirm={() => handleConfirmClick(selectedHabit)}
+                    title={`Are you sure you want to delete this habit?`}
+                    show={showConfirmation}
+                  />
+                  <button
+                    className={`block md:hidden text-white rounded-md p-2 px-3
+                      ${canCreate && !isBusy ? "bg-red-500" : "bg-red-200"}
+                    `}
+                    onClick={() => setShowConfirmation(true)}
+                    disabled={!canCreate || isBusy}
+                  >
+                    Delete
+                  </button>
+                </div>
               )}
-            </button>
+
+              <button
+                className={`text-white rounded-md p-2 px-3
+                  ${canCreate && !isBusy ? "bg-blue-500" : "bg-blue-200"}
+                `}
+                onClick={handleSaveUpdate}
+                disabled={!canCreate || isBusy}
+              >
+                {isEditing ? "Save" : "Create"}
+              </button>
+            </div>
 
             {onHabitsLimit && !isEditing && (
               <div className="text-slate-500 text-sm mt-2">

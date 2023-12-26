@@ -9,6 +9,7 @@ interface ModalProps {
 const stopPropagation = (e: MouseEvent<any>) => e?.stopPropagation();
 
 export const Modal = ({ children, onClose, open }: ModalProps) => {
+  if(!open) return null;
   return (
     <div
       className={`

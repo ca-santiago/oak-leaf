@@ -26,7 +26,7 @@ import { ConfirmationModal } from "../modal/confirmation";
 interface HabitDetailsProps {
   habit: Habit;
   token: string;
-  onEditClick: (evt: Event) => any;
+  onEditClick: () => any;
   onDelete: () => any;
 }
 
@@ -249,15 +249,27 @@ export const HabitDetails = ({
     _delete();
   };
 
+  const handleCardClick = () => {
+    const w = screen.width;
+    if (w > 769) return;
+    onEditClick();
+  };
+
   return (
-    <div className="w-fit relative">
+    <div className="w-full relative max-w-xl">
       <ConfirmationModal
         onCancel={() => setShowConfirmation(false)}
         onConfirm={handleConfirmClick}
         title={`Are you sure you want to delete this habit?`}
         show={showConfirmation}
       />
-      <div className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full w-fit relative">
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+          handleCardClick();
+        }}
+        className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full relative"
+      >
         <CardHeader />
         <div
           id={habit.id}
@@ -290,7 +302,7 @@ export const HabitDetails = ({
           />
         </div>
       </div>
-      <div className="absolute bottom-3 right-0 translate-x-2 hover:translate-x-10 duration-150 ease-in-out select-none">
+      <div className="hidden md:block absolute bottom-3 right-0 translate-x-2 hover:translate-x-10 duration-150 ease-in-out select-none">
         <div className="w-10 hover:h-fit bg-slate-500 duration-150 ease-in-out hover:bg-slate-600 flex items-center justify-center rounded-r-md cursor-pointer py-2">
           <div className="flex flex-col gap-2">
             <BsTrash2Fill
