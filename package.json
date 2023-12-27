@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "stage 0.10.2",
+  "version": "0.11.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
