@@ -6,4 +6,5 @@ export const API_CONFIG = {
   completionsUrl: `${baseURL}/completions`,
   incidencesUrl: `${baseURL}/incidences`,
   accountsUrl: `${baseURL}/accounts`,
+  invitesUrl: `${baseURL}/invites`,
 };

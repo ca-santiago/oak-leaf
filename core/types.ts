@@ -38,3 +38,11 @@ export interface Account {
   preferredName: string;
   updatedAt: string;
 }
+
+export interface AccountInvite {
+  id: string;
+  accountId: string;
+  inviteCode: string;
+  createdAt: string;
+  usedByUserId?: string;
+}

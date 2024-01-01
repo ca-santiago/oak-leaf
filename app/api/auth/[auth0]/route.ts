@@ -4,12 +4,14 @@ import { NextApiRequest } from "next";
 export const GET = handleAuth({
   async login(req: NextApiRequest, res: any) {
     const params = new URL(req.url || "").searchParams;
-    const inviteCode = params.get('inviteCode');
+    const inviteCode = params.get("inviteCode");
+    const useSignUp = params.get("useSignUp");
 
     try {
       return handleLogin(req, res, {
         authorizationParams: {
           inviteCode: inviteCode || undefined,
+          screen_hint: useSignUp === "true" ? "signup" : "login",
         },
         returnTo: "/",
       });

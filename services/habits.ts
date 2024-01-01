@@ -10,13 +10,14 @@ export const getHabits = async (
     headers: {
       Authorization: "Bearer " + token,
     },
-  })
-    .then((res) => {
-      console.log(res);
-      return res.json();
-    })
-    .then(({ data }) => data)
-    .catch(err => console.error(err));
+  }).then(async (res) => {
+    if (res.status === 200) {
+      return (await res.json()).data;
+    }
+    if (res.status === 401) {
+      return [];
+    }
+  });
 };
 
 interface CreateHabitArgs {
@@ -50,7 +51,6 @@ export const createHabit = async (args: CreateHabitArgs) => {
     })
     .then(({ data }) => data);
 };
-
 
 interface DeleteHabitArgs {
   token: string;
