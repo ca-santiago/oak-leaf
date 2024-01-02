@@ -38,7 +38,6 @@ export interface Account {
   preferredName: string;
   updatedAt: string;
 }
-<<<<<<< HEAD
 
 export interface AccountInvite {
   id: string;
@@ -47,5 +46,3 @@ export interface AccountInvite {
   createdAt: string;
   usedByUserId?: string;
 }
-=======
->>>>>>> main
