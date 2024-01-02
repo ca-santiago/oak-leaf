@@ -24,7 +24,11 @@ export const createIncidence = async ({
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
     },
-  }).then((data) => data.json());
+  }).then((data) => {
+    if (data.status === 200) {
+      return data.json();
+    } else throw new Error(data.statusText);
+  });
 };
 
 interface UpdateIndigenceArgs {
@@ -50,5 +54,9 @@ export const updateIndigence = async ({
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
     },
-  }).then((data) => data.json());
+  }).then((data) => {
+    if (data.status === 200) {
+      return data.json();
+    } else throw new Error(data.statusText);
+  });
 };

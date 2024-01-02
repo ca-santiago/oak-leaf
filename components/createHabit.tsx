@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useManagerContext } from "@/context/manager";
 import { cleanSelectedHabit } from "@/context/manager/actions";
 import { ConfirmationModal } from "./modal/confirmation";
+import toast from "react-hot-toast";
 
 const IconList = Object.entries(IconMapping);
 const ColorList = Object.entries(ColorsMapping);
@@ -98,12 +99,16 @@ export const HabitCreator = ({
             iconKey,
             description,
           });
+          restoreState();
         })
         .catch((err) => {
           console.error(err);
-        })
-        .finally(() => {
-          restoreState();
+          setState((prev) => ({
+            ...prev,
+            showModal: true,
+            isBusy: false,
+          }));
+          toast.error("Could not save, please try again");
         });
       return;
     }
@@ -125,9 +130,11 @@ export const HabitCreator = ({
       })
       .catch((err) => {
         console.error(err);
-      })
-      .finally(() => {
-        restoreState();
+        toast.error("Could not create, please try again");
+        setState((prev) => ({
+          ...prev,
+          isBusy: false,
+        }));
       });
   };
 
@@ -151,11 +158,12 @@ export const HabitCreator = ({
         onDelete?.(h);
       })
       .catch((err) => {
+        console.error(err);
         setState((prev) => ({
           ...prev,
           isBusy: false,
         }));
-        console.log(err);
+        toast.error("Could not delete the Habit, please try again");
       });
   };
 
@@ -327,7 +335,7 @@ export const HabitCreator = ({
               )}
 
               <button
-                className={`text-white rounded-md p-2 px-3
+                className={`text-white rounded-md p-2 px-3 select-none
                   ${canCreate && !isBusy ? "bg-blue-500" : "bg-blue-200"}
                 `}
                 onClick={handleSaveUpdate}

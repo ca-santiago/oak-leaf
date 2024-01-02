@@ -22,6 +22,7 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { deleteHabit } from "@/services/habits";
 import { ConfirmationModal } from "../modal/confirmation";
+import toast from "react-hot-toast";
 
 interface HabitDetailsProps {
   habit: Habit;
@@ -36,9 +37,7 @@ export const HabitDetails = ({
   onEditClick,
   onDelete,
 }: HabitDetailsProps) => {
-  const [yearRange, setYearRange] = React.useState<string>(
-    moment().year().toString()
-  );
+  const [yearRange, setYearRange] = React.useState<string>("2023");
   const today = moment().tz(moment.tz.guess()).format(DATE_FORMAT);
 
   const [incidence, setIncidence] = React.useState<Incidence | null>(
@@ -86,9 +85,13 @@ export const HabitDetails = ({
   const saveRanges = (
     incidence: Incidence | null,
     newRanges: string[],
-    oldRanges: string[]
+    oldRanges: string[],
+    isToday = false
   ) => {
     setSaving(true);
+    setDateRanges(newRanges);
+    setTodayCompleted(isToday);
+
     if (incidence) {
       updateIndigence({
         token,
@@ -96,35 +99,36 @@ export const HabitDetails = ({
         incidenceId: incidence.id,
         yearRange,
       })
-        .then(() => {
-          setDateRanges(newRanges);
-          setTodayCompleted(findDateInRanges(today, newRanges));
-        })
-        .catch((err) => {
+        .catch(() => {
+          toast.error("Something went wrong, please try again");
+          if (isToday) setTodayCompleted(false);
           // Revert if saving fails
           setDateRanges(oldRanges);
         })
         .finally(() => {
           setSaving(false);
         });
-    } else {
-      createIncidence({
-        dateRanges: serializeArrayToString(newRanges),
-        habitId: habit.id,
-        token,
-        yearRange,
-      })
-        .then(({ data }) => {
-          setSaving(false);
-          setIncidence(data);
-        })
-        .catch((err) => {
-          setDateRanges(dateRanges);
-        })
-        .finally(() => {
-          setSaving(false);
-        });
+      return;
     }
+
+    createIncidence({
+      dateRanges: serializeArrayToString(newRanges),
+      habitId: habit.id,
+      token,
+      yearRange,
+    })
+      .then(({ data }) => {
+        setIncidence(data);
+      })
+      .catch(() => {
+        toast.error("Something went wrong, please try again");
+        if (isToday) setTodayCompleted(false);
+        console.log("Reverting to...", oldRanges);
+        setDateRanges(oldRanges);
+      })
+      .finally(() => {
+        setSaving(false);
+      });
   };
 
   const activities: Activity[] = React.useMemo(() => {
@@ -170,19 +174,15 @@ export const HabitDetails = ({
       ? removeDateFromRanges(dateRanges, formatted)
       : mergeNewDateRanges(dateRanges, formatted);
 
-    // Need to revert this if saving fails
-    setDateRanges(newRanges);
-    saveRanges(incidence, newRanges, dateRanges);
+    saveRanges(incidence, newRanges, [...dateRanges]);
   };
 
   const toggleDay = () => {
     const newRanges = todayCompleted
       ? removeDateFromRanges(dateRanges, today)
       : mergeNewDateRanges(dateRanges, today);
-    setTodayCompleted(!todayCompleted);
-    setDateRanges(newRanges);
 
-    saveRanges(incidence, newRanges, dateRanges);
+    saveRanges(incidence, newRanges, [...dateRanges], true);
   };
 
   const _delete = () => {
@@ -194,7 +194,10 @@ export const HabitDetails = ({
       token,
     })
       .then(() => onDelete())
-      .catch((err) => console.log(err))
+      .catch((err) => {
+        console.error(err);
+        toast.error("Could not delete habit, please try again");
+      })
       .finally(() => {
         setSaving(false);
       });
@@ -211,7 +214,7 @@ export const HabitDetails = ({
   const Icon = IconMapping[habit.iconKey] || IconMapping.default;
 
   const CardHeader = () => (
-    <div className="flex justify-between items-start">
+    <div className="flex justify-between items-start select-none">
       <div>
         <div className="flex flex-row gap-2 items-center text-slate-600">
           <Icon.Icon size={Icon.size} />

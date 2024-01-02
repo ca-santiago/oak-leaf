@@ -15,7 +15,6 @@ const Profile = async () => {
 
   return (
     <div className="min-h-screen bg-lightblue">
-      <Toaster position="bottom-center" gutter={42} reverseOrder={false} />
       <AccountHeader session={session!} />
       <AccountDetails data={res} />
       {inviteData && (

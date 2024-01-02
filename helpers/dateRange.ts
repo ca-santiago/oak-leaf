@@ -7,9 +7,10 @@ export function mergeNewDateRanges(
 ): string[] {
   const given = new Date(givenDate);
   let merged = false;
+  const ranges = [...dateRanges];
 
-  for (let i = 0; i < dateRanges.length; i++) {
-    const [startDate, endDate] = dateRanges[i].split(":");
+  for (let i = 0; i < ranges.length; i++) {
+    const [startDate, endDate] = ranges[i].split(":");
     const start = new Date(startDate);
     const end = new Date(endDate);
 
@@ -19,12 +20,12 @@ export function mergeNewDateRanges(
       break;
     } else if (given.getTime() === end.getTime() + 24 * 60 * 60 * 1000) {
       // Date is right after an existing range, extend the range
-      dateRanges[i] = `${startDate}:${givenDate}`;
+      ranges[i] = `${startDate}:${givenDate}`;
       merged = true;
       break;
     } else if (given.getTime() === start.getTime() - 24 * 60 * 60 * 1000) {
       // Date is right before an existing range, extend the range
-      dateRanges[i] = `${givenDate}:${endDate}`;
+      ranges[i] = `${givenDate}:${endDate}`;
       merged = true;
       break;
     }
@@ -32,16 +33,16 @@ export function mergeNewDateRanges(
 
   if (!merged) {
     // Date is new, create a new range
-    dateRanges.push(`${givenDate}:${givenDate}`);
+    ranges.push(`${givenDate}:${givenDate}`);
   }
 
   // Merge overlapping intervals if any
-  dateRanges.sort();
+  ranges.sort();
   const mergedRanges = [];
-  let currentRange = dateRanges[0].split(":");
+  let currentRange = ranges[0].split(":");
 
-  for (let i = 1; i < dateRanges.length; i++) {
-    const [startDate, endDate] = dateRanges[i].split(":");
+  for (let i = 1; i < ranges.length; i++) {
+    const [startDate, endDate] = ranges[i].split(":");
     const currentEnd = new Date(currentRange[1]);
     const nextStart = new Date(startDate);
 
