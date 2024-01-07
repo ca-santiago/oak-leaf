@@ -94,7 +94,7 @@ export const HabitCreator = ({
             habitName,
             id: selectedHabit.id,
             createdAt: selectedHabit.createdAt,
-            incidences: selectedHabit.incidences,
+            completions: selectedHabit.completions,
             colorKey,
             iconKey,
             description,
