@@ -1,4 +1,4 @@
-import { Incidence } from "@/core/types";
+import { YearRangeData } from "@/core/types";
 import { Activity } from "react-activity-calendar";
 
 export function mergeNewDateRanges(
@@ -146,24 +146,6 @@ export function mapDateRangeToActivityArray(
   return datesArray;
 }
 
-// Returns empty string if no matching dataRange was found
-export const getDateRangesByYear = (
-  year: string,
-  incidences: Incidence[]
-): string => {
-  const exist = incidences.find((i) => i.yearRange === year);
-  return exist ? exist.dateRanges : "";
-};
-
-// Returns a copy of the found incidence
-export const getIncidenceByYear = (
-  year: string,
-  incidences: Incidence[]
-): Incidence | null => {
-  const exist = incidences.find((i) => i.yearRange === year);
-  return exist ? { ...exist } : null;
-};
-
 /**
  * Find if given date exists in ranges
  */
@@ -171,12 +153,12 @@ export const findDateInRanges = (
   dateToFind: string,
   dateRanges: string[]
 ): boolean => {
-     const dateArr: Activity[][] = dateRanges.map((i) => {
-      const [start, end] = i.split(":");
-      return mapDateRangeToActivityArray(start, end);
-    });
+  const dateArr: Activity[][] = dateRanges.map((i) => {
+    const [start, end] = i.split(":");
+    return mapDateRangeToActivityArray(start, end);
+  });
 
-    const flatten = dateArr.flat();
-    const exist = flatten.find(d => dateToFind === d.date);
-    return !!exist;
+  const flatten = dateArr.flat();
+  const exist = flatten.find((d) => dateToFind === d.date);
+  return !!exist;
 };

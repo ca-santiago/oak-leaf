@@ -10,7 +10,7 @@ async function ManagerPage() {
   const { accessToken } = session!;
 
   const [habits, account] = await Promise.all([
-    getHabits(accessToken!, "2023"),
+    getHabits(accessToken!),
     getAccountInfo(accessToken!),
   ]);
 

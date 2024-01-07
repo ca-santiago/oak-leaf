@@ -1,15 +1,5 @@
-import {
-  deserializeStringToArray,
-  findDateInRanges,
-  getDateRangesByYear,
-  getIncidenceByYear,
-  mapDateRangeToActivityArray,
-  mergeNewDateRanges,
-  removeDateFromRanges,
-  serializeArrayToString,
-} from "@/helpers/dateRange";
-import { createIncidence, updateIndigence } from "@/services/incidences";
-import { Habit, Incidence } from "../../core/types";
+import { mapDateRangeToActivityArray } from "@/helpers/dateRange";
+import { YearRangeData, Habit } from "../../core/types";
 import moment from "moment-timezone";
 import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";
@@ -20,9 +10,17 @@ import { FaSquareCheck } from "react-icons/fa6";
 import { BsTrash2Fill } from "react-icons/bs";
 import { BiLoaderAlt } from "react-icons/bi";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
-import { deleteHabit } from "@/services/habits";
+import { HabitService, deleteHabit } from "@/services/habits";
 import { ConfirmationModal } from "../modal/confirmation";
 import toast from "react-hot-toast";
+import {
+  deserializeCompletionsRecord,
+  mergeDateOnYearRangeData,
+  removeDateFromYearRangeData,
+  serializeDateRangeData,
+  splitDateRange,
+  splitDateRanges,
+} from "@/helpers/incidences";
 
 interface HabitDetailsProps {
   habit: Habit;
@@ -31,33 +29,29 @@ interface HabitDetailsProps {
   onDelete: () => any;
 }
 
+const TZ = moment.tz.guess();
+const TODAY = moment().tz(TZ).format(DATE_FORMAT);
+
 export const HabitDetails = ({
   habit,
   token,
   onEditClick,
   onDelete,
 }: HabitDetailsProps) => {
-  const [yearRange, setYearRange] = React.useState<string>("2023");
-  const today = moment().tz(moment.tz.guess()).format(DATE_FORMAT);
-
-  const [incidence, setIncidence] = React.useState<Incidence | null>(
-    getIncidenceByYear(yearRange, habit.incidences)
-  );
-
-  const [dateRanges, setDateRanges] = React.useState<string[]>(
-    deserializeStringToArray(getDateRangesByYear(yearRange, habit.incidences))
-  );
-
+  const [year, setYear] = React.useState(moment().year().toString());
   const [loading, setLoading] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [showConfirmation, setShowConfirmation] = React.useState(false);
-
-  const [todayCompleted, setTodayCompleted] = React.useState(
-    findDateInRanges(
-      moment.tz(moment.tz.guess()).format(DATE_FORMAT),
-      dateRanges
-    )
+  const [dateRanges, setDateRanges] = React.useState(
+    deserializeCompletionsRecord(habit.completions)
   );
+
+  const currRanges = React.useMemo((): YearRangeData => {
+    const emptyNewYearRange = { ranges: [], year: year };
+    return dateRanges.find((r) => r.year === year) || emptyNewYearRange;
+  }, [dateRanges, year]);
+
+  const todayCompleted = React.useMemo(() => false, [currRanges]);
 
   const scrollToToday = () => {
     const el = document
@@ -70,61 +64,72 @@ export const HabitDetails = ({
   };
 
   React.useEffect(() => {
-    if (moment(today).month() < 7) return;
+    if (moment(TODAY).month() < 7) return;
     scrollToToday();
   }, []);
 
-  React.useEffect(() => {
-    const foundIncidence = getIncidenceByYear(yearRange, habit.incidences);
-    if (foundIncidence) setIncidence(foundIncidence);
-    else {
-      // Fetch incidence
-    }
-  }, [yearRange, habit.incidences]);
+  // Now saving habit with just completions as argument
+  // const saveRanges = (
+  //   incidence: Incidence | null,
+  //   newRanges: string[],
+  //   oldRanges: string[],
+  //   isToday = false
+  // ) => {
+  //   setSaving(true);
+  //   setDateRanges(newRanges);
+  //   setTodayCompleted(isToday);
 
-  const saveRanges = (
-    incidence: Incidence | null,
-    newRanges: string[],
-    oldRanges: string[],
-    isToday = false
-  ) => {
+  //   if (incidence) {
+  //     updateIndigence({
+  //       token,
+  //       dateRanges: serializeArrayToString(newRanges),
+  //       incidenceId: incidence.id,
+  //       yearRange,
+  //     })
+  //       .catch(() => {
+  //         toast.error("Something went wrong, please try again");
+  //         if (isToday) setTodayCompleted(false);
+  //         // Revert if saving fails
+  //         setDateRanges(oldRanges);
+  //       })
+  //       .finally(() => {
+  //         setSaving(false);
+  //       });
+  //     return;
+  //   }
+
+  //   createIncidence({
+  //     dateRanges: serializeArrayToString(newRanges),
+  //     habitId: habit.id,
+  //     token,
+  //     yearRange,
+  //   })
+  //     .then(({ data }) => {
+  //       setIncidence(data);
+  //     })
+  //     .catch(() => {
+  //       toast.error("Something went wrong, please try again");
+  //       if (isToday) setTodayCompleted(false);
+  //       console.log("Reverting to...", oldRanges);
+  //       setDateRanges(oldRanges);
+  //     })
+  //     .finally(() => {
+  //       setSaving(false);
+  //     });
+  // };
+
+  const saveIncidences = (newIncidences: YearRangeData[]) => {
     setSaving(true);
-    setDateRanges(newRanges);
-    setTodayCompleted(isToday);
-
-    if (incidence) {
-      updateIndigence({
-        token,
-        dateRanges: serializeArrayToString(newRanges),
-        incidenceId: incidence.id,
-        yearRange,
-      })
-        .catch(() => {
-          toast.error("Something went wrong, please try again");
-          if (isToday) setTodayCompleted(false);
-          // Revert if saving fails
-          setDateRanges(oldRanges);
-        })
-        .finally(() => {
-          setSaving(false);
-        });
-      return;
-    }
-
-    createIncidence({
-      dateRanges: serializeArrayToString(newRanges),
+    HabitService.save({
       habitId: habit.id,
       token,
-      yearRange,
+      completions: serializeDateRangeData(newIncidences),
     })
-      .then(({ data }) => {
-        setIncidence(data);
+      .then(() => {
+        setDateRanges(newIncidences);
       })
       .catch(() => {
-        toast.error("Something went wrong, please try again");
-        if (isToday) setTodayCompleted(false);
-        console.log("Reverting to...", oldRanges);
-        setDateRanges(oldRanges);
+        toast.error(`Error saving`);
       })
       .finally(() => {
         setSaving(false);
@@ -132,8 +137,8 @@ export const HabitDetails = ({
   };
 
   const activities: Activity[] = React.useMemo(() => {
-    const dateArr: Activity[][] = dateRanges.map((i) => {
-      const [start, end] = i.split(":");
+    const dateArr: Activity[][] = currRanges.ranges.map((range) => {
+      const [start, end] = splitDateRange(range).map((d) => `${year}-${d}`);
       return mapDateRangeToActivityArray(start, end);
     });
 
@@ -141,13 +146,13 @@ export const HabitDetails = ({
 
     const startingActivity: Activity = {
       count: 0,
-      date: `${yearRange}-01-01`,
+      date: `${year}-01-01`,
       level: 0,
     };
 
     const endActivity: Activity = {
       count: 0,
-      date: `${yearRange}-12-31`,
+      date: `${year}-12-31`,
       level: 0,
     };
 
@@ -164,25 +169,25 @@ export const HabitDetails = ({
     }
 
     return flatten;
-  }, [dateRanges, yearRange]);
+  }, [currRanges, year]);
 
   const handleActivityClick = (ac: Activity) => {
     if (loading || saving) return;
 
-    const formatted = moment(ac.date).tz(moment.tz.guess()).format(DATE_FORMAT);
+    const formatted = moment(ac.date).tz(TZ).format(DATE_FORMAT);
     const newRanges = ac.count
-      ? removeDateFromRanges(dateRanges, formatted)
-      : mergeNewDateRanges(dateRanges, formatted);
-
-    saveRanges(incidence, newRanges, [...dateRanges]);
+      ? removeDateFromYearRangeData(currRanges, formatted)
+      : mergeDateOnYearRangeData(currRanges, formatted);
+    // const newRanges = mergeDateOnYearRangeData(currRanges, formatted);
+    const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
+    saveIncidences([...filteredDateRanges, newRanges]);
   };
 
   const toggleDay = () => {
-    const newRanges = todayCompleted
-      ? removeDateFromRanges(dateRanges, today)
-      : mergeNewDateRanges(dateRanges, today);
-
-    saveRanges(incidence, newRanges, [...dateRanges], true);
+    // const newRanges = todayCompleted
+    //   ? removeDateFromRanges(dateRanges, today)
+    //   : mergeNewDateRanges(dateRanges, today);
+    // saveRanges(incidence, newRanges, [...dateRanges], true);
   };
 
   const _delete = () => {

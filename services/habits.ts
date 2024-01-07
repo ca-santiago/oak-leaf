@@ -1,11 +1,8 @@
 import { API_CONFIG } from "./api";
 import { Habit } from "../core/types";
 
-export const getHabits = async (
-  token: string,
-  yearRange: string
-): Promise<Habit[]> => {
-  return fetch(`${API_CONFIG.habitsUrl}/${yearRange}`, {
+export const getHabits = async (token: string): Promise<Habit[]> => {
+  return fetch(`${API_CONFIG.habitsUrl}`, {
     method: "GET",
     headers: {
       Authorization: "Bearer " + token,
@@ -78,6 +75,7 @@ export const deleteHabit = async (args: DeleteHabitArgs) => {
 interface UpdateHabitArgs {
   token: string;
   habitId: string;
+  completions?: string;
   name?: string;
   description?: string;
   colorKey?: string;
@@ -96,6 +94,7 @@ export const updateHabit = async (args: UpdateHabitArgs) => {
       colorKey: args.colorKey || undefined,
       iconKey: args.iconKey || undefined,
       description: args.description || undefined,
+      completions: args.completions || undefined
     }),
   })
     .then((data) => {
@@ -107,3 +106,10 @@ export const updateHabit = async (args: UpdateHabitArgs) => {
     })
     .then(({ data }) => data);
 };
+
+export const HabitService = {
+  save: updateHabit,
+  update: updateHabit,
+  create: createHabit,
+  delete: deleteHabit,
+}

@@ -1,29 +1,12 @@
-import { Dispatch } from "react";
-
 export interface Habit {
   id: string;
   habitName: string;
   description?: string;
   createdAt: string;
-  incidences: Incidence[];
+  completions: string;
 
   iconKey: string;
   colorKey: string;
-}
-
-export interface Completion {
-  id: string;
-  completed: boolean;
-  completionDate: string;
-}
-
-export interface Incidence {
-  id: string;
-  habitId: string;
-  createdAt: string;
-  dateRanges: string;
-  endDate: string;
-  yearRange: string;
 }
 
 export interface Account {
@@ -46,3 +29,18 @@ export interface AccountInvite {
   createdAt: string;
   usedByUserId?: string;
 }
+
+// Internal types
+
+export interface YearRangeData {
+  year: string;
+  ranges: string[];
+}
+
+// date               MM-dd                           02-13
+// dateRange          <date>:<date>                   02-13:04:25
+// dateRanges         <dateRange>,<dateRange>         02-13:04:25,04-27:08:05
+// yearRanges         YYYY=<dateRanges>               2024=02-13:04:25,04-27:08:05
+// CompletionsRecord   "<yearRanges>|<yearRanges>"     2023=02-13:04:25,04-27:08:05|2024=01-01:01-01:01-01:01-01, 
+
+// YearRangeData    { year: YYYY, ranges: <dateRanges> }         // Basically a yearRange formatted into an object to quickly filter by year
