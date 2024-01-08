@@ -1,5 +1,5 @@
 import React, { SyntheticEvent } from "react";
-import { mapDateRangeToActivityArray } from "@/helpers/dateRange";
+import { mapDateRangeToActivityArray } from "@/helpers/activity";
 import { YearRangeData, Habit } from "../../core/types";
 import moment from "moment-timezone";
 import ActivityCalendar, { Activity } from "react-activity-calendar";
