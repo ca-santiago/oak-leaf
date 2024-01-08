@@ -3,7 +3,7 @@ import { mapDateRangeToActivityArray } from "@/helpers/activity";
 import { YearRangeData, Habit } from "../../core/types";
 import moment from "moment-timezone";
 import ActivityCalendar, { Activity } from "react-activity-calendar";
-import { DATE_FORMAT } from "@/core/constants";
+import { DATE_FORMAT, IS_PROD } from "@/core/constants";
 
 import { MdEdit } from "react-icons/md";
 import { FaSquareCheck } from "react-icons/fa6";
@@ -274,6 +274,22 @@ export const HabitDetails = ({
             }}
             data={activities}
           />
+          {!IS_PROD && (
+            <div className="py-2 flex gap-2">
+              <button
+                className="rounded bg-blue-500 text-white p-0.5 px-2 text-xs cursor-pointer"
+                onClick={() => setYear("2023")}
+              >
+                2023
+              </button>
+              <button
+                className="rounded bg-blue-500 text-white p-0.5 px-2 text-xs cursor-pointer"
+                onClick={() => setYear("2024")}
+              >
+                2024
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className="hidden md:block absolute bottom-3 right-0 translate-x-2 hover:translate-x-10 duration-150 ease-in-out select-none">

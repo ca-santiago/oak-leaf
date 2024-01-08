@@ -1,11 +1,11 @@
-import { StringRegexOptions } from "joi";
-import React from "react";
 import { IconType } from "react-icons";
 import { TbBadgeFilled } from "react-icons/tb";
 
 const pjson = require("../package.json");
 export const DATE_FORMAT = "YYYY-MM-DD";
 export const VERSION = pjson.version;
+export const SYS_ENV = process.env.NODE_ENV;
+export const IS_PROD = SYS_ENV === "production";
 
 type PlanType = "basic" | "advanced" | "total";
 
