@@ -194,3 +194,22 @@ export function serializeDateRangeData(ranges: YearRangeData[]): string {
   const yearRanges = yearRangeDataToYearRanges(ranges);
   return yearRangesToCompletionsRecord(yearRanges);
 }
+
+/**
+ * Find if given date exists in ranges
+ * @returns the dataRange or null if not found
+ */
+export const findExistingRangeForADate = (
+  dateToFind: string,
+  yearRange: YearRangeData
+): string | null => {
+  const { year, ranges } = yearRange;
+  const exists = ranges.find((e) => {
+    const [_start, _end] = splitDateRange(e);
+    const start = new Date(`${year}-${_start}`).getTime();
+    const end = new Date(`${year}-${_end}`).getTime();
+    const toFind = new Date(dateToFind).getTime();
+    return toFind >= start && toFind <= end;
+  });
+  return exists || null;
+};

@@ -7,6 +7,7 @@ import {
   yearRangesToCompletionsRecord,
   mergeDateOnYearRangeData,
   removeDateFromYearRangeData,
+  findExistingRangeForADate,
 } from "../incidences";
 
 describe("Incidences serialization", () => {
@@ -230,5 +231,51 @@ describe("removeDateFromYearRangeData", () => {
       year: "2015",
       ranges: [],
     });
+  });
+});
+
+describe("findExistingRangeForADate", () => {
+  test("find a suitable range", () => {
+    const expected = "02-01:02-05";
+    const dateRanges: YearRangeData = {
+      year: "2015",
+      ranges: ["01-08:01-09", expected],
+    };
+    const toFind = "2015-02-03";
+    const result = findExistingRangeForADate(toFind, dateRanges);
+    expect(result).toBe(expected);
+  });
+
+  test("no ranges found", () => {
+    const expected = null;
+    const dateRanges: YearRangeData = {
+      year: "2015",
+      ranges: ["01-08:01-09", "02-01:02-05"],
+    };
+    const toFind = "2015-05-03";
+    const result = findExistingRangeForADate(toFind, dateRanges);
+    expect(result).toBe(expected);
+  });
+
+  test("dateToFind and rangeStart", () => {
+    const expected = "02-01:02-05";
+    const dateRanges: YearRangeData = {
+      year: "2015",
+      ranges: ["01-08:01-09", expected],
+    };
+    const toFind = "2015-02-01";
+    const result = findExistingRangeForADate(toFind, dateRanges);
+    expect(result).toBe(expected);
+  });
+
+  test("dateToFind and rangeEnd", () => {
+    const expected = "02-01:02-05";
+    const dateRanges: YearRangeData = {
+      year: "2015",
+      ranges: ["01-08:01-09", expected],
+    };
+    const toFind = "2015-02-05";
+    const result = findExistingRangeForADate(toFind, dateRanges);
+    expect(result).toBe(expected);
   });
 });

@@ -1,9 +1,9 @@
+import React, { SyntheticEvent } from "react";
 import { mapDateRangeToActivityArray } from "@/helpers/dateRange";
 import { YearRangeData, Habit } from "../../core/types";
 import moment from "moment-timezone";
 import ActivityCalendar, { Activity } from "react-activity-calendar";
 import { DATE_FORMAT } from "@/core/constants";
-import React, { SyntheticEvent } from "react";
 
 import { MdEdit } from "react-icons/md";
 import { FaSquareCheck } from "react-icons/fa6";
@@ -15,11 +15,11 @@ import { ConfirmationModal } from "../modal/confirmation";
 import toast from "react-hot-toast";
 import {
   deserializeCompletionsRecord,
+  findExistingRangeForADate,
   mergeDateOnYearRangeData,
   removeDateFromYearRangeData,
   serializeDateRangeData,
   splitDateRange,
-  splitDateRanges,
 } from "@/helpers/incidences";
 
 interface HabitDetailsProps {
@@ -31,6 +31,7 @@ interface HabitDetailsProps {
 
 const TZ = moment.tz.guess();
 const TODAY = moment().tz(TZ).format(DATE_FORMAT);
+const TODAY_MOMENT = moment().tz(TZ);
 
 export const HabitDetails = ({
   habit,
@@ -51,7 +52,10 @@ export const HabitDetails = ({
     return dateRanges.find((r) => r.year === year) || emptyNewYearRange;
   }, [dateRanges, year]);
 
-  const todayCompleted = React.useMemo(() => false, [currRanges]);
+  const isTodayCompleted = React.useMemo(
+    () => findExistingRangeForADate(TODAY, currRanges),
+    [currRanges, TODAY]
+  );
 
   const scrollToToday = () => {
     const el = document
@@ -68,68 +72,21 @@ export const HabitDetails = ({
     scrollToToday();
   }, []);
 
-  // Now saving habit with just completions as argument
-  // const saveRanges = (
-  //   incidence: Incidence | null,
-  //   newRanges: string[],
-  //   oldRanges: string[],
-  //   isToday = false
-  // ) => {
-  //   setSaving(true);
-  //   setDateRanges(newRanges);
-  //   setTodayCompleted(isToday);
-
-  //   if (incidence) {
-  //     updateIndigence({
-  //       token,
-  //       dateRanges: serializeArrayToString(newRanges),
-  //       incidenceId: incidence.id,
-  //       yearRange,
-  //     })
-  //       .catch(() => {
-  //         toast.error("Something went wrong, please try again");
-  //         if (isToday) setTodayCompleted(false);
-  //         // Revert if saving fails
-  //         setDateRanges(oldRanges);
-  //       })
-  //       .finally(() => {
-  //         setSaving(false);
-  //       });
-  //     return;
-  //   }
-
-  //   createIncidence({
-  //     dateRanges: serializeArrayToString(newRanges),
-  //     habitId: habit.id,
-  //     token,
-  //     yearRange,
-  //   })
-  //     .then(({ data }) => {
-  //       setIncidence(data);
-  //     })
-  //     .catch(() => {
-  //       toast.error("Something went wrong, please try again");
-  //       if (isToday) setTodayCompleted(false);
-  //       console.log("Reverting to...", oldRanges);
-  //       setDateRanges(oldRanges);
-  //     })
-  //     .finally(() => {
-  //       setSaving(false);
-  //     });
-  // };
-
-  const saveIncidences = (newIncidences: YearRangeData[]) => {
+  const saveIncidences = (
+    newIncidences: YearRangeData[],
+    oldIncidences: YearRangeData[]
+  ) => {
     setSaving(true);
+    setDateRanges(newIncidences);
+
     HabitService.save({
       habitId: habit.id,
       token,
       completions: serializeDateRangeData(newIncidences),
     })
-      .then(() => {
-        setDateRanges(newIncidences);
-      })
       .catch(() => {
         toast.error(`Error saving`);
+        setDateRanges(oldIncidences);
       })
       .finally(() => {
         setSaving(false);
@@ -178,16 +135,19 @@ export const HabitDetails = ({
     const newRanges = ac.count
       ? removeDateFromYearRangeData(currRanges, formatted)
       : mergeDateOnYearRangeData(currRanges, formatted);
-    // const newRanges = mergeDateOnYearRangeData(currRanges, formatted);
+
     const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
-    saveIncidences([...filteredDateRanges, newRanges]);
+    saveIncidences([...filteredDateRanges, newRanges], dateRanges);
   };
 
   const toggleDay = () => {
-    // const newRanges = todayCompleted
-    //   ? removeDateFromRanges(dateRanges, today)
-    //   : mergeNewDateRanges(dateRanges, today);
-    // saveRanges(incidence, newRanges, [...dateRanges], true);
+    if (TODAY_MOMENT.year.toString() !== year) return;
+    const newRanges = isTodayCompleted
+      ? removeDateFromYearRangeData(currRanges, TODAY)
+      : mergeDateOnYearRangeData(currRanges, TODAY);
+
+    const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
+    saveIncidences([...filteredDateRanges, newRanges], []);
   };
 
   const _delete = () => {
@@ -244,7 +204,7 @@ export const HabitDetails = ({
           size={28}
           className="text-slate-400 cursor-pointer hover:text-slate-500"
           color={
-            todayCompleted ? `${colorSchema.active}` : `${colorSchema.base}`
+            isTodayCompleted ? `${colorSchema.active}` : `${colorSchema.base}`
           }
           onClick={(e: SyntheticEvent) => {
             e.stopPropagation();
