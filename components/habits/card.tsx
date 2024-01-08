@@ -141,7 +141,7 @@ export const HabitDetails = ({
   };
 
   const toggleDay = () => {
-    if (TODAY_MOMENT.year.toString() !== year) return;
+    if (TODAY_MOMENT.year().toString() !== year) return;
     const newRanges = isTodayCompleted
       ? removeDateFromYearRangeData(currRanges, TODAY)
       : mergeDateOnYearRangeData(currRanges, TODAY);
