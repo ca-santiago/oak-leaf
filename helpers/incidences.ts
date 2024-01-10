@@ -1,4 +1,6 @@
+import { DATE_FORMAT } from "@/core/constants";
 import { YearRangeData } from "@/core/types";
+import moment, { Moment } from "moment";
 
 function extractMonthAndDay(str: string): string {
   return str.slice(5, str.length);
@@ -212,4 +214,38 @@ export const findExistingRangeForADate = (
     return toFind >= start && toFind <= end;
   });
   return exists || null;
+};
+
+export const daysInRange = (start: string, end: string): number => {
+  return (
+    (new Date(end).getTime() - new Date(start).getTime()) /
+      (1000 * 60 * 60 * 24) +
+    1
+  );
+};
+
+export const calculateStreak = (yearRange: YearRangeData) => {
+  const { year, ranges } = yearRange;
+  const lastRange = ranges[ranges.length - 1];
+
+  if (!lastRange) return 0;
+
+  const today = moment().format(DATE_FORMAT);
+  const yesterday = moment().subtract(1, 'day').format(DATE_FORMAT);
+
+  const [s, e] = splitDateRange(lastRange);
+  const endDate = `${year}-${e}`;
+  //const endDate = moment(`${year}-${e}`).tz(moment.tz.guess());
+
+  // const isToday = today.isSame(endDate, 'day');
+  // const isYesterday = yesterday.isSame(endDate, 'day');
+
+  const isToday = endDate === today;
+  const isYesterday = endDate === yesterday;
+
+  if (isToday || isYesterday) {
+    return daysInRange(s,e);
+  }
+
+  return 0;
 };

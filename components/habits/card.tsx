@@ -9,11 +9,14 @@ import { MdEdit } from "react-icons/md";
 import { FaSquareCheck } from "react-icons/fa6";
 import { BsTrash2Fill } from "react-icons/bs";
 import { BiLoaderAlt } from "react-icons/bi";
+import { HiMiniFire } from "react-icons/hi2";
+
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { HabitService, deleteHabit } from "@/services/habits";
 import { ConfirmationModal } from "../modal/confirmation";
 import toast from "react-hot-toast";
 import {
+  calculateStreak,
   deserializeCompletionsRecord,
   findExistingRangeForADate,
   mergeDateOnYearRangeData,
@@ -56,6 +59,8 @@ export const HabitDetails = ({
     () => findExistingRangeForADate(TODAY, currRanges),
     [currRanges, TODAY]
   );
+
+  const streak = calculateStreak(currRanges);
 
   const scrollToToday = () => {
     const el = document
@@ -274,23 +279,32 @@ export const HabitDetails = ({
             }}
             data={activities}
           />
-          {!IS_PROD && (
-            <div className="py-2 flex gap-2">
-              <button
-                className="rounded bg-blue-500 text-white p-0.5 px-2 text-xs cursor-pointer"
-                onClick={() => setYear("2023")}
-              >
-                2023
-              </button>
-              <button
-                className="rounded bg-blue-500 text-white p-0.5 px-2 text-xs cursor-pointer"
-                onClick={() => setYear("2024")}
-              >
-                2024
-              </button>
-            </div>
-          )}
         </div>
+        {/* STATS */}
+        <div className="flex items-center pt-3 gap-2 text-slate-500 text-xs font-semibold [&>:nth-child(n)]:border-r-2 [&>:nth-child(n)]:pr-2 [&>:nth-last-child(1)]:border-r-0">
+          <div className="flex items-center gap-1">
+            <HiMiniFire className="text-red-400" />
+            <p className="">
+              {streak} days in streak
+            </p>
+          </div>
+        </div>
+        {!IS_PROD && (
+          <div className="pt-2 flex gap-2">
+            <button
+              className="rounded bg-blue-500 text-white p-0.5 px-2 text-xs cursor-pointer"
+              onClick={() => setYear("2023")}
+            >
+              2023
+            </button>
+            <button
+              className="rounded bg-blue-500 text-white p-0.5 px-2 text-xs cursor-pointer"
+              onClick={() => setYear("2024")}
+            >
+              2024
+            </button>
+          </div>
+        )}
       </div>
       <div className="hidden md:block absolute bottom-3 right-0 translate-x-2 hover:translate-x-10 duration-150 ease-in-out select-none">
         <div className="w-10 hover:h-fit bg-slate-500 duration-150 ease-in-out hover:bg-slate-600 flex items-center justify-center rounded-r-md cursor-pointer py-2">
