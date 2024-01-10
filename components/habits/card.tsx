@@ -1,9 +1,10 @@
 import React, { SyntheticEvent } from "react";
-import { mapDateRangeToActivityArray } from "@/helpers/activity";
-import { YearRangeData, Habit } from "../../core/types";
-import moment from "moment-timezone";
+import { ConfirmationModal } from "../modal/confirmation";
+
 import ActivityCalendar, { Activity } from "react-activity-calendar";
-import { DATE_FORMAT, IS_PROD } from "@/core/constants";
+import moment from "moment-timezone";
+import toast from "react-hot-toast";
+import cn from "classnames";
 
 import { MdEdit } from "react-icons/md";
 import { FaSquareCheck } from "react-icons/fa6";
@@ -11,10 +12,11 @@ import { BsTrash2Fill } from "react-icons/bs";
 import { BiLoaderAlt } from "react-icons/bi";
 import { HiMiniFire } from "react-icons/hi2";
 
+import { YearRangeData, Habit } from "@/core/types";
+import { DATE_FORMAT, IS_PROD } from "@/core/constants";
+import { mapDateRangeToActivityArray } from "@/helpers/activity";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { HabitService, deleteHabit } from "@/services/habits";
-import { ConfirmationModal } from "../modal/confirmation";
-import toast from "react-hot-toast";
 import {
   calculateStreak,
   deserializeCompletionsRecord,
@@ -183,6 +185,11 @@ export const HabitDetails = ({
     ColorsMapping[habit.colorKey] || ColorsMapping.defaultColorSchema;
   const Icon = IconMapping[habit.iconKey] || IconMapping.default;
 
+  const todayCompletedCheckColor = cn({
+    [`${colorSchema.active}`]: isTodayCompleted,
+    [`${colorSchema.base}`]: !isTodayCompleted,
+  });
+
   const CardHeader = () => (
     <div className="flex justify-between items-start select-none">
       <div>
@@ -208,9 +215,7 @@ export const HabitDetails = ({
         <FaSquareCheck
           size={28}
           className="text-slate-400 cursor-pointer hover:text-slate-500"
-          color={
-            isTodayCompleted ? `${colorSchema.active}` : `${colorSchema.base}`
-          }
+          color={todayCompletedCheckColor}
           onClick={(e: SyntheticEvent) => {
             e.stopPropagation();
             toggleDay();
@@ -284,9 +289,7 @@ export const HabitDetails = ({
         <div className="flex items-center pt-3 gap-2 text-slate-500 text-xs font-semibold [&>:nth-child(n)]:border-r-2 [&>:nth-child(n)]:pr-2 [&>:nth-last-child(1)]:border-r-0">
           <div className="flex items-center gap-1">
             <HiMiniFire className="text-red-400" />
-            <p className="">
-              {streak} days in streak
-            </p>
+            <p className="">{streak} days in streak</p>
           </div>
         </div>
         {!IS_PROD && (

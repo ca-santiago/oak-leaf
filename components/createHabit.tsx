@@ -1,17 +1,21 @@
 "use client";
 import React from "react";
 import { Modal } from "./modal/modal";
+import { ConfirmationModal } from "./modal/confirmation";
+
 import { FaPlusSquare } from "react-icons/fa";
-import { createHabit, deleteHabit, updateHabit } from "@/services/habits";
-import { Account, Habit } from "@/core/types";
 import { BiLoaderAlt } from "react-icons/bi";
+
+import Link from "next/link";
+import toast from "react-hot-toast";
+import cn from "classnames";
+
+import { Habit } from "@/core/types";
+import { createHabit, deleteHabit, updateHabit } from "@/services/habits";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { PLANS, defaultPlan } from "@/core/constants";
-import Link from "next/link";
 import { useManagerContext } from "@/context/manager";
 import { cleanSelectedHabit } from "@/context/manager/actions";
-import { ConfirmationModal } from "./modal/confirmation";
-import toast from "react-hot-toast";
 
 const IconList = Object.entries(IconMapping);
 const ColorList = Object.entries(ColorsMapping);
@@ -202,6 +206,18 @@ export const HabitCreator = ({
     }
   }, [selectedHabit]);
 
+  const canCreateAndNotBusy = canCreate && !isBusy;
+
+  const deleteBtnCn = cn("block md:hidden text-white rounded-md p-2 px-3", {
+    ["bg-red-500"]: !isBusy,
+    ["bg-red-200"]: isBusy,
+  });
+
+  const saveBtnCn = cn("text-white rounded-md p-2 px-3 select-none", {
+    ["bg-blue-500"]: canCreateAndNotBusy,
+    ["bg-blue-200"]: !canCreateAndNotBusy,
+  });
+
   return (
     <div className="z-50">
       <FaPlusSquare
@@ -253,19 +269,19 @@ export const HabitCreator = ({
               <div className="flex gap-2 flex-wrap mt-2">
                 {IconList.map(([key, { Icon, size }]) => {
                   if (key === "default") return null;
+                  const iconKeyCn = cn(
+                    "rounded-md outline-none bg-slate-100 hover:bg-slate-100",
+                    "text-slate-400 flex items-center justify-center w-8 h-8",
+                    {
+                      ["border-slate-400 border text-slate-400"]:
+                        key === iconKey,
+                      ["border-slate-200 bg-slate-100"]: key !== iconKey,
+                    }
+                  );
                   return (
                     <button
                       key={key}
-                      className={`
-                      rounded-md outline-none bg-slate-100
-                      hover:bg-slate-100 text-slate-400
-                      flex items-center justify-center w-8 h-8
-                      ${
-                        key === iconKey
-                          ? "border-slate-400 border text-slate-400 "
-                          : "border-slate-200 bg-slate-100 "
-                      }
-                    `}
+                      className={iconKeyCn}
                       onClick={() => handleIconClick(key)}
                     >
                       <Icon size={size} />
@@ -282,19 +298,18 @@ export const HabitCreator = ({
               <div className="flex gap-2 flex-wrap mt-2">
                 {ColorList.map(([key, { active }]) => {
                   if (key === "default") return null;
+                  const colorKeyCn = cn(
+                    "flex items-center justify-center w-8 h-8",
+                    " rounded-md outline-none text-slate-400 bg-slate-50",
+                    {
+                      ["border-slate-400 border bg-slate-100"]:
+                        key === colorKey,
+                    }
+                  );
                   return (
                     <button
                       key={key}
-                      className={`
-                      rounded-md outline-none
-                      text-slate-400 bg-slate-50
-                      flex items-center justify-center w-8 h-8
-                      ${
-                        key === colorKey
-                          ? "border-slate-400 border bg-slate-100"
-                          : ""
-                      }
-                    `}
+                      className={colorKeyCn}
                       onClick={() => handleColorClick(key)}
                     >
                       <div
@@ -323,11 +338,9 @@ export const HabitCreator = ({
                     show={showConfirmation}
                   />
                   <button
-                    className={`block md:hidden text-white rounded-md p-2 px-3
-                      ${canCreate && !isBusy ? "bg-red-500" : "bg-red-200"}
-                    `}
+                    className={deleteBtnCn}
                     onClick={() => setShowConfirmation(true)}
-                    disabled={!canCreate || isBusy}
+                    disabled={isBusy}
                   >
                     Delete
                   </button>
@@ -335,9 +348,7 @@ export const HabitCreator = ({
               )}
 
               <button
-                className={`text-white rounded-md p-2 px-3 select-none
-                  ${canCreate && !isBusy ? "bg-blue-500" : "bg-blue-200"}
-                `}
+                className={saveBtnCn}
                 onClick={handleSaveUpdate}
                 disabled={!canCreate || isBusy}
               >
