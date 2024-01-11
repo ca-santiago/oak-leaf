@@ -20,6 +20,7 @@ import { HabitService, deleteHabit } from "@/services/habits";
 import {
   calculateStreak,
   deserializeCompletionsRecord,
+  filterAndClampYearRangesByDateLimits,
   findExistingRangeForADate,
   findRangesByYearOrCreate,
   mergeDateOnYearRangeData,
@@ -45,17 +46,23 @@ export const HabitDetails = ({
   onEditClick,
   onDelete,
 }: HabitDetailsProps) => {
-  const [year, setYear] = React.useState(moment().year().toString());
+  const [year] = React.useState(moment().year().toString());
+  const [rangeLimit] = React.useState(
+    `${moment().subtract(7, "months").format(DATE_FORMAT)}:${moment()
+      .endOf("week")
+      .format(DATE_FORMAT)}`
+  );
   const [loading, setLoading] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [showConfirmation, setShowConfirmation] = React.useState(false);
-  const [dateRanges, setDateRanges] = React.useState(
+
+  const [dateRanges, setDateRanges] = React.useState<YearRangeData[]>(
     deserializeCompletionsRecord(habit.completions)
   );
 
-  const currRanges = React.useMemo((): YearRangeData => {
-    return findRangesByYearOrCreate(dateRanges, year);
-  }, [dateRanges, year]);
+  const currRanges = React.useMemo((): string[] => {
+    return filterAndClampYearRangesByDateLimits(dateRanges, rangeLimit);
+  }, [dateRanges]);
 
   const isTodayCompleted = React.useMemo(
     () => findExistingRangeForADate(TODAY, currRanges),
@@ -75,7 +82,7 @@ export const HabitDetails = ({
   };
 
   React.useEffect(() => {
-    if (moment(TODAY).month() < 7) return;
+    // if (moment(TODAY).month() < 7) return;
     scrollToToday();
   }, []);
 
@@ -101,22 +108,24 @@ export const HabitDetails = ({
   };
 
   const activities: Activity[] = React.useMemo(() => {
-    const dateArr: Activity[][] = currRanges.ranges.map((range) => {
-      const [start, end] = splitDateRange(range).map((d) => `${year}-${d}`);
+    const dateArr: Activity[][] = currRanges.map((range) => {
+      const [start, end] = splitDateRange(range);
       return mapDateRangeToActivityArray(start, end);
     });
 
     const flatten = dateArr.flat();
 
+    const [sLimit, eLimit] = splitDateRange(rangeLimit);
+
     const startingActivity: Activity = {
       count: 0,
-      date: `${year}-01-01`,
+      date: sLimit,
       level: 0,
     };
 
     const endActivity: Activity = {
       count: 0,
-      date: `${year}-12-31`,
+      date: eLimit,
       level: 0,
     };
 
@@ -133,14 +142,14 @@ export const HabitDetails = ({
     }
 
     return flatten;
-  }, [currRanges, year]);
+  }, [currRanges, rangeLimit]);
 
   const handleActivityClick = (ac: Activity) => {
     if (loading || saving) return;
 
     const formatted = moment(ac.date).tz(TZ).format(DATE_FORMAT);
     // Get the year from the date
-    const [y] = formatted.split('-');
+    const [y] = formatted.split("-");
     const rangeToUpdate = findRangesByYearOrCreate(dateRanges, y);
     const updatedRange = ac.count
       ? removeDateFromYearRangeData(rangeToUpdate, formatted)
@@ -152,9 +161,13 @@ export const HabitDetails = ({
 
   const toggleDay = () => {
     if (TODAY_MOMENT.year().toString() !== year) return;
+
+    // Get the year from the date
+    const [y] = TODAY.split("-");
+    const rangeToUpdate = findRangesByYearOrCreate(dateRanges, y);
     const newRanges = isTodayCompleted
-      ? removeDateFromYearRangeData(currRanges, TODAY)
-      : mergeDateOnYearRangeData(currRanges, TODAY);
+      ? removeDateFromYearRangeData(rangeToUpdate, TODAY)
+      : mergeDateOnYearRangeData(rangeToUpdate, TODAY);
 
     const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
     saveIncidences([...filteredDateRanges, newRanges], dateRanges);
@@ -263,7 +276,7 @@ export const HabitDetails = ({
             hideMonthLabels
             loading={loading}
             hideColorLegend
-            maxLevel={2}
+            maxLevel={3}
             renderBlock={(block) =>
               React.cloneElement(block, {
                 className: "cursor-pointer overflow-hidden",
@@ -290,27 +303,22 @@ export const HabitDetails = ({
         </div>
         {/* STATS */}
         <div className="flex items-center pt-3 gap-2 text-slate-500 text-xs font-semibold [&>:nth-child(n)]:border-r-2 [&>:nth-child(n)]:pr-2 [&>:nth-last-child(1)]:border-r-0">
-          <div className="flex items-center gap-1">
-            <HiMiniFire className="text-red-400" />
-            <p className="">{streak} days in streak</p>
-          </div>
+          <>
+            {!!streak && (
+              <div className="flex items-center gap-1">
+                <HiMiniFire className="text-red-400" />
+                <p>
+                  {streak}{" "}
+                  {streak > 0
+                    ? streak > 1
+                      ? "days  on a streak"
+                      : "day on a streak"
+                    : "no days"}
+                </p>
+              </div>
+            )}
+          </>
         </div>
-        {!IS_PROD && (
-          <div className="pt-2 flex gap-2">
-            <button
-              className="rounded bg-blue-500 text-white p-0.5 px-2 text-xs cursor-pointer"
-              onClick={() => setYear("2023")}
-            >
-              2023
-            </button>
-            <button
-              className="rounded bg-blue-500 text-white p-0.5 px-2 text-xs cursor-pointer"
-              onClick={() => setYear("2024")}
-            >
-              2024
-            </button>
-          </div>
-        )}
       </div>
       <div className="hidden md:block absolute bottom-3 right-0 translate-x-2 hover:translate-x-10 duration-150 ease-in-out select-none">
         <div className="w-10 hover:h-fit bg-slate-500 duration-150 ease-in-out hover:bg-slate-600 flex items-center justify-center rounded-r-md cursor-pointer py-2">

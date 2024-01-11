@@ -1,6 +1,6 @@
 import { DATE_FORMAT } from "@/core/constants";
 import { YearRangeData } from "@/core/types";
-import moment, { Moment } from "moment";
+import moment from "moment";
 
 function extractMonthAndDay(str: string): string {
   return str.slice(5, str.length);
@@ -81,6 +81,44 @@ export const findRangesByYearOrCreate = (
 ) => {
   const emptyNewYearRange = { ranges: [], year };
   return rangesArray.find((r) => r.year === year) || emptyNewYearRange;
+};
+
+export const filterAndClampYearRangesByDateLimits = (
+  yRanges: YearRangeData[],
+  dateRangeAsLimit: string
+): string[] => {
+  const filteredRanges: string[] = [];
+
+  yRanges.forEach(({ranges, year}) => {
+    ranges.forEach((r) => {
+      const [s, e] = splitDateRange(r);
+
+      let [start, end] = [`${year}-${s}`, `${year}-${e}`];
+      const [startLimit, endLimit] = splitDateRange(dateRangeAsLimit);
+
+      const _start = new Date(start);
+      const _end = new Date(end);
+      const _startLimit = new Date(startLimit);
+      const _endLimit = new Date(endLimit);
+
+      const startWithinLimits = _start >= _startLimit && _start <= _endLimit;
+      const endWithinLimits = _end >= _startLimit && _end <= _endLimit;
+
+      if (!startWithinLimits) {
+        start = startLimit;
+      }
+
+      if (!endWithinLimits) {
+        end = endLimit;
+      }
+
+      if (startWithinLimits || endWithinLimits) {
+        filteredRanges.push(`${start}:${end}`);
+      }
+    });
+  });
+
+  return filteredRanges;
 };
 
 /**
@@ -211,13 +249,12 @@ export function serializeDateRangeData(ranges: YearRangeData[]): string {
  */
 export const findExistingRangeForADate = (
   dateToFind: string,
-  yearRange: YearRangeData
+  dateRanges: string[]
 ): string | null => {
-  const { year, ranges } = yearRange;
-  const exists = ranges.find((e) => {
+  const exists = dateRanges.find((e) => {
     const [_start, _end] = splitDateRange(e);
-    const start = new Date(`${year}-${_start}`).getTime();
-    const end = new Date(`${year}-${_end}`).getTime();
+    const start = new Date(`${_start}`).getTime();
+    const end = new Date(`${_end}`).getTime();
     const toFind = new Date(dateToFind).getTime();
     return toFind >= start && toFind <= end;
   });
@@ -232,8 +269,7 @@ export const daysInRange = (start: string, end: string): number => {
   );
 };
 
-export const calculateStreak = (yearRange: YearRangeData) => {
-  const { year, ranges } = yearRange;
+export const calculateStreak = (ranges: string[]) => {
   const lastRange = ranges[ranges.length - 1];
 
   if (!lastRange) return 0;
@@ -242,14 +278,9 @@ export const calculateStreak = (yearRange: YearRangeData) => {
   const yesterday = moment().subtract(1, "day").format(DATE_FORMAT);
 
   const [s, e] = splitDateRange(lastRange);
-  const endDate = `${year}-${e}`;
-  //const endDate = moment(`${year}-${e}`).tz(moment.tz.guess());
 
-  // const isToday = today.isSame(endDate, 'day');
-  // const isYesterday = yesterday.isSame(endDate, 'day');
-
-  const isToday = endDate === today;
-  const isYesterday = endDate === yesterday;
+  const isToday = e === today;
+  const isYesterday = e === yesterday;
 
   if (isToday || isYesterday) {
     return daysInRange(s, e);

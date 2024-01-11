@@ -13,7 +13,7 @@ export function mapDateRangeToActivityArray(
     datesArray.push({
       count: 1,
       date: currentDate.toISOString().split("T")[0],
-      level: 2,
+      level: 3,
     });
     currentDate.setDate(currentDate.getDate() + 1);
   }

@@ -8,6 +8,7 @@ import {
   mergeDateOnYearRangeData,
   removeDateFromYearRangeData,
   findExistingRangeForADate,
+  filterAndClampYearRangesByDateLimits,
 } from "../incidences";
 
 describe("Incidences serialization", () => {
@@ -236,46 +237,88 @@ describe("removeDateFromYearRangeData", () => {
 
 describe("findExistingRangeForADate", () => {
   test("find a suitable range", () => {
-    const expected = "02-01:02-05";
-    const dateRanges: YearRangeData = {
-      year: "2015",
-      ranges: ["01-08:01-09", expected],
-    };
+    const expected = "2015-02-01:2015-02-05";
+    const ranges = ["2015-01-08:2015-01-09", expected];
     const toFind = "2015-02-03";
-    const result = findExistingRangeForADate(toFind, dateRanges);
+    const result = findExistingRangeForADate(toFind, ranges);
     expect(result).toBe(expected);
   });
 
   test("no ranges found", () => {
-    const expected = null;
-    const dateRanges: YearRangeData = {
-      year: "2015",
-      ranges: ["01-08:01-09", "02-01:02-05"],
-    };
+    const ranges = ["2015-01-08:2015-01-09", "2015-02-01:2015-02-05"];
     const toFind = "2015-05-03";
-    const result = findExistingRangeForADate(toFind, dateRanges);
-    expect(result).toBe(expected);
+    const result = findExistingRangeForADate(toFind, ranges);
+    expect(result).toBe(null);
   });
 
   test("dateToFind and rangeStart", () => {
-    const expected = "02-01:02-05";
-    const dateRanges: YearRangeData = {
-      year: "2015",
-      ranges: ["01-08:01-09", expected],
-    };
+    const expected = "2015-02-01:2015-02-05";
+    const ranges = ["2015-01-08:2015-01-09", expected];
     const toFind = "2015-02-01";
-    const result = findExistingRangeForADate(toFind, dateRanges);
+    const result = findExistingRangeForADate(toFind, ranges);
     expect(result).toBe(expected);
   });
 
   test("dateToFind and rangeEnd", () => {
-    const expected = "02-01:02-05";
-    const dateRanges: YearRangeData = {
-      year: "2015",
-      ranges: ["01-08:01-09", expected],
-    };
+    const expected = "2015-02-01:2015-02-05";
+    const ranges = ["2015-01-08:2015-01-09", expected];
     const toFind = "2015-02-05";
-    const result = findExistingRangeForADate(toFind, dateRanges);
+    const result = findExistingRangeForADate(toFind, ranges);
     expect(result).toBe(expected);
+  });
+});
+
+describe("filterAndClampYearRangesByDateLimits", () => {
+  test("should filter correctly for a single year", () => {
+    const input: YearRangeData[] = [
+      {
+        year: "2015",
+        ranges: ["11-03:11-04", "12-09:12-09"],
+      },
+    ];
+    const result = filterAndClampYearRangesByDateLimits(
+      input,
+      "2015-11-01:2015-12-01"
+    );
+    expect(result).toEqual(["2015-11-03:2015-11-04"]);
+  });
+
+  test("one year ranges for multi-year limit", () => {
+    const input: YearRangeData[] = [
+      {
+        year: "2015",
+        ranges: ["03-05:03-20", "11-03:11-04", "12-09:12-09"],
+      },
+    ];
+    const result = filterAndClampYearRangesByDateLimits(
+      input,
+      "2014-11-01:2015-12-01"
+    );
+    expect(result).toEqual(["2015-03-05:2015-03-20", "2015-11-03:2015-11-04"]);
+  });
+
+  test("multi year ranges for single year limit", () => {
+    const input: YearRangeData[] = [
+      {
+        year: "2014",
+        ranges: ["01-05:01-22", "10-03:10-11", "12-09:12-19"],
+      },
+      {
+        year: "2015",
+        ranges: ["03-05:03-20", "11-03:11-04", "12-09:12-11", "12-22:12-24"],
+      },
+    ];
+    const result = filterAndClampYearRangesByDateLimits(
+      input,
+      "2014-10-01:2015-12-10"
+    );
+    expect(result).toEqual([
+      "2014-10-03:2014-10-11",
+      "2014-12-09:2014-12-19",
+      "2015-03-05:2015-03-20",
+      "2015-11-03:2015-11-04",
+      // range end is clamped
+      "2015-12-09:2015-12-10",
+    ]);
   });
 });
