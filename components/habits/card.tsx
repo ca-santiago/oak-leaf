@@ -21,6 +21,7 @@ import {
   calculateStreak,
   deserializeCompletionsRecord,
   findExistingRangeForADate,
+  findRangesByYearOrCreate,
   mergeDateOnYearRangeData,
   removeDateFromYearRangeData,
   serializeDateRangeData,
@@ -53,8 +54,7 @@ export const HabitDetails = ({
   );
 
   const currRanges = React.useMemo((): YearRangeData => {
-    const emptyNewYearRange = { ranges: [], year: year };
-    return dateRanges.find((r) => r.year === year) || emptyNewYearRange;
+    return findRangesByYearOrCreate(dateRanges, year);
   }, [dateRanges, year]);
 
   const isTodayCompleted = React.useMemo(
@@ -139,12 +139,15 @@ export const HabitDetails = ({
     if (loading || saving) return;
 
     const formatted = moment(ac.date).tz(TZ).format(DATE_FORMAT);
-    const newRanges = ac.count
-      ? removeDateFromYearRangeData(currRanges, formatted)
-      : mergeDateOnYearRangeData(currRanges, formatted);
+    // Get the year from the date
+    const [y] = formatted.split('-');
+    const rangeToUpdate = findRangesByYearOrCreate(dateRanges, y);
+    const updatedRange = ac.count
+      ? removeDateFromYearRangeData(rangeToUpdate, formatted)
+      : mergeDateOnYearRangeData(rangeToUpdate, formatted);
 
-    const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
-    saveIncidences([...filteredDateRanges, newRanges], dateRanges);
+    const filteredDateRanges = dateRanges.filter((r) => r.year !== y);
+    saveIncidences([...filteredDateRanges, updatedRange], dateRanges);
   };
 
   const toggleDay = () => {
@@ -154,7 +157,7 @@ export const HabitDetails = ({
       : mergeDateOnYearRangeData(currRanges, TODAY);
 
     const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
-    saveIncidences([...filteredDateRanges, newRanges], []);
+    saveIncidences([...filteredDateRanges, newRanges], dateRanges);
   };
 
   const _delete = () => {

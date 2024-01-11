@@ -75,6 +75,14 @@ export function mergeDateOnYearRangeData(
   };
 }
 
+export const findRangesByYearOrCreate = (
+  rangesArray: YearRangeData[],
+  year: string
+) => {
+  const emptyNewYearRange = { ranges: [], year };
+  return rangesArray.find((r) => r.year === year) || emptyNewYearRange;
+};
+
 /**
  * @argument givenDate: A date in the format of YYYY-MM-dd
  */
@@ -231,7 +239,7 @@ export const calculateStreak = (yearRange: YearRangeData) => {
   if (!lastRange) return 0;
 
   const today = moment().format(DATE_FORMAT);
-  const yesterday = moment().subtract(1, 'day').format(DATE_FORMAT);
+  const yesterday = moment().subtract(1, "day").format(DATE_FORMAT);
 
   const [s, e] = splitDateRange(lastRange);
   const endDate = `${year}-${e}`;
@@ -244,7 +252,7 @@ export const calculateStreak = (yearRange: YearRangeData) => {
   const isYesterday = endDate === yesterday;
 
   if (isToday || isYesterday) {
-    return daysInRange(s,e);
+    return daysInRange(s, e);
   }
 
   return 0;
