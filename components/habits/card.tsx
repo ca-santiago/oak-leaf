@@ -62,10 +62,10 @@ export const HabitDetails = ({
 
   const currRanges = React.useMemo((): string[] => {
     return filterAndClampYearRangesByDateLimits(dateRanges, rangeLimit);
-  }, [dateRanges]);
+  }, [dateRanges, rangeLimit]);
 
   const isTodayCompleted = React.useMemo(
-    () => findExistingRangeForADate(TODAY, currRanges),
+    () => findExistingRangeForADate(TODAY, currRanges) >= 0,
     [currRanges, TODAY]
   );
 
