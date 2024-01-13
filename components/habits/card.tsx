@@ -23,7 +23,7 @@ import {
   filterAndClampYearRangesByDateLimits,
   findExistingRangeForADate,
   findRangesByYearOrCreate,
-  mergeDateOnYearRangeData,
+  mergeDateOnYearRangeDataV2,
   removeDateFromYearRangeData,
   serializeDateRangeData,
   splitDateRange,
@@ -153,7 +153,7 @@ export const HabitDetails = ({
     const rangeToUpdate = findRangesByYearOrCreate(dateRanges, y);
     const updatedRange = ac.count
       ? removeDateFromYearRangeData(rangeToUpdate, formatted)
-      : mergeDateOnYearRangeData(rangeToUpdate, formatted);
+      : mergeDateOnYearRangeDataV2(rangeToUpdate, formatted);
 
     const filteredDateRanges = dateRanges.filter((r) => r.year !== y);
     saveIncidences([...filteredDateRanges, updatedRange], dateRanges);
@@ -167,7 +167,7 @@ export const HabitDetails = ({
     const rangeToUpdate = findRangesByYearOrCreate(dateRanges, y);
     const newRanges = isTodayCompleted
       ? removeDateFromYearRangeData(rangeToUpdate, TODAY)
-      : mergeDateOnYearRangeData(rangeToUpdate, TODAY);
+      : mergeDateOnYearRangeDataV2(rangeToUpdate, TODAY);
 
     const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
     saveIncidences([...filteredDateRanges, newRanges], dateRanges);

@@ -6,6 +6,89 @@ function extractMonthAndDay(str: string): string {
   return str.slice(5, str.length);
 }
 
+export function mergeDateOnYearRangeDataV2(
+  yearRange: YearRangeData,
+  givenDate: string
+): YearRangeData {
+  const { year, ranges } = yearRange;
+  const dateToMerge = new Date(givenDate);
+  const stringDate = extractMonthAndDay(givenDate);
+
+  // Nothing to loop, so just insert
+  if (ranges.length === 0)
+    return {
+      year,
+      ranges: [`${stringDate}:${stringDate}`],
+    };
+
+  const [gDateYear] = givenDate.split("-");
+  if (year !== gDateYear) throw new Error(`Invalid year: ${givenDate}`);
+
+  let merged = false;
+  const rangesWithNewDate: string[] = [];
+
+  ranges.forEach((r) => {
+    const [s, e] = splitDateRange(r);
+    const start = `${year}-${s}`;
+    const end = `${year}-${e}`;
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    const beforeStartDate = new Date(startDate);
+    beforeStartDate.setDate(startDate.getDate() - 1);
+
+    if (merged) return rangesWithNewDate.push(r);
+
+    if (dateToMerge < beforeStartDate) {
+      rangesWithNewDate.push(`${stringDate}:${stringDate}`);
+      rangesWithNewDate.push(r);
+      merged = true;
+      return;
+    }
+
+    if (dateToMerge.getTime() === endDate.getTime() + 24 * 60 * 60 * 1000) {
+      // Date is right after an existing range, extend the range
+      rangesWithNewDate.push(`${s}:${stringDate}`);
+      merged = true;
+    } else if (
+      dateToMerge.getTime() ===
+      startDate.getTime() - 24 * 60 * 60 * 1000
+    ) {
+      // Date is right before an existing range, extend the range
+      rangesWithNewDate.push(`${stringDate}:${e}`);
+      merged = true;
+    } else {
+      rangesWithNewDate.push(r);
+    }
+  });
+
+  // Push at the end if no found before, after or older than current ranges
+  if (!merged) rangesWithNewDate.push(`${stringDate}:${stringDate}`);
+
+  const outRanges: string[] = [rangesWithNewDate[0]];
+
+  for (let i = 1; i < rangesWithNewDate.length; i++) {
+    const outRangesLen = outRanges.length - 1;
+    const [outStart, outEnd] = outRanges[outRangesLen].split(":");
+    const [currStart, currEnd] = rangesWithNewDate[i].split(":");
+
+    const _outEnd = new Date(`${year}-${outEnd}`);
+    const _currStart = new Date(`${year}-${currStart}`);
+    _currStart.setDate(_currStart.getDate() - 1);
+    // endDate at pos outRanges.len - 1 === startDate at curr post
+    if (_outEnd >= _currStart) {
+      outRanges[outRangesLen] = `${outStart}:${currEnd}`;
+    } else {
+      outRanges.push(rangesWithNewDate[i]);
+    }
+  }
+
+  return {
+    ranges: outRanges,
+    year,
+  };
+}
+
 export function mergeDateOnYearRangeData(
   yearRange: YearRangeData,
   givenDate: string
@@ -89,7 +172,7 @@ export const filterAndClampYearRangesByDateLimits = (
 ): string[] => {
   const filteredRanges: string[] = [];
 
-  yRanges.forEach(({ranges, year}) => {
+  yRanges.forEach(({ ranges, year }) => {
     ranges.forEach((r) => {
       const [s, e] = splitDateRange(r);
 
@@ -219,7 +302,8 @@ export function joinDateRangeArr(str: string[]): string {
 }
 
 export function yearRangeDataToYearRanges(YRs: YearRangeData[]): string[] {
-  return YRs.map((yr) => `${yr.year}=${joinDateRangeArr(yr.ranges)}`);
+  const filtered = YRs.filter((y) => y.ranges.length);
+  return filtered.map((yr) => `${yr.year}=${joinDateRangeArr(yr.ranges)}`);
 }
 
 export function yearRangesToCompletionsRecord(str: string[]): string {
@@ -239,26 +323,28 @@ export function deserializeCompletionsRecord(str: string): YearRangeData[] {
 }
 
 export function serializeDateRangeData(ranges: YearRangeData[]): string {
-  const yearRanges = yearRangeDataToYearRanges(ranges);
+  // Do not save empty ranges
+  const filteredRanges = ranges.filter((range) => range.ranges.length > 0);
+  const yearRanges = yearRangeDataToYearRanges(filteredRanges);
   return yearRangesToCompletionsRecord(yearRanges);
 }
 
 /**
  * Find if given date exists in ranges
- * @returns the dataRange or null if not found
+ * @returns the index
  */
 export const findExistingRangeForADate = (
   dateToFind: string,
   dateRanges: string[]
-): string | null => {
-  const exists = dateRanges.find((e) => {
+): number => {
+  const exists = dateRanges.findIndex((e) => {
     const [_start, _end] = splitDateRange(e);
     const start = new Date(`${_start}`).getTime();
     const end = new Date(`${_end}`).getTime();
     const toFind = new Date(dateToFind).getTime();
     return toFind >= start && toFind <= end;
   });
-  return exists || null;
+  return exists;
 };
 
 export const daysInRange = (start: string, end: string): number => {
