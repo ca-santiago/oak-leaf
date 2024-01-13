@@ -331,6 +331,7 @@ export function serializeDateRangeData(ranges: YearRangeData[]): string {
 
 /**
  * Find if given date exists in ranges
+ * @param dateToFind YYYY-MM-dd format string date
  * @returns the index
  */
 export const findExistingRangeForADate = (
@@ -356,20 +357,41 @@ export const daysInRange = (start: string, end: string): number => {
 };
 
 export const calculateStreak = (ranges: string[]) => {
-  const lastRange = ranges[ranges.length - 1];
-
-  if (!lastRange) return 0;
-
   const today = moment().format(DATE_FORMAT);
   const yesterday = moment().subtract(1, "day").format(DATE_FORMAT);
+  const indexForRangeWithToday = findExistingRangeForADate(today, ranges);
+  const indexForRangeWithYesterday = findExistingRangeForADate(
+    yesterday,
+    ranges
+  );
+  const rangeToUse =
+    ranges[indexForRangeWithToday] || ranges[indexForRangeWithYesterday];
 
-  const [s, e] = splitDateRange(lastRange);
+  if (!rangeToUse) return 0;
 
-  const isToday = e === today;
-  const isYesterday = e === yesterday;
+  let [streakStart, streakEnd] = splitDateRange(rangeToUse);
+  const [sYear, month, day] = streakStart.split("-");
+
+  // If range start at year start look for adjacent prev year range
+  if (`${month}-${day}` === "01-01") {
+    const prevYear = Number(sYear) - 1;
+    const rangeIndexPrevYear = findExistingRangeForADate(
+      `${prevYear}-12-31`,
+      ranges
+    );
+    // If a range on the prev year ends on years end date, then also count it as part of the streak
+    const rangeOfPrevYearEndingLastYearDay = ranges[rangeIndexPrevYear];
+    if (rangeOfPrevYearEndingLastYearDay) {
+      const [_s, _e] = splitDateRange(rangeOfPrevYearEndingLastYearDay);
+      streakStart = _s;
+    }
+  }
+
+  const isToday = streakEnd === today;
+  const isYesterday = streakEnd === yesterday;
 
   if (isToday || isYesterday) {
-    return daysInRange(s, e);
+    return daysInRange(streakStart, streakEnd);
   }
 
   return 0;

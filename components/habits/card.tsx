@@ -69,7 +69,7 @@ export const HabitDetails = ({
     [currRanges, TODAY]
   );
 
-  const streak = calculateStreak(currRanges);
+  const streak = React.useMemo(() => calculateStreak(currRanges), [currRanges]);
 
   const scrollToToday = () => {
     const el = document
