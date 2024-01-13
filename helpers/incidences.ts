@@ -396,3 +396,7 @@ export const calculateStreak = (ranges: string[]) => {
 
   return 0;
 };
+
+export const sortYearRange = (yRanges: YearRangeData[]) => {
+  return yRanges.sort((a, b) => Number(a.year) - Number(b.year));
+};

@@ -26,6 +26,7 @@ import {
   mergeDateOnYearRangeDataV2,
   removeDateFromYearRangeData,
   serializeDateRangeData,
+  sortYearRange,
   splitDateRange,
 } from "@/helpers/incidences";
 
@@ -156,7 +157,8 @@ export const HabitDetails = ({
       : mergeDateOnYearRangeDataV2(rangeToUpdate, formatted);
 
     const filteredDateRanges = dateRanges.filter((r) => r.year !== y);
-    saveIncidences([...filteredDateRanges, updatedRange], dateRanges);
+    filteredDateRanges.push(updatedRange);
+    saveIncidences(sortYearRange(filteredDateRanges), dateRanges);
   };
 
   const toggleDay = () => {
@@ -170,7 +172,8 @@ export const HabitDetails = ({
       : mergeDateOnYearRangeDataV2(rangeToUpdate, TODAY);
 
     const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
-    saveIncidences([...filteredDateRanges, newRanges], dateRanges);
+    filteredDateRanges.push(newRanges);
+    saveIncidences(sortYearRange(filteredDateRanges), dateRanges);
   };
 
   const _delete = () => {
