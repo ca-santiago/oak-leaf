@@ -26,7 +26,9 @@ async function ManagerPage() {
         habits={habits}
         token={accessToken!}
       >
-        <HabitsList />
+        <div className="w-full md:w-5/6 lg:w-3/4 xl:w-1/2 mx-auto mt-6 pb-10 px-3 md:px-0 gap-12">
+          <HabitsList />
+        </div>
       </ManagerContextWrapper>
     </div>
   );

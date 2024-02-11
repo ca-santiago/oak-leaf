@@ -13,7 +13,7 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { HiMiniFire } from "react-icons/hi2";
 
 import { YearRangeData, Habit } from "@/core/types";
-import { DATE_FORMAT, IS_PROD } from "@/core/constants";
+import { DATE_FORMAT } from "@/core/constants";
 import { mapDateRangeToActivityArray } from "@/helpers/activity";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { HabitService, deleteHabit } from "@/services/habits";
@@ -244,6 +244,24 @@ export const HabitDetails = ({
     </div>
   );
 
+  const renderStreaks = () => {
+    return (
+      !!streak && (
+        <div className="flex items-center gap-1">
+          <HiMiniFire className="text-red-400" />
+          <p>
+            {streak}{" "}
+            {streak > 0
+              ? streak > 1
+                ? "days  on a streak"
+                : "day on a streak"
+              : "no days"}
+          </p>
+        </div>
+      )
+    );
+  };
+
   const handleConfirmClick = () => {
     setShowConfirmation(false);
     _delete();
@@ -251,12 +269,11 @@ export const HabitDetails = ({
 
   const handleCardClick = () => {
     const w = screen.width;
-    if (w > 769) return;
-    onEditClick();
+    if (w < 1024) onEditClick();
   };
 
   return (
-    <div className="w-full relative max-w-xl">
+    <div className="w-full max-w-full relative md:max-w-xl overflow-hidden">
       <ConfirmationModal
         onCancel={() => setShowConfirmation(false)}
         onConfirm={handleConfirmClick}
@@ -264,11 +281,11 @@ export const HabitDetails = ({
         show={showConfirmation}
       />
       <div
+        className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full"
         onClick={(e) => {
           e.stopPropagation();
           handleCardClick();
         }}
-        className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full relative"
       >
         <CardHeader />
         <div
@@ -305,42 +322,26 @@ export const HabitDetails = ({
           />
         </div>
         {/* STATS */}
-        <div className="flex items-center pt-3 gap-2 text-slate-500 text-xs font-semibold [&>:nth-child(n)]:border-r-2 [&>:nth-child(n)]:pr-2 [&>:nth-last-child(1)]:border-r-0">
-          <>
-            {!!streak && (
-              <div className="flex items-center gap-1">
-                <HiMiniFire className="text-red-400" />
-                <p>
-                  {streak}{" "}
-                  {streak > 0
-                    ? streak > 1
-                      ? "days  on a streak"
-                      : "day on a streak"
-                    : "no days"}
-                </p>
-              </div>
-            )}
-          </>
-        </div>
-      </div>
-      <div className="hidden md:block absolute bottom-3 right-0 translate-x-2 hover:translate-x-10 duration-150 ease-in-out select-none">
-        <div className="w-10 hover:h-fit bg-slate-500 duration-150 ease-in-out hover:bg-slate-600 flex items-center justify-center rounded-r-md cursor-pointer py-2">
-          <div className="flex flex-col gap-2">
+        <div className="flex justify-between pt-3 text-slate-500 text-xs font-semibold">
+          <div className="[&>:nth-child(n)]:border-r-2 [&>:nth-child(n)]:pr-2 [&>:nth-last-child(1)]:border-r-0 h-[28px] flex gap-3 items-center">
+            {renderStreaks()}
+          </div>
+          <div className="gap-2 items-center max-lg:hidden flex">
             <BsTrash2Fill
-              onClick={(e: SyntheticEvent) => {
+              onClick={(e: React.SyntheticEvent) => {
                 e.stopPropagation();
-                handleDeleteClick();
+                handleDeleteClick?.();
               }}
-              size={20}
-              className="text-red-400 rounded-full hover:bg-slate-500 p-1 w-fit h-fit"
+              size={16}
+              className="text-red-400 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
             />
             <MdEdit
-              onClick={(e: SyntheticEvent) => {
+              onClick={(e: React.SyntheticEvent) => {
                 e.stopPropagation();
-                onEditClick();
+                onEditClick?.();
               }}
-              size={18}
-              className="text-slate-50 rounded-full hover:bg-slate-500 p-1 w-fit h-fit"
+              size={16}
+              className="text-slate-500 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
             />
           </div>
         </div>

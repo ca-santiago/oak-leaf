@@ -1,10 +1,14 @@
-"use client"
+"use client";
 import React from "react";
 import { Habit } from "@/core/types";
 import { HabitDetails } from "./card";
 import { HabitCreator } from "../createHabit";
 import { useManagerContext } from "../../context/manager";
-import { removeHabit, setHabits, setSelectedHabit } from "@/context/manager/actions";
+import {
+  removeHabit,
+  setHabits,
+  setSelectedHabit,
+} from "@/context/manager/actions";
 
 export const HabitsList = () => {
   const { state, dispatch } = useManagerContext();
@@ -20,17 +24,17 @@ export const HabitsList = () => {
 
   const handleDeleteClick = (h: Habit) => {
     dispatch(setHabits(habits.filter((x) => x.id !== h.id)));
-  }
+  };
 
   return (
-    <div className="w-full md:w-4/6 lg:w-3/4 mx-auto mt-6 pb-10 px-3 md:px-0">
+    <div className="w-full">
       <HabitCreator
         onDelete={handleDeleteClick}
         onHabitCreate={handleHabitCreated}
         onHabitUpdate={handleHabitUpdate}
         startOpen={habits.length < 1}
       />
-      <div className="w-full flex flex-col gap-3 mt-3">
+      <div className="w-full grid md:grid-cols-2 grid-rows-1 gap-5 mt-3">
         {habits.map((item) => (
           <HabitDetails
             onEditClick={() => dispatch(setSelectedHabit(item))}
