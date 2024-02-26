@@ -1,29 +1,32 @@
-//
 import { IconType } from "react-icons";
-import { FaCode } from "react-icons/fa";
-import { PiPlaceholderLight } from "react-icons/pi";
-import { FaBook } from "react-icons/fa";
-import { MdOutlineSportsGymnastics } from "react-icons/md";
+import { PiPlaceholderLight, PiRecordFill, PiScrollFill, PiSoccerBallFill } from "react-icons/pi";
+import { FaCode, FaBook, FaPen, FaAudioDescription, FaScroll, FaThermometerFull, FaPhotoVideo } from "react-icons/fa";
+import { MdCameraRoll, MdOutlineSportsGymnastics, MdSportsBaseball, MdSportsEsports, MdSportsFootball, MdSportsTennis } from "react-icons/md";
 import { CgGym } from "react-icons/cg";
-import { VscWorkspaceTrusted } from "react-icons/vsc";
-import { IoSearch } from "react-icons/io5";
-import { FaPen } from "react-icons/fa";
-import { IoMail } from "react-icons/io5";
-import { FiShoppingCart } from "react-icons/fi";
+import { VscGraphLine, VscWorkspaceTrusted } from "react-icons/vsc";
+import { IoSearch, IoVideocam, IoMail, IoCamera, IoSpeedometer, IoCarSportSharp, IoMegaphoneSharp } from "react-icons/io5";
+import {
+  FiShoppingCart,
+  FiMeh,
+  FiMessageCircle,
+  FiMic,
+  FiPhoneCall,
+} from "react-icons/fi";
 import { LuChurch } from "react-icons/lu";
-import { FiMeh } from "react-icons/fi";
-import { FiMessageCircle } from "react-icons/fi";
-import { FiMic } from "react-icons/fi";
-import { FiPhoneCall } from "react-icons/fi";
-import { BiBulb } from "react-icons/bi";
-import { BiCycling } from "react-icons/bi";
-import { BiSolidBatteryCharging } from "react-icons/bi";
+import { BiBulb, BiCycling, BiSolidBatteryCharging, BiSolidPaintRoll } from "react-icons/bi";
 import { BsFillBriefcaseFill } from "react-icons/bs";
-import { TbLetterCase } from "react-icons/tb";
-import { RiBoxingLine } from "react-icons/ri";
-import { RiCalendarCheckFill } from "react-icons/ri";
-import { RiCapsuleFill } from "react-icons/ri";
-import { TbMoodSearch } from "react-icons/tb";
+import { TbLetterCase, TbMoodSearch, TbScript } from "react-icons/tb";
+import {
+  RiAliensFill,
+  RiBookMarkFill,
+  RiBoxingLine,
+  RiBracesFill,
+  RiBrushFill,
+  RiCalendarCheckFill,
+  RiCapsuleFill,
+  RiEqualizerLine,
+} from "react-icons/ri";
+import { GiTiedScroll } from "react-icons/gi";
 
 export interface IconMapping {
   [key: string]: {
@@ -133,6 +136,110 @@ export const IconMapping: IconMapping = {
     Icon: TbMoodSearch,
     size: 20,
   },
+  videoCam: {
+    Icon: IoVideocam,
+    size: 20,
+  },
+  record: {
+    Icon: PiRecordFill,
+    size: 20,
+  },
+  camera: {
+    Icon: IoCamera,
+    size: 20,
+  },
+  paintRoll: {
+    Icon: BiSolidPaintRoll,
+    size: 20,
+  },
+  cameraRoll: {
+    Icon: MdCameraRoll,
+    size: 20,
+  },
+  ad: {
+    Icon: FaAudioDescription,
+    size: 20,
+  },
+  scriptRoll: {
+    Icon: FaScroll,
+    size: 20,
+  },
+  thermometer: {
+    Icon: FaThermometerFull,
+    size: 20,
+  },
+  Speedometer: {
+    Icon: IoSpeedometer,
+    size: 20,
+  },
+  lineGraph: {
+    Icon: VscGraphLine,
+    size: 20,
+  },
+  PhotoAndVideo: {
+    Icon: FaPhotoVideo,
+    size: 20,
+  },
+  sportCar: {
+    Icon: IoCarSportSharp,
+    size: 20,
+  },
+  baseball: {
+    Icon: MdSportsBaseball,
+    size: 20,
+  },
+  ESports: {
+    Icon: MdSportsEsports,
+    size: 20,
+  },
+  tennis: {
+    Icon: MdSportsTennis,
+    size: 20,
+  },
+  football: {
+    Icon: MdSportsFootball,
+    size: 20,
+  },
+  soccer: {
+    Icon: PiSoccerBallFill,
+    size: 20,
+  },
+  alien: {
+    Icon: RiAliensFill,
+    size: 20,
+  },
+  bookWithMark: {
+    Icon: RiBookMarkFill,
+    size: 20,
+  },
+  braces: {
+    Icon: RiBracesFill,
+    size: 20,
+  },
+  brush: {
+    Icon: RiBrushFill,
+    size: 20,
+  },
+  equalizer: {
+    Icon: RiEqualizerLine,
+    size: 20,
+  },
+  scriptOutline: {
+    Icon: TbScript,
+    size: 20,
+  },
+  tiedScroll: {
+    Icon: GiTiedScroll,
+    size: 20,
+  },
+  scrollFill: {
+    Icon: PiScrollFill,
+    size: 20,
+  },
+  megaphone: {
+    Icon: IoMegaphoneSharp,
+    size: 20,
+  }
 };
 
 interface ColorsSchema {
@@ -230,10 +337,30 @@ export const ColorsMapping: ColorsMapping = {
   },
   charcoal: {
     base: "#d6e1ed",
-    // active: " #3e454b",
     active: "#373e45",
     bg: "#FFFFFF",
     hover: "#000000",
     textOnBg: "#000000",
   },
+  softenedGreen: {
+    base: '#CBF783',
+    active: "#9BCF53",
+    bg: "#FFFFFF",
+    hover: "#000000",
+    textOnBg: "#000000",
+  },
+  verdePantanoso: {
+    base: '#8AA6A3',
+    active: '#10454F',
+    bg: '#FFFFFF',
+    hover: '#000000',
+    textOnBg: '#000000',
+  },
+  contraste: {
+    base: '#02735E',
+    active: '#F27405',
+    bg: '#FFFFFF',
+    hover: '#000000',
+    textOnBg: '#000000',
+  }
 };
