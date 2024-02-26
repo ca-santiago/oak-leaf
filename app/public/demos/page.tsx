@@ -8,7 +8,7 @@ import { DATE_FORMAT } from "@/core/constants";
 // const { Drawer, open } = useDrawer();
 // const Drawer2 = useDrawer();
 
-export default function demosPage() {
+export default function DemosPage() {
   const [selectedDay, setSelectedDay] = React.useState(
     moment().format(DATE_FORMAT)
   );
