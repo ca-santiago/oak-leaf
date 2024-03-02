@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { MouseEvent } from "react";
 
 interface ModalProps {
@@ -9,18 +10,21 @@ interface ModalProps {
 const stopPropagation = (e: MouseEvent<any>) => e?.stopPropagation();
 
 export const Modal = ({ children, onClose, open }: ModalProps) => {
-  if(!open) return null;
+  if (!open) return null;
+  const cx = classNames("fixed inset-0 transition-colors z-50", {
+    ["visible bg-black/30"]: open,
+    invisible: !open,
+  });
   return (
     <div
-      className={`
-        fixed inset-0 flex justify-center items-center transition-colors z-50
-        ${open ? "visible bg-black/30" : "invisible"}
-    `}
-      onMouseDown={() => onClose()}
+      className={cx}
+      onMouseDown={(e) => {
+        stopPropagation(e);
+        onClose();
+      }}
+      onClick={stopPropagation}
     >
-      <div onMouseDown={stopPropagation} onClick={stopPropagation}>
-        {children}
-      </div>
+      {children}
     </div>
   );
 };

@@ -213,10 +213,13 @@ export const HabitCreator = ({
     ["bg-red-200"]: isBusy,
   });
 
-  const saveBtnCn = cn("text-white rounded-md p-2 px-3 select-none", {
-    ["bg-blue-500"]: canCreateAndNotBusy,
-    ["bg-blue-200"]: !canCreateAndNotBusy,
-  });
+  const saveBtnCn = cn(
+    "text-white rounded-md p-2 px-3 select-none max-sm:w-full max-md:w-1/2 max-md:mx-auto",
+    {
+      ["bg-blue-500"]: canCreateAndNotBusy,
+      ["bg-blue-200"]: !canCreateAndNotBusy,
+    }
+  );
 
   return (
     <div className="z-50">
@@ -226,8 +229,8 @@ export const HabitCreator = ({
         onClick={() => setState((prev) => ({ ...prev, showModal: true }))}
       />
       <Modal open={showModal || !!selectedHabit} onClose={handleOnClose}>
-        <div className="px-2 md:px-0">
-          <div className="w-full md:w-96 bg-white shadow rounded-md flex flex-col gap-3 p-3">
+        <div className="flex max-lg:items-end items-center h-full mx-auto max-sm:w-full max-lg:w-4/6 w-96">
+          <div className="w-full mx-auto h-fit bg-white shadow rounded-md flex flex-col gap-3 p-3 max-lg:rounded-b-none">
             <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-xl">
               {isEditing ? "Let's configure it" : "Let's start a new habit"}
             </h4>

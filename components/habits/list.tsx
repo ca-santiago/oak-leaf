@@ -34,7 +34,7 @@ export const HabitsList = () => {
         onHabitUpdate={handleHabitUpdate}
         startOpen={habits.length < 1}
       />
-      <div className="w-full grid md:grid-cols-2 grid-rows-1 gap-5 mt-3">
+      <div className="w-full grid md:grid-cols-2 grid-rows-1 max-md:gap-3 gap-5 mt-3">
         {habits.map((item) => (
           <HabitDetails
             onEditClick={() => dispatch(setSelectedHabit(item))}
