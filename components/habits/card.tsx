@@ -273,7 +273,7 @@ export const HabitDetails = ({
   };
 
   return (
-    <div className="w-full max-w-full relative md:max-w-xl overflow-hidden">
+    <div className="w-full max-w-full relative md:max-w-xl overflow-hidden pb-2 flex">
       <ConfirmationModal
         onCancel={() => setShowConfirmation(false)}
         onConfirm={handleConfirmClick}
@@ -281,7 +281,7 @@ export const HabitDetails = ({
         show={showConfirmation}
       />
       <div
-        className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full"
+        className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full justify-between"
         onClick={(e) => {
           e.stopPropagation();
           handleCardClick();
