@@ -26,9 +26,12 @@ const WeekDayChip = ({
   };
 
   const chipWrapperCn = classNames(
-    "rounded-lg border border-slate-300 p-1 px-2 flex flex-col items-center relative",
+    "rounded-lg border p-1 px-2 flex flex-col items-center relative",
     "justify-center text-slate-500 cursor-pointer max-w-[50px] min-h-[75px]",
-    { ["border-green-500"]: isActive }
+    {
+      "border-green-500": isActive,
+      "border-slate-300": !isActive
+    }
   );
 
   const badgeCn = classNames(
@@ -66,12 +69,15 @@ const HorizontalWeekDaysView = ({
   const [weekOffset, setWeekOffset] = React.useState(0);
 
   const offsetDate = React.useMemo(() => {
-    const out = today.clone().add(weekOffset, "weeks");
-    const offsetDay = out.day(selectedDay.day()).format(DATE_FORMAT);
-    onSelectedDayChange?.(offsetDay);
+    const out = today.clone().add(weekOffset, "weeks").set('day', selectedDay.get('day'));
     setSelectedDay(out);
     return out;
   }, [today, weekOffset]);
+
+  React.useEffect(() => {
+    const offsetDay = offsetDate.day(selectedDay.day()).format(DATE_FORMAT);
+    onSelectedDayChange?.(offsetDay);
+  }, [offsetDate]);
 
   const momentWeekDays = React.useMemo(() => {
     const dayNumbers = [0, 1, 2, 3, 4, 5, 6];
@@ -87,7 +93,7 @@ const HorizontalWeekDaysView = ({
         <RiArrowDropLeftLine
           size={40}
           className="text-slate-500 cursor-pointer hover:text-slate-600"
-          onClick={() => setWeekOffset((prev) => prev - 1)}
+          onClick={() => { setWeekOffset((prev) => prev - 1) }}
         />
         <div className="flex gap-3">
           {momentWeekDays.map((d) => {
@@ -103,7 +109,7 @@ const HorizontalWeekDaysView = ({
                 showBadge={showBadge}
                 onClick={() => {
                   setSelectedDay(d);
-                  onSelectedDayChange?.(d.toISOString());
+                  onSelectedDayChange?.(standFormat);
                 }}
               />
             );
