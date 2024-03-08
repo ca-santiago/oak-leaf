@@ -24,7 +24,7 @@ export type ManagerReducerAction =
 
 export type ManagerReducer = React.Reducer<ManagerState, ManagerReducerAction>;
 
-export const managerReducer: ManagerReducer = (state, action): ManagerState => {
+export const managerReducer: ManagerReducer = (state, action) => {
   switch (action.type) {
     case "SET_HABITS":
       return {

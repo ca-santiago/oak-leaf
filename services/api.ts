@@ -7,4 +7,5 @@ export const API_CONFIG = {
   incidencesUrl: `${baseURL}/incidences`,
   accountsUrl: `${baseURL}/accounts`,
   invitesUrl: `${baseURL}/invites`,
+  tasksUrl: `${baseURL}/tasks`,
 };

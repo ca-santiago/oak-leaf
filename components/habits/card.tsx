@@ -29,6 +29,7 @@ import {
   sortYearRange,
   splitDateRange,
 } from "@/helpers/incidences";
+import { useRouter } from "next/navigation";
 
 interface HabitDetailsProps {
   habit: Habit;
@@ -47,6 +48,8 @@ export const HabitDetails = ({
   onEditClick,
   onDelete,
 }: HabitDetailsProps) => {
+  const navigate = useRouter();
+
   const [year] = React.useState(moment().year().toString());
   const [rangeLimit] = React.useState(
     `${moment().subtract(7, "months").format(DATE_FORMAT)}:${moment()
@@ -209,12 +212,44 @@ export const HabitDetails = ({
     [`${colorSchema.base}`]: !isTodayCompleted,
   });
 
+  const renderStreaks = () => {
+    return (
+      !!streak && (
+        <div className="flex items-center gap-1">
+          <HiMiniFire className="text-red-400" />
+          <p>
+            {streak}{" "}
+            {streak > 0
+              ? streak > 1
+                ? "days  on a streak"
+                : "day on a streak"
+              : "no days"}
+          </p>
+        </div>
+      )
+    );
+  };
+
+  const handleConfirmClick = () => {
+    setShowConfirmation(false);
+    _delete();
+  };
+
+  const handleCardClick = () => {
+    navigate.push(`/habits/${habit.id}`);
+    // const w = screen.width;
+    // if (w < 1024) onEditClick();
+  };
+
   const CardHeader = () => (
     <div className="flex justify-between items-start select-none">
       <div>
-        <div className="flex flex-row gap-2 items-center text-slate-600">
+        <div
+          onClick={handleCardClick}
+          className="flex flex-row gap-2 items-center text-slate-600  cursor-pointer"
+        >
           <Icon.Icon size={Icon.size} />
-          <h4 className="font-semibold text-lg notranslate">
+          <h4 className="font-semibold text-lg notranslate hover:underline">
             {habit.habitName}
           </h4>
         </div>
@@ -244,34 +279,6 @@ export const HabitDetails = ({
     </div>
   );
 
-  const renderStreaks = () => {
-    return (
-      !!streak && (
-        <div className="flex items-center gap-1">
-          <HiMiniFire className="text-red-400" />
-          <p>
-            {streak}{" "}
-            {streak > 0
-              ? streak > 1
-                ? "days  on a streak"
-                : "day on a streak"
-              : "no days"}
-          </p>
-        </div>
-      )
-    );
-  };
-
-  const handleConfirmClick = () => {
-    setShowConfirmation(false);
-    _delete();
-  };
-
-  const handleCardClick = () => {
-    const w = screen.width;
-    if (w < 1024) onEditClick();
-  };
-
   return (
     <div className="w-full max-w-full relative md:max-w-xl overflow-hidden max-md:pb-2 pb-1 flex">
       <ConfirmationModal
@@ -282,10 +289,7 @@ export const HabitDetails = ({
       />
       <div
         className="p-3 z-10 shadow-line bg-white rounded-lg flex flex-col max-w-full justify-between max-lg:mx-auto"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleCardClick();
-        }}
+        onClick={(e) => { e.stopPropagation() }}
       >
         <CardHeader />
         <div

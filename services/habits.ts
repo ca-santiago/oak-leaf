@@ -17,6 +17,22 @@ export const getHabits = async (token: string): Promise<Habit[]> => {
   });
 };
 
+const getHabit = async (token: string, habitId: string) => {
+  return fetch(`${API_CONFIG.habitsUrl}/${habitId}`, {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  }).then(async (res) => {
+    if (res.status === 200) {
+      return (await res.json()).data;
+    }
+    if (res.status === 401) {
+      return [];
+    }
+  });
+};
+
 interface CreateHabitArgs {
   token: string;
   name: string;
@@ -94,7 +110,7 @@ export const updateHabit = async (args: UpdateHabitArgs) => {
       colorKey: args.colorKey || undefined,
       iconKey: args.iconKey || undefined,
       description: args.description || undefined,
-      completions: args.completions || undefined
+      completions: args.completions || undefined,
     }),
   })
     .then((data) => {
@@ -112,4 +128,5 @@ export const HabitService = {
   update: updateHabit,
   create: createHabit,
   delete: deleteHabit,
-}
+  getById: getHabit,
+};
