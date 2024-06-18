@@ -39,9 +39,15 @@ const getByHabitId = async (token: string, habitId: string): Promise<Task[]> => 
     if (res.status === 200) {
       return (await res.json()).data;
     }
-    if (res.status === 401) {
-      return [];
-    }
+    const meta = {
+      operation: 'getTasksByHabitId',
+      args: {
+        habitId,
+      },
+    };
+    console.log({ meta, response: res });
+
+    return [];
   });
 };
 
