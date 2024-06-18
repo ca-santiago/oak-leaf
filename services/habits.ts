@@ -27,9 +27,15 @@ const getHabit = async (token: string, habitId: string) => {
     if (res.status === 200) {
       return (await res.json()).data;
     }
-    if (res.status === 401) {
-      return [];
-    }
+    const meta = {
+      operation: 'getHabits',
+      args: {
+        habitId,
+      },
+    };
+    console.log({ meta, response: res });
+
+    return [];
   });
 };
 
