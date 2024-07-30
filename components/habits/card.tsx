@@ -236,9 +236,9 @@ export const HabitDetails = ({
   };
 
   const handleCardClick = () => {
-    navigate.push(`/habits/${habit.id}`);
-    // const w = screen.width;
-    // if (w < 1024) onEditClick();
+    // navigate.push(`/habits/${habit.id}`);
+    const w = screen.width;
+    if (w < 1024) onEditClick();
   };
 
   const CardHeader = () => (

@@ -229,151 +229,149 @@ export const HabitCreator = ({
         onClick={() => setState((prev) => ({ ...prev, showModal: true }))}
       />
       <Modal open={showModal || !!selectedHabit} onClose={handleOnClose}>
-        <div className="flex max-lg:items-end items-center h-full mx-auto max-sm:w-full max-lg:w-4/6 w-96">
-          <div className="w-full mx-auto h-fit bg-white shadow rounded-md flex flex-col gap-3 p-3 max-lg:rounded-b-none">
-            <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-xl">
-              {isEditing ? "Let's configure it" : "Let's start a new habit"}
+        <div className="w-full mx-auto h-fit flex flex-col gap-3 p-3">
+          <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-xl">
+            {isEditing ? "Let's configure it" : "Let's start a new habit"}
+          </h4>
+          <div className="mt-2">
+            <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+              Name
             </h4>
-            <div className="mt-2">
-              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
-                Name
-              </h4>
-              <input
-                type="text"
-                name="habitName"
-                value={habitName}
-                onChange={(e) =>
-                  setState((prev) => ({ ...prev, habitName: e.target.value }))
-                }
-                className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 p-1 px-2 w-full mt-1"
-              />
-            </div>
-            <div>
-              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
-                Description
-              </h4>
-              <textarea
-                name="habitDescription"
-                value={description}
-                onChange={(e) =>
-                  setState((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
-                className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 text-sm p-1 px-2 min-h-[32px] max-h-72 w-full mt-1"
-              />
-            </div>
-
-            <div>
-              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
-                Icons
-              </h4>
-              <div className="flex gap-2 flex-wrap mt-2">
-                {IconList.map(([key, { Icon, size }]) => {
-                  if (key === "default") return null;
-                  const iconKeyCn = cn(
-                    "rounded-md outline-none bg-slate-100 hover:bg-slate-100",
-                    "text-slate-400 flex items-center justify-center w-8 h-8",
-                    {
-                      ["border-slate-400 border text-slate-400"]:
-                        key === iconKey,
-                      ["border-slate-200 bg-slate-100"]: key !== iconKey,
-                    }
-                  );
-                  return (
-                    <button
-                      key={key}
-                      className={iconKeyCn}
-                      onClick={() => handleIconClick(key)}
-                    >
-                      <Icon size={size} />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
-                Colors
-              </h4>
-              <div className="flex gap-2 flex-wrap mt-2">
-                {ColorList.map(([key, { active }]) => {
-                  if (key === "default") return null;
-                  const colorKeyCn = cn(
-                    "flex items-center justify-center w-8 h-8",
-                    " rounded-md outline-none text-slate-400 bg-slate-50",
-                    {
-                      ["border-slate-400 border bg-slate-100"]:
-                        key === colorKey,
-                    }
-                  );
-                  return (
-                    <button
-                      key={key}
-                      className={colorKeyCn}
-                      onClick={() => handleColorClick(key)}
-                    >
-                      <div
-                        style={{ backgroundColor: active }}
-                        className="w-5 h-5 rounded"
-                      ></div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="flex gap-2 justify-end items-center">
-              {
-                <Modal open={isBusy} onClose={() => {}}>
-                  <BiLoaderAlt size={28} className="animate-spin text-white" />
-                </Modal>
+            <input
+              type="text"
+              name="habitName"
+              value={habitName}
+              onChange={(e) =>
+                setState((prev) => ({ ...prev, habitName: e.target.value }))
               }
+              className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 p-1 px-2 w-full mt-1"
+            />
+          </div>
+          <div>
+            <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+              Description
+            </h4>
+            <textarea
+              name="habitDescription"
+              value={description}
+              onChange={(e) =>
+                setState((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 text-sm p-1 px-2 min-h-[32px] max-h-72 w-full mt-1"
+            />
+          </div>
 
-              {isEditing && (
-                <div>
-                  <ConfirmationModal
-                    onCancel={() => setShowConfirmation(false)}
-                    onConfirm={() => handleConfirmClick(selectedHabit)}
-                    title={`Are you sure you want to delete this habit?`}
-                    show={showConfirmation}
-                  />
+          <div>
+            <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+              Icons
+            </h4>
+            <div className="flex gap-2 flex-wrap mt-2">
+              {IconList.map(([key, { Icon, size }]) => {
+                if (key === "default") return null;
+                const iconKeyCn = cn(
+                  "rounded-md outline-none bg-slate-100 hover:bg-slate-100",
+                  "text-slate-400 flex items-center justify-center w-8 h-8",
+                  {
+                    ["border-slate-400 border text-slate-400"]:
+                      key === iconKey,
+                    ["border-slate-200 bg-slate-100"]: key !== iconKey,
+                  }
+                );
+                return (
                   <button
-                    className={deleteBtnCn}
-                    onClick={() => setShowConfirmation(true)}
-                    disabled={isBusy}
+                    key={key}
+                    className={iconKeyCn}
+                    onClick={() => handleIconClick(key)}
                   >
-                    Delete
+                    <Icon size={size} />
                   </button>
-                </div>
-              )}
-
-              <button
-                className={saveBtnCn}
-                onClick={handleSaveUpdate}
-                disabled={!canCreate || isBusy}
-              >
-                {isEditing ? "Save" : "Create"}
-              </button>
+                );
+              })}
             </div>
+          </div>
 
-            {onHabitsLimit && !isEditing && (
-              <div className="text-slate-500 text-sm mt-2">
-                <p>
-                  Your current plan does not allow more than {plan.maxHabits}{" "}
-                  habits at a time
-                </p>
-                <p>
-                  Upgrade your plan{" "}
-                  <Link className="cursor-pointer text-blue-400" href="/plans">
-                    here
-                  </Link>
-                </p>
+          <div>
+            <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+              Colors
+            </h4>
+            <div className="flex gap-2 flex-wrap mt-2">
+              {ColorList.map(([key, { active }]) => {
+                if (key === "default") return null;
+                const colorKeyCn = cn(
+                  "flex items-center justify-center w-8 h-8",
+                  " rounded-md outline-none text-slate-400 bg-slate-50",
+                  {
+                    ["border-slate-400 border bg-slate-100"]:
+                      key === colorKey,
+                  }
+                );
+                return (
+                  <button
+                    key={key}
+                    className={colorKeyCn}
+                    onClick={() => handleColorClick(key)}
+                  >
+                    <div
+                      style={{ backgroundColor: active }}
+                      className="w-5 h-5 rounded"
+                    ></div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex gap-2 justify-end items-center">
+            { isBusy &&
+              <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full bg-black/5 rounded-md">
+                <BiLoaderAlt size={32} className="animate-spin text-slate-800" />
+              </div>
+            }
+
+            {isEditing && (
+              <div>
+                <ConfirmationModal
+                  onCancel={() => setShowConfirmation(false)}
+                  onConfirm={() => handleConfirmClick(selectedHabit)}
+                  title={`Are you sure you want to delete this habit?`}
+                  show={showConfirmation}
+                />
+                <button
+                  className={deleteBtnCn}
+                  onClick={() => setShowConfirmation(true)}
+                  disabled={isBusy}
+                >
+                  Delete
+                </button>
               </div>
             )}
+
+            <button
+              className={saveBtnCn}
+              onClick={handleSaveUpdate}
+              disabled={!canCreate || isBusy}
+            >
+              {isEditing ? "Save" : "Create"}
+            </button>
           </div>
+
+          {onHabitsLimit && !isEditing && (
+            <div className="text-slate-500 text-sm mt-2">
+              <p>
+                Your current plan does not allow more than {plan.maxHabits}{" "}
+                habits at a time
+              </p>
+              <p>
+                Upgrade your plan{" "}
+                <Link className="cursor-pointer text-blue-400" href="/plans">
+                  here
+                </Link>
+              </p>
+            </div>
+          )}
         </div>
       </Modal>
     </div>
