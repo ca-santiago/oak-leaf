@@ -1,27 +1,31 @@
 import { AccountDetails } from "@/components/account/details";
 import { AccountHeader } from "@/components/accountHeader";
-import { getAccountInfo } from "@/services/accounts";
+import { getAccountData } from "@/services/accounts";
 import { getUserInviteCode } from "@/services/plans";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { UserInviteCode } from "./inviteCode";
-import { Toaster } from "react-hot-toast";
 
 const Profile = async () => {
   const session = await getSession();
-  const { accessToken } = session!;
+  const { user } = session!;
 
-  const res = await getAccountInfo(accessToken!);
-  const inviteData = await getUserInviteCode(accessToken!);
+  const [
+    accountInfo,
+    inviteData,
+  ] = await Promise.all([
+    getAccountData({ userId: user.sub }),
+    getUserInviteCode(user.sub),
+  ]);
 
   return (
     <div className="min-h-screen bg-lightblue">
-      <AccountHeader session={session!} />
-      <AccountDetails data={res} />
-      {inviteData && (
+      <AccountHeader session={ session! } />
+      <AccountDetails data={ accountInfo } />
+      { inviteData &&
         <div className="mt-12">
-          <UserInviteCode accountInvite={inviteData} />
+          <UserInviteCode accountInvite={ inviteData } />
         </div>
-      )}
+      }
     </div>
   );
 };

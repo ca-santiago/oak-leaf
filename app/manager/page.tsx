@@ -1,22 +1,25 @@
-import { getHabits } from "@/services/habits";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { HabitsList } from "../../components/habits/list";
 import { AccountHeader } from "@/components/accountHeader";
-import { getAccountInfo } from "@/services/accounts";
+import { getAccountData } from "@/services/accounts";
 import { ManagerContextWrapper } from "./context";
+import { redirect } from "next/navigation";
+import { getAllHabits } from "@/services/habits";
 
 async function ManagerPage() {
   const session = await getSession();
-  const { accessToken } = session!;
+  const { accessToken, user } = session!;
 
-  const [habits, account] = await Promise.all([
-    getHabits(accessToken!),
-    getAccountInfo(accessToken!),
-  ]);
+  const account = await getAccountData({ userId: user.sub });
 
-  // console.log(session);
-  // console.log(habits);
-  // console.log(accountConfig);
+  if (!account) return redirect('/account-creation-fallback');
+
+  const habits = await getAllHabits({ userId: account.id });
+
+  // console.log({
+  //   account,
+  //   habits,
+  // });
 
   return (
     <div className="bg-[#ebeff4] min-h-screen">

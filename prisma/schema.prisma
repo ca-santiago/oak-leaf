@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Account {
+  id            String   @id @default(uuid())
+  externalId    String
+  preferredName String?
+  contactEmail  String
+  imageUri      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+
+  planType     String
+  planEndDate  DateTime
+  planInitDate DateTime
+
+  @@unique([externalId])
+}
+
+model AccountInvite {
+  id           String   @id @default(uuid())
+  accountId    String
+  inviteCode   String
+  createdAt    DateTime @default(now())
+  usedByUserId String?
+}
+
+model Habit {
+  id          String      @id @default(uuid())
+  userId      String
+  habitName   String
+  description String?
+  createdAt   DateTime    @default(now())
+  completions String      @db.Text()
+
+  iconKey  String
+  colorKey String
+
+  @@index([userId])
+  @@index([id])
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  date        String
+  status      String
+
+  ownerId     String
+  habitId     String
+
+  createdAt   DateTime @default(now())
+  @@index([ownerId, date])
+}

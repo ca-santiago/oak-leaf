@@ -149,7 +149,7 @@ const HabitDetails = (props: HabitDetailsProps) => {
             <div className="p-2 mt-4 gap-2 flex flex-col">
               {filteredTasks.length === 0 && <div>No Tasks for this habit</div>}
               {filteredTasks.map((task) => (
-                <TaskCard data={task} />
+                <TaskCard key={ task.id } data={ task } />
               ))}
             </div>
           </section>

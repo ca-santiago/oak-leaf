@@ -2,7 +2,7 @@ import { getInviteById } from "@/services/plans";
 import { InvalidInvitationPage } from "./invalid";
 import { ValidInvitationPage } from "./valid";
 
-export default async ({ params }: { params: { id: string } }) => {
+const Page = async ({ params }: { params: { id: string } }) => {
   const result = await getInviteById(params.id);
 
   if (!result || result?.usedByUserId) {
@@ -11,3 +11,5 @@ export default async ({ params }: { params: { id: string } }) => {
 
   return <ValidInvitationPage inviteCode={result.inviteCode} />;
 };
+
+export default Page;
