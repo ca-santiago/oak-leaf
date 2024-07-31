@@ -1,13 +1,14 @@
 {
   "name": "client",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "NODE_ENV=production next start",
     "lint": "next lint",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.3.0",
