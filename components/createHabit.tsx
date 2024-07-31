@@ -30,7 +30,7 @@ interface HabitCreatorProps {
 interface HabitCreatorState {
   showModal: boolean;
   habitName: string;
-  description: string;
+  description: string | null;
   colorKey: string;
   iconKey: string;
   isBusy: boolean;
@@ -87,48 +87,53 @@ export const HabitCreator = ({
     if (selectedHabit) {
       updateHabit({
         habitId: selectedHabit.id,
-        name: habitName,
-        description,
+        userId: account.id,
+
         colorKey,
+        completions: selectedHabit.completions,
+        description: description || undefined,
         iconKey,
-        token,
+        name: habitName,
       })
-        .then(() => {
-          onHabitUpdate({
-            habitName,
-            id: selectedHabit.id,
-            createdAt: selectedHabit.createdAt,
-            completions: selectedHabit.completions,
-            colorKey,
-            iconKey,
-            description,
-          });
-          restoreState();
-        })
-        .catch((err) => {
-          console.error(err);
+        .then(({ data, success }) => {
+          if (success) {
+            onHabitUpdate({
+              ...data,
+              // habitName,
+              // id: selectedHabit.id,
+              // createdAt: selectedHabit.createdAt,
+              // completions: selectedHabit.completions,
+              // colorKey,
+              // iconKey,
+              // description,
+            });
+            restoreState();
+            return;
+          }
+
           setState((prev) => ({
             ...prev,
             showModal: true,
             isBusy: false,
           }));
           toast.error("Could not save, please try again");
+        })
+        .catch((err: any) => {
+          console.error(err);
         });
       return;
     }
 
     createHabit({
+      userId: account.id,
       name: habitName,
-      description,
+      description: description || undefined,
       iconKey,
       colorKey,
-      token,
+      completions: '',
     })
       .then((data) => {
-        const newHabit: Habit = {
-          ...data,
-          incidences: [],
-        };
+        const newHabit: Habit = { ...data };
         onHabitCreate(newHabit);
         restoreState();
       })
@@ -155,14 +160,15 @@ export const HabitCreator = ({
 
     deleteHabit({
       habitId: h.id,
-      token,
+      userId: account.id,
     })
-      .then(() => {
-        restoreState();
-        onDelete?.(h);
-      })
-      .catch((err) => {
-        console.error(err);
+      .then(({ deleted }) => {
+        if (deleted) {
+          restoreState();
+          onDelete?.(h);
+          return;
+        }
+
         setState((prev) => ({
           ...prev,
           isBusy: false,
@@ -200,8 +206,8 @@ export const HabitCreator = ({
     if (selectedHabit) {
       setState((prev) => ({
         ...prev,
-        showModal: true,
         ...selectedHabit,
+        showModal: true,
       }));
     }
   }, [selectedHabit]);
@@ -253,7 +259,7 @@ export const HabitCreator = ({
             </h4>
             <textarea
               name="habitDescription"
-              value={description}
+              value={description || ''}
               onChange={(e) =>
                 setState((prev) => ({
                   ...prev,

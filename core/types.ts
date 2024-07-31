@@ -1,34 +1,58 @@
-export interface Habit {
-  id: string;
-  habitName: string;
-  description?: string;
-  createdAt: string;
-  completions: string;
+export type {
+  Habit,
+  Account,
+  AccountInvite,
+} from '@prisma/client';
 
-  iconKey: string;
-  colorKey: string;
+interface FlaggedResponse<T> {
+  success: boolean;
+  data: T | null;
+};
+
+interface FlaggedSuccess<T> extends FlaggedResponse<T> {
+  success: true,
+  data: T;
 }
 
-export interface Account {
-  contactEmail: string;
-  createdAt: string;
-  externalId: string;
-  id: string;
-  imageUri: string;
-  planEndDate: string;
-  planInitDate: string;
-  planType: string;
-  preferredName: string;
-  updatedAt: string;
+interface FlaggedFailure<T> extends FlaggedResponse<T> {
+  success: false;
+  data: null;
 }
 
-export interface AccountInvite {
-  id: string;
-  accountId: string;
-  inviteCode: string;
-  createdAt: string;
-  usedByUserId?: string;
-}
+export type FlaggedResult<T> = FlaggedSuccess<T> | FlaggedFailure<T>;
+
+// export interface Habit {
+//   id: string;
+//   userId: string;
+//   habitName: string;
+//   description: string | null;
+//   createdAt: string;
+//   completions: string;
+
+//   iconKey: string;
+//   colorKey: string;
+// }
+
+// export interface Account {
+//   contactEmail: string;
+//   createdAt: string;
+//   externalId: string;
+//   id: string;
+//   imageUri: string | null;
+//   planEndDate: string;
+//   planInitDate: string;
+//   planType: string;
+//   preferredName: string | null;
+//   updatedAt: string;
+// }
+
+// export interface AccountInvite {
+//   id: string;
+//   accountId: string;
+//   inviteCode: string;
+//   createdAt: string;
+//   usedByUserId?: string;
+// }
 
 // Internal types
 

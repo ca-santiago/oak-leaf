@@ -1,17 +1,13 @@
 import { PLANS, extendedPlanDefs } from "@/core/constants";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { PlanCard } from "./planCard";
-import { getAccountInfo } from "@/services/accounts";
-import { Account } from "@/core/types";
+import { getAccountData } from "@/services/accounts";
 
 const _plans = Object.values(PLANS);
 
 async function PlansPage() {
   const session = await getSession();
-  let account: Account;
-  if (session?.accessToken) {
-    account = await getAccountInfo(session.accessToken);
-  }
+  const account = await getAccountData(session!.user.sub);
 
   return (
     <div className="min-h-screen bg-lightblue pt-10 md:pt-32">

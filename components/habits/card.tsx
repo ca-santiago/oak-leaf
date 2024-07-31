@@ -16,7 +16,7 @@ import { YearRangeData, Habit } from "@/core/types";
 import { DATE_FORMAT } from "@/core/constants";
 import { mapDateRangeToActivityArray } from "@/helpers/activity";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
-import { HabitService, deleteHabit } from "@/services/habits";
+import { deleteHabit, updateHabit } from "@/services/habits";
 import {
   calculateStreak,
   deserializeCompletionsRecord,
@@ -30,6 +30,7 @@ import {
   splitDateRange,
 } from "@/helpers/incidences";
 import { useRouter } from "next/navigation";
+import { useManagerContext } from "@/context/manager";
 
 interface HabitDetailsProps {
   habit: Habit;
@@ -48,8 +49,7 @@ export const HabitDetails = ({
   onEditClick,
   onDelete,
 }: HabitDetailsProps) => {
-  const navigate = useRouter();
-
+  const { state: { account } } = useManagerContext();
   const [year] = React.useState(moment().year().toString());
   const [rangeLimit] = React.useState(
     `${moment().subtract(7, "months").format(DATE_FORMAT)}:${moment()
@@ -97,12 +97,18 @@ export const HabitDetails = ({
     setSaving(true);
     setDateRanges(newIncidences);
 
-    HabitService.save({
+    updateHabit({
+      userId: account.id,
       habitId: habit.id,
-      token,
       completions: serializeDateRangeData(newIncidences),
+      colorKey: habit.colorKey,
+      description: habit.description || undefined,
+      iconKey: habit.iconKey,
+      name: habit.habitName,
     })
-      .catch(() => {
+      .then(({ success, data }) => {
+        if (success) return;
+
         toast.error(`Error saving`);
         setDateRanges(oldIncidences);
       })
@@ -185,11 +191,10 @@ export const HabitDetails = ({
 
     deleteHabit({
       habitId: habit.id,
-      token,
+      userId: account.id,
     })
-      .then(() => onDelete())
-      .catch((err) => {
-        console.error(err);
+      .then(({ deleted }) => {
+        if (deleted) onDelete();
         toast.error("Could not delete habit, please try again");
       })
       .finally(() => {

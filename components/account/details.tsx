@@ -10,17 +10,19 @@ interface AccountDetailsProps {
 export const AccountDetails = ({ data }: AccountDetailsProps) => {
   return (
     <div className="mt-2 flex flex-col items-center">
-      <div>
-        <Image
-          className="rounded-full"
-          width={100}
-          height={100}
-          blurDataURL="true"
-          alt="profile picture"
-          draggable={false}
-          src={data.imageUri}
-        />
-      </div>
+      { data.imageUri &&
+        <div>
+          <Image
+            className="rounded-full"
+            width={100}
+            height={100}
+            blurDataURL="true"
+            alt="profile picture"
+            draggable={false}
+            src={data.imageUri}
+          />
+        </div>
+      }
       <h1 className="font-semibold text-slate-700 text-lg mt-2">
         {data.preferredName}
       </h1>
