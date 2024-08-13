@@ -16,6 +16,8 @@ import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { PLANS, defaultPlan } from "@/core/constants";
 import { useManagerContext } from "@/context/manager";
 import { cleanSelectedHabit } from "@/context/manager/actions";
+import DayOfWeekSelector from "./habits/day-of-wee-selector";
+
 
 const IconList = Object.entries(IconMapping);
 const ColorList = Object.entries(ColorsMapping);
@@ -34,6 +36,9 @@ interface HabitCreatorState {
   colorKey: string;
   iconKey: string;
   isBusy: boolean;
+  daysOfWeekToRemind: string;
+  hourToRemind: string;
+  // periodicity: ReminderConfig;
 }
 
 export const HabitCreator = ({
@@ -43,7 +48,11 @@ export const HabitCreator = ({
   onDelete,
 }: HabitCreatorProps) => {
   const {
-    state: { account, selectedHabit, habits, token },
+    state: {
+      account,
+      selectedHabit,
+      habits
+    },
     dispatch,
   } = useManagerContext();
 
@@ -56,13 +65,11 @@ export const HabitCreator = ({
     iconKey: "",
     isBusy: false,
     showModal: startOpen || !!selectedHabit,
+    daysOfWeekToRemind: "",
+    hourToRemind: "",
   });
+
   const [showConfirmation, setShowConfirmation] = React.useState(false);
-
-  const { habitName, description, colorKey, iconKey, isBusy, showModal } =
-    state;
-
-  const plan = PLANS[account.planType] || defaultPlan;
 
   const restoreState = () => {
     setState({
@@ -72,6 +79,8 @@ export const HabitCreator = ({
       description: "",
       colorKey: "",
       iconKey: "",
+      daysOfWeekToRemind: "",
+      hourToRemind: "",
     });
     dispatch(cleanSelectedHabit());
   };
@@ -93,6 +102,10 @@ export const HabitCreator = ({
         completions: selectedHabit.completions,
         description: description || undefined,
         iconKey,
+
+        daysOfWeekToRemind,
+        hourToRemind,
+
         name: habitName,
       })
         .then(({ data, success }) => {
@@ -131,6 +144,8 @@ export const HabitCreator = ({
       iconKey,
       colorKey,
       completions: '',
+      daysOfWeekToRemind,
+      hourToRemind,
     })
       .then((data) => {
         const newHabit: Habit = { ...data };
@@ -198,19 +213,45 @@ export const HabitCreator = ({
     }));
   };
 
-  const onHabitsLimit = habits.length >= plan.maxHabits;
-  const isValidHabit = habitName.length > 2 && colorKey && iconKey;
-  const canCreate = isValidHabit && (isEditing ? true : !onHabitsLimit);
-
   React.useEffect(() => {
     if (selectedHabit) {
       setState((prev) => ({
         ...prev,
         ...selectedHabit,
         showModal: true,
+        daysOfWeekToRemind: selectedHabit.daysOfWeek || "",
+        hourToRemind: selectedHabit.hourOfDay || "",
       }));
     }
   }, [selectedHabit]);
+
+  const initialDaysOfWeekSelected = React.useMemo(() => {
+    if (!selectedHabit || !selectedHabit.daysOfWeek) return [];
+    
+    const daysArr = selectedHabit.daysOfWeek.split(',');
+    console.log({
+      selectedHabit,
+      daysArr,
+    });
+    return daysArr.length > 0 ? daysArr.map(d => parseInt(d)) : [];
+  }, [selectedHabit]);
+
+  const {
+    habitName,
+    description,
+    colorKey,
+    iconKey,
+    isBusy,
+    showModal,
+    daysOfWeekToRemind,
+    hourToRemind,
+  } = state;
+
+  const plan = PLANS[account.planType] || defaultPlan;
+
+  const onHabitsLimit = habits.length >= plan.maxHabits;
+  const isValidHabit = habitName.length > 2 && colorKey && iconKey;
+  const canCreate = isValidHabit && (isEditing ? true : !onHabitsLimit);
 
   const canCreateAndNotBusy = canCreate && !isBusy;
 
@@ -267,6 +308,19 @@ export const HabitCreator = ({
                 }))
               }
               className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 text-sm p-1 px-2 min-h-[32px] max-h-72 w-full mt-1"
+            />
+          </div>
+
+          <div>
+            <div className="text-sm text-slate-400 font-normal mb-0 select-none">Remind on days</div>
+            <DayOfWeekSelector
+              initialSelection={ initialDaysOfWeekSelected }
+              onSelectionChange={ (selectedDays) => {
+                setState(prev => ({
+                  ...prev,
+                  daysOfWeekToRemind: selectedDays.join(',')
+                }));
+              }}
             />
           </div>
 

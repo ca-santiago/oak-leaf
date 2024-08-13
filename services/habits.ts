@@ -1,7 +1,7 @@
 'use server';
 
 import { API_CONFIG } from "./api";
-import { FlaggedResult, Habit, ReminderConfig } from "../core/types";
+import { FlaggedResult, Habit } from "../core/types";
 import prisma from "@/prisma/db";
 
 // export const getHabits = async (token: string): Promise<Habit[]> => {
@@ -168,7 +168,8 @@ interface CreateHabitArgs {
   iconKey: string;
   name: string;
   userId: string;
-  reminder?: ReminderConfig;
+  daysOfWeekToRemind?: string;
+  hourToRemind?: string;
 }
 
 export const createHabit = async (args: CreateHabitArgs): Promise<Habit> => {
@@ -178,11 +179,12 @@ export const createHabit = async (args: CreateHabitArgs): Promise<Habit> => {
     description,
     iconKey,
     name,
-    reminder,
+    daysOfWeekToRemind,
+    hourToRemind,
     userId,
   } = args;
 
-  const periodicity = reminder ? `${reminder.daysOfWeek}-${reminder.hourOfDay}` : undefined;
+  const periodicity = daysOfWeekToRemind && hourToRemind ? `${ daysOfWeekToRemind }-${ hourToRemind }` : undefined;
 
   try {
     const instance = await prisma.habit.create({
@@ -193,8 +195,8 @@ export const createHabit = async (args: CreateHabitArgs): Promise<Habit> => {
         habitName: name,
         description,
         completions,
-        daysOfWeek: reminder?.daysOfWeek || undefined,
-        hourOfDay: reminder?.hourOfDay || undefined,
+        daysOfWeek: daysOfWeekToRemind,
+        hourOfDay: hourToRemind,
         periodicity: periodicity,
       }
     });
@@ -214,7 +216,8 @@ interface UpdateHabitArgs {
   description?: string;
   iconKey?: string;
   name?: string;
-  reminder?: ReminderConfig;
+  daysOfWeekToRemind?: string;
+  hourToRemind?: string;
 }
 
 export const updateHabit = async (args: UpdateHabitArgs): Promise<FlaggedResult<Habit>> => {
@@ -225,11 +228,12 @@ export const updateHabit = async (args: UpdateHabitArgs): Promise<FlaggedResult<
     habitId,
     iconKey,
     name,
-    reminder,
+    daysOfWeekToRemind,
+    hourToRemind,
     userId,
   } = args;
 
-  const periodicity = reminder ? `${reminder.daysOfWeek}-${reminder.hourOfDay}` : undefined;
+  const periodicity = daysOfWeekToRemind && hourToRemind ? `${ daysOfWeekToRemind }-${ hourToRemind }` : undefined;
 
   try {
     const updated = await prisma.habit.update({
@@ -239,8 +243,8 @@ export const updateHabit = async (args: UpdateHabitArgs): Promise<FlaggedResult<
         completions,
         description,
         habitName: name,
-        daysOfWeek: reminder?.daysOfWeek,
-        hourOfDay: reminder?.hourOfDay,
+        daysOfWeek: daysOfWeekToRemind,
+        hourOfDay: hourToRemind,
         periodicity,
       },
       where: {
