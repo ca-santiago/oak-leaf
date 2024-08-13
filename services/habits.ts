@@ -182,6 +182,8 @@ export const createHabit = async (args: CreateHabitArgs): Promise<Habit> => {
     userId,
   } = args;
 
+  const periodicity = reminder ? `${reminder.daysOfWeek}-${reminder.hourOfDay}` : undefined;
+
   try {
     const instance = await prisma.habit.create({
       data: {
@@ -193,6 +195,7 @@ export const createHabit = async (args: CreateHabitArgs): Promise<Habit> => {
         completions,
         daysOfWeek: reminder?.daysOfWeek || undefined,
         hourOfDay: reminder?.hourOfDay || undefined,
+        periodicity: periodicity,
       }
     });
     return instance;
@@ -226,6 +229,8 @@ export const updateHabit = async (args: UpdateHabitArgs): Promise<FlaggedResult<
     userId,
   } = args;
 
+  const periodicity = reminder ? `${reminder.daysOfWeek}-${reminder.hourOfDay}` : undefined;
+
   try {
     const updated = await prisma.habit.update({
       data: {
@@ -236,6 +241,7 @@ export const updateHabit = async (args: UpdateHabitArgs): Promise<FlaggedResult<
         habitName: name,
         daysOfWeek: reminder?.daysOfWeek,
         hourOfDay: reminder?.hourOfDay,
+        periodicity,
       },
       where: {
         id: habitId,
