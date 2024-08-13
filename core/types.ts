@@ -21,6 +21,11 @@ interface FlaggedFailure<T> extends FlaggedResponse<T> {
 
 export type FlaggedResult<T> = FlaggedSuccess<T> | FlaggedFailure<T>;
 
+export interface ReminderConfig {
+  daysOfWeek: string;
+  hourOfDay: string;
+}
+
 // export interface Habit {
 //   id: string;
 //   userId: string;

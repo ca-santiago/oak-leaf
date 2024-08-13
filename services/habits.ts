@@ -1,7 +1,7 @@
 'use server';
 
 import { API_CONFIG } from "./api";
-import { FlaggedResult, Habit } from "../core/types";
+import { FlaggedResult, Habit, ReminderConfig } from "../core/types";
 import prisma from "@/prisma/db";
 
 // export const getHabits = async (token: string): Promise<Habit[]> => {
@@ -168,16 +168,20 @@ interface CreateHabitArgs {
   iconKey: string;
   name: string;
   userId: string;
+  reminder?: ReminderConfig;
 }
 
-export const createHabit = async ({
-  colorKey,
-  completions = '',
-  description,
-  iconKey,
-  name,
-  userId,
-}: CreateHabitArgs): Promise<Habit> => {
+export const createHabit = async (args: CreateHabitArgs): Promise<Habit> => {
+  const {
+    colorKey,
+    completions = '',
+    description,
+    iconKey,
+    name,
+    reminder,
+    userId,
+  } = args;
+
   try {
     const instance = await prisma.habit.create({
       data: {
@@ -187,6 +191,8 @@ export const createHabit = async ({
         habitName: name,
         description,
         completions,
+        daysOfWeek: reminder?.daysOfWeek || undefined,
+        hourOfDay: reminder?.hourOfDay || undefined,
       }
     });
     return instance;
@@ -205,17 +211,21 @@ interface UpdateHabitArgs {
   description?: string;
   iconKey?: string;
   name?: string;
+  reminder?: ReminderConfig;
 }
 
-export const updateHabit = async ({
-  colorKey,
-  completions,
-  description,
-  habitId,
-  iconKey,
-  name,
-  userId,
-}: UpdateHabitArgs): Promise<FlaggedResult<Habit>> => {
+export const updateHabit = async (args: UpdateHabitArgs): Promise<FlaggedResult<Habit>> => {
+  const {
+    colorKey,
+    completions,
+    description,
+    habitId,
+    iconKey,
+    name,
+    reminder,
+    userId,
+  } = args;
+
   try {
     const updated = await prisma.habit.update({
       data: {
@@ -224,6 +234,8 @@ export const updateHabit = async ({
         completions,
         description,
         habitName: name,
+        daysOfWeek: reminder?.daysOfWeek,
+        hourOfDay: reminder?.hourOfDay,
       },
       where: {
         id: habitId,

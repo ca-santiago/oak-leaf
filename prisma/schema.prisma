@@ -40,6 +40,12 @@ model Habit {
   createdAt   DateTime    @default(now())
   completions String      @db.Text()
 
+  daysOfWeek  String?
+  hourOfDay   String?
+
+  periodicity String?
+
+
   iconKey  String
   colorKey String
 
