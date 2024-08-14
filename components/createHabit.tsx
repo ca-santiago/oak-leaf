@@ -41,6 +41,24 @@ interface HabitCreatorState {
   // periodicity: ReminderConfig;
 }
 
+const _INITIAL_STATE: HabitCreatorState = {
+  habitName: "",
+  description: "",
+  colorKey: "",
+  iconKey: "",
+  isBusy: false,
+  showModal: false,
+  daysOfWeekToRemind: "",
+  hourToRemind: "00:00",
+};
+
+const getInitialState = (override: Partial<HabitCreatorState>): HabitCreatorState => {
+  return ({
+    ..._INITIAL_STATE,
+    ...override,
+  });
+}
+
 export const HabitCreator = ({
   startOpen,
   onHabitCreate,
@@ -58,30 +76,16 @@ export const HabitCreator = ({
 
   const isEditing = !!selectedHabit;
 
-  const [state, setState] = React.useState<HabitCreatorState>({
-    habitName: "",
-    description: "",
-    colorKey: "",
-    iconKey: "",
-    isBusy: false,
-    showModal: startOpen || !!selectedHabit,
-    daysOfWeekToRemind: "",
-    hourToRemind: "",
-  });
+  const [state, setState] = React.useState<HabitCreatorState>(
+    getInitialState({
+      showModal: startOpen || !!selectedHabit, 
+    })
+  );
 
   const [showConfirmation, setShowConfirmation] = React.useState(false);
 
   const restoreState = () => {
-    setState({
-      isBusy: false,
-      showModal: false,
-      habitName: "",
-      description: "",
-      colorKey: "",
-      iconKey: "",
-      daysOfWeekToRemind: "",
-      hourToRemind: "",
-    });
+    setState(_INITIAL_STATE);
     dispatch(cleanSelectedHabit());
   };
 
@@ -213,26 +217,30 @@ export const HabitCreator = ({
     }));
   };
 
+  const handleReminderHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e) return;
+
+    setState(prev => ({
+      ...prev,
+      hourToRemind: e.target.value,
+    }));
+  }
+
   React.useEffect(() => {
     if (selectedHabit) {
       setState((prev) => ({
         ...prev,
         ...selectedHabit,
         showModal: true,
-        daysOfWeekToRemind: selectedHabit.daysOfWeek || "",
-        hourToRemind: selectedHabit.hourOfDay || "",
+        hourToRemind: selectedHabit.hourOfDay || _INITIAL_STATE.hourToRemind,
       }));
     }
   }, [selectedHabit]);
 
   const initialDaysOfWeekSelected = React.useMemo(() => {
     if (!selectedHabit || !selectedHabit.daysOfWeek) return [];
-    
+
     const daysArr = selectedHabit.daysOfWeek.split(',');
-    console.log({
-      selectedHabit,
-      daysArr,
-    });
     return daysArr.length > 0 ? daysArr.map(d => parseInt(d)) : [];
   }, [selectedHabit]);
 
@@ -322,6 +330,25 @@ export const HabitCreator = ({
                 }));
               }}
             />
+          </div>
+
+          <div className="flex gap-2 items-center">
+            <label htmlFor="hour" className="text-sm text-slate-400 font-normal mb-0 select-none">At hour</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 end-0 top-0 flex items-center pe-3 pointer-events-none">
+                <svg className="w-4 h-4 text-slate-500 dark:text-slate-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clipRule="evenodd"/>
+                </svg>
+              </div>
+              <input
+                className="bg-slate-50 border leading-none border-gray-300 text-slate-500 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-2 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 [&::-webkit-calendar-picker-indicator]:opacity-0"
+                type="time"
+                id="hour"
+                value={ state.hourToRemind }
+                onChange={ handleReminderHourChange }
+                required
+              />
+            </div>
           </div>
 
           <div>
