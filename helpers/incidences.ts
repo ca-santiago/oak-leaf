@@ -1,5 +1,5 @@
 import { DATE_FORMAT } from "@/core/constants";
-import { YearRangeData } from "@/core/types";
+import { YearRangeCollection, YearRange } from "@/core/types";
 import moment from "moment";
 
 function extractMonthAndDay(str: string): string {
@@ -7,9 +7,9 @@ function extractMonthAndDay(str: string): string {
 }
 
 export function mergeDateOnYearRangeDataV2(
-  yearRange: YearRangeData,
+  yearRange: YearRange,
   givenDate: string
-): YearRangeData {
+): YearRange {
   const { year, ranges } = yearRange;
   const dateToMerge = new Date(givenDate);
   const stringDate = extractMonthAndDay(givenDate);
@@ -90,9 +90,9 @@ export function mergeDateOnYearRangeDataV2(
 }
 
 export function mergeDateOnYearRangeData(
-  yearRange: YearRangeData,
+  yearRange: YearRange,
   givenDate: string
-): YearRangeData {
+): YearRange {
   const { year, ranges } = yearRange;
   const given = new Date(givenDate);
   const _givenDate = extractMonthAndDay(givenDate);
@@ -159,7 +159,7 @@ export function mergeDateOnYearRangeData(
 }
 
 export const findRangesByYearOrCreate = (
-  rangesArray: YearRangeData[],
+  rangesArray: YearRangeCollection,
   year: string
 ) => {
   const emptyNewYearRange = { ranges: [], year };
@@ -167,7 +167,7 @@ export const findRangesByYearOrCreate = (
 };
 
 export const filterAndClampYearRangesByDateLimits = (
-  yRanges: YearRangeData[],
+  yRanges: YearRangeCollection,
   dateRangeAsLimit: string
 ): string[] => {
   const filteredRanges: string[] = [];
@@ -208,9 +208,9 @@ export const filterAndClampYearRangesByDateLimits = (
  * @argument givenDate: A date in the format of YYYY-MM-dd
  */
 export function removeDateFromYearRangeData(
-  dateRanges: YearRangeData,
+  dateRanges: YearRange,
   givenDate: string
-): YearRangeData {
+): YearRange {
   const { year, ranges } = dateRanges;
   const updatedRanges = Array.from(ranges);
   const dateToFind = new Date(givenDate);
@@ -301,7 +301,7 @@ export function joinDateRangeArr(str: string[]): string {
   return str.join(",");
 }
 
-export function yearRangeDataToYearRanges(YRs: YearRangeData[]): string[] {
+export function yearRangeDataToYearRanges(YRs: YearRangeCollection): string[] {
   const filtered = YRs.filter((y) => y.ranges.length);
   return filtered.map((yr) => `${yr.year}=${joinDateRangeArr(yr.ranges)}`);
 }
@@ -310,9 +310,9 @@ export function yearRangesToCompletionsRecord(str: string[]): string {
   return str.join("|");
 }
 
-export function deserializeCompletionsRecord(str: string): YearRangeData[] {
+export function deserializeCompletionsRecord(str: string): YearRangeCollection {
   if (!str) return []; // CompletionsRecord can be and empty for new habits
-  const out: YearRangeData[] = [];
+  const out: YearRangeCollection = [];
   const yearRanges = splitCompletionsRecord(str);
   yearRanges.forEach((range) => {
     const [year, dateRanges] = splitYearRanges(range);
@@ -322,7 +322,7 @@ export function deserializeCompletionsRecord(str: string): YearRangeData[] {
   return out;
 }
 
-export function serializeDateRangeData(ranges: YearRangeData[]): string {
+export function serializeDateRangeData(ranges: YearRangeCollection): string {
   // Do not save empty ranges
   const filteredRanges = ranges.filter((range) => range.ranges.length > 0);
   const yearRanges = yearRangeDataToYearRanges(filteredRanges);
@@ -397,6 +397,6 @@ export const calculateStreak = (ranges: string[]) => {
   return 0;
 };
 
-export const sortYearRange = (yRanges: YearRangeData[]) => {
+export const sortYearRange = (yRanges: YearRangeCollection) => {
   return yRanges.sort((a, b) => Number(a.year) - Number(b.year));
 };

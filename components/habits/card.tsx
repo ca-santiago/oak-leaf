@@ -12,7 +12,7 @@ import { BsTrash2Fill } from "react-icons/bs";
 import { BiLoaderAlt } from "react-icons/bi";
 import { HiMiniFire } from "react-icons/hi2";
 
-import { YearRangeData, Habit } from "@/core/types";
+import { YearRange, Habit } from "@/core/types";
 import { DATE_FORMAT } from "@/core/constants";
 import { mapDateRangeToActivityArray } from "@/helpers/activity";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
@@ -29,7 +29,6 @@ import {
   sortYearRange,
   splitDateRange,
 } from "@/helpers/incidences";
-import { useRouter } from "next/navigation";
 import { useManagerContext } from "@/context/manager";
 
 interface HabitDetailsProps {
@@ -60,7 +59,7 @@ export const HabitDetails = ({
   const [saving, setSaving] = React.useState(false);
   const [showConfirmation, setShowConfirmation] = React.useState(false);
 
-  const [dateRanges, setDateRanges] = React.useState<YearRangeData[]>(
+  const [dateRanges, setDateRanges] = React.useState<YearRange[]>(
     deserializeCompletionsRecord(habit.completions)
   );
 
@@ -91,8 +90,8 @@ export const HabitDetails = ({
   }, []);
 
   const saveIncidences = (
-    newIncidences: YearRangeData[],
-    oldIncidences: YearRangeData[]
+    newIncidences: YearRange[],
+    oldIncidences: YearRange[]
   ) => {
     setSaving(true);
     setDateRanges(newIncidences);
@@ -158,8 +157,8 @@ export const HabitDetails = ({
     if (loading || saving) return;
 
     const formatted = moment(ac.date).tz(TZ).format(DATE_FORMAT);
-    // Get the year from the date
     const [y] = formatted.split("-");
+    // Get the year from the date
     const rangeToUpdate = findRangesByYearOrCreate(dateRanges, y);
     const updatedRange = ac.count
       ? removeDateFromYearRangeData(rangeToUpdate, formatted)
@@ -167,6 +166,7 @@ export const HabitDetails = ({
 
     const filteredDateRanges = dateRanges.filter((r) => r.year !== y);
     filteredDateRanges.push(updatedRange);
+
     saveIncidences(sortYearRange(filteredDateRanges), dateRanges);
   };
 
@@ -175,13 +175,16 @@ export const HabitDetails = ({
 
     // Get the year from the date
     const [y] = TODAY.split("-");
-    const rangeToUpdate = findRangesByYearOrCreate(dateRanges, y);
+    const rangeToUpdate = findRangesByYearOrCreate(dateRanges, y);  
     const newRanges = isTodayCompleted
       ? removeDateFromYearRangeData(rangeToUpdate, TODAY)
       : mergeDateOnYearRangeDataV2(rangeToUpdate, TODAY);
 
+    // create a new list excluding the current year
     const filteredDateRanges = dateRanges.filter((r) => r.year !== year);
+    // adding the new updated ranges for this year
     filteredDateRanges.push(newRanges);
+
     saveIncidences(sortYearRange(filteredDateRanges), dateRanges);
   };
 

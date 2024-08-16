@@ -3,6 +3,7 @@
 import { API_CONFIG } from "./api";
 import { FlaggedResult, Habit } from "../core/types";
 import prisma from "@/prisma/db";
+import { revalidatePath } from "next/cache";
 
 // export const getHabits = async (token: string): Promise<Habit[]> => {
 //   return fetch(`${API_CONFIG.habitsUrl}`, {
@@ -252,7 +253,7 @@ export const updateHabit = async (args: UpdateHabitArgs): Promise<FlaggedResult<
         userId,
       }
     });
-
+    revalidatePath('/');
     return {
       success: true,
       data: updated as Habit,

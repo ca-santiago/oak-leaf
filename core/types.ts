@@ -56,10 +56,12 @@ export type FlaggedResult<T> = FlaggedSuccess<T> | FlaggedFailure<T>;
 
 // Internal types
 
-export interface YearRangeData {
+export interface YearRange {
   year: string;
   ranges: string[];
 }
+
+export type YearRangeCollection = YearRange[];
 
 // date               MM-dd                           02-13
 // dateRange          <date>:<date>                   02-13:04:25

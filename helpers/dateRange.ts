@@ -1,4 +1,4 @@
-import { YearRangeData } from "@/core/types";
+import { YearRange } from "@/core/types";
 import { Activity } from "react-activity-calendar";
 import { mapDateRangeToActivityArray } from "./activity";
 

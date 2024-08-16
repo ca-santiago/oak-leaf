@@ -1,4 +1,4 @@
-import { YearRangeData } from "@/core/types";
+import { YearRange } from "@/core/types";
 import {
   deserializeCompletionsRecord,
   joinDateRangeArr,
@@ -16,14 +16,14 @@ describe("Incidences serialization", () => {
   test("deserializeCompletionsRecord", () => {
     const ranges = "2023=02-13:04-25,04-27:08-05|2024=01-01:01-01,01-03:01-05";
     const result = deserializeCompletionsRecord(ranges);
-    expect(result).toEqual<YearRangeData[]>([
+    expect(result).toEqual<YearRange[]>([
       { year: "2023", ranges: ["02-13:04-25", "04-27:08-05"] },
       { year: "2024", ranges: ["01-01:01-01", "01-03:01-05"] },
     ]);
   });
 
   test("serializeDateRangeData", () => {
-    const dRanges: YearRangeData[] = [
+    const dRanges: YearRange[] = [
       { year: "2021", ranges: ["01-17:03-24", "07-27:08-05"] },
       { year: "1999", ranges: ["01-11:02-12", "01-03:01-05"] },
     ];
@@ -65,7 +65,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
     const input = "2015-02-10";
     const ranges = ["02-12:02-14", "03-02:03-20"];
     const year = "2015";
-    const yRange: YearRangeData = {
+    const yRange: YearRange = {
       ranges,
       year,
     };
@@ -81,7 +81,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
     const input = "2015-02-16";
     const ranges = ["02-12:02-15", "03-02:03-20"];
     const year = "2015";
-    const yRange: YearRangeData = {
+    const yRange: YearRange = {
       ranges,
       year,
     };
@@ -94,7 +94,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
     const input = "2015-02-11";
     const ranges = ["02-12:02-15", "03-02:03-20"];
     const year = "2015";
-    const yRange: YearRangeData = {
+    const yRange: YearRange = {
       ranges,
       year,
     };
@@ -107,7 +107,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
     const input = "2015-03-01";
     const ranges = ["02-12:02-15", "03-02:03-20"];
     const year = "2015";
-    const yRange: YearRangeData = {
+    const yRange: YearRange = {
       ranges,
       year,
     };
@@ -117,7 +117,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
   });
 
   test("Merge two ranges if givenDate is in between", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: ["12-01:12-03", "12-05:12-08"],
     };
@@ -128,7 +128,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
   });
 
   test("Merge two ranges givenDate create and overlap", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: ["12-01:12-04", "12-05:12-08"],
     };
@@ -139,7 +139,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
   });
 
   test("just insert the givenDate when ranges is 0", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: [],
     };
@@ -150,7 +150,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
   });
 
   test("insert date at end if is the most new", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       ranges: ["11-30:12-04"],
       year: "2023",
     };
@@ -163,7 +163,7 @@ describe("mergeDateOnYearRangeDataV2", () => {
 
 describe("mergeDateOnYearRangeData", () => {
   test("Merges two overlapping intervals when givenDate fills the gap", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: ["12-01:12-04", "12-06:12-08"],
     };
@@ -177,7 +177,7 @@ describe("mergeDateOnYearRangeData", () => {
   });
 
   test("Merges adjacent ranges when given date extends both ranges", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: ["12-01:12-04", "12-05:12-08"],
     };
@@ -191,7 +191,7 @@ describe("mergeDateOnYearRangeData", () => {
   });
 
   test("Merges adjacent ranges when given date extends the first range", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: ["12-01:12-04", "12-05:12-08"],
     };
@@ -205,7 +205,7 @@ describe("mergeDateOnYearRangeData", () => {
   });
 
   test("Extends range if date is right after an existing range", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: ["12-01:12-04"],
     };
@@ -219,7 +219,7 @@ describe("mergeDateOnYearRangeData", () => {
   });
 
   test("Extends range if date is right before an existing range", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: ["12-06:12-08"],
     };
@@ -233,7 +233,7 @@ describe("mergeDateOnYearRangeData", () => {
   });
 
   test("Adds a new range if date is new", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2023",
       ranges: ["12-01:12-04", "12-06:12-08"],
     };
@@ -250,7 +250,7 @@ describe("mergeDateOnYearRangeData", () => {
 describe("removeDateFromYearRangeData", () => {
   test("Remove date from single-day range containing the given date", () => {
     const ranges = ["12-01:12-01", "12-03:12-06", "12-08:12-10"];
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2015",
       ranges,
     };
@@ -265,7 +265,7 @@ describe("removeDateFromYearRangeData", () => {
 
   test("Adjust end date of a range to one day less than the given date", () => {
     const ranges = ["12-01:12-05", "12-07:12-10"];
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2015",
       ranges,
     };
@@ -280,7 +280,7 @@ describe("removeDateFromYearRangeData", () => {
 
   test("Adjust start date of a range to one day greater than the given date", () => {
     const ranges = ["12-01:12-05", "12-07:12-10"];
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2015",
       ranges,
     };
@@ -295,7 +295,7 @@ describe("removeDateFromYearRangeData", () => {
 
   test("Split range into two ranges omitting the day of the given date", () => {
     const ranges = ["12-01:12-10", "12-13:12-16"];
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2015",
       ranges,
     };
@@ -310,7 +310,7 @@ describe("removeDateFromYearRangeData", () => {
 
   test("Given date not found in any range, should return unchanged ranges", () => {
     const ranges = ["12-01:12-10", "12-12:12-15"];
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2015",
       ranges,
     };
@@ -323,7 +323,7 @@ describe("removeDateFromYearRangeData", () => {
   });
 
   test("Empty ranges array, should return empty array", () => {
-    const dateRanges: YearRangeData = {
+    const dateRanges: YearRange = {
       year: "2015",
       ranges: [],
     };
@@ -371,7 +371,7 @@ describe("findExistingRangeForADate", () => {
 
 describe("filterAndClampYearRangesByDateLimits", () => {
   test("should filter correctly for a single year", () => {
-    const input: YearRangeData[] = [
+    const input: YearRange[] = [
       {
         year: "2015",
         ranges: ["11-03:11-04", "12-09:12-09"],
@@ -385,7 +385,7 @@ describe("filterAndClampYearRangesByDateLimits", () => {
   });
 
   test("one year ranges for multi-year limit", () => {
-    const input: YearRangeData[] = [
+    const input: YearRange[] = [
       {
         year: "2015",
         ranges: ["03-05:03-20", "11-03:11-04", "12-09:12-09"],
@@ -399,7 +399,7 @@ describe("filterAndClampYearRangesByDateLimits", () => {
   });
 
   test("multi year ranges for single year limit", () => {
-    const input: YearRangeData[] = [
+    const input: YearRange[] = [
       {
         year: "2014",
         ranges: ["01-05:01-22", "10-03:10-11", "12-09:12-19"],

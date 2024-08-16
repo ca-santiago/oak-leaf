@@ -5,6 +5,7 @@ import { getAccountData } from "@/services/accounts";
 import { ManagerContextWrapper } from "./context";
 import { redirect } from "next/navigation";
 import { getAllHabits } from "@/services/habits";
+import HabitsDaySchedule from "@/components/habits/day-schedule";
 
 async function ManagerPage() {
   const session = await getSession();
@@ -29,8 +30,16 @@ async function ManagerPage() {
         habits={habits}
         token={accessToken!}
       >
-        <div className="w-full md:w-5/6 lg:w-3/4 xl:w-1/2 mx-auto mt-6 pb-10 px-3 md:px-0 gap-12">
-          <HabitsList />
+        <div className="grid row-auto grid-cols-8 h-full w-full flex-1 pt-8 px-8 gap-8">
+          <div className="col-span-2 col-start-3">
+            <HabitsDaySchedule />
+          </div>
+          <div className="col-span-2 col-start-5">
+            <h3 className="text-slate-700 font-semibold text-xl text-center">Observa tu progreso</h3>
+            <div className="mt-2">
+              <HabitsList />
+            </div>
+          </div>
         </div>
       </ManagerContextWrapper>
     </div>

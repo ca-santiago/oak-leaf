@@ -2,7 +2,7 @@
 import HorizontalWeekDaysView from "@/components/calendar/horizontalWeekView";
 import { DATE_FORMAT } from "@/core/constants";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
-import { Habit, Task, YearRangeData } from "@/core/types";
+import { Habit, Task, YearRange } from "@/core/types";
 import { mapDateRangeToActivityArray } from "@/helpers/activity";
 import {
   deserializeCompletionsRecord,
@@ -48,7 +48,7 @@ const HabitDetails = (props: HabitDetailsProps) => {
       .format(DATE_FORMAT)}`
   );
 
-  const [dateRanges, setDateRanges] = React.useState<YearRangeData[]>(
+  const [dateRanges, setDateRanges] = React.useState<YearRange[]>(
     deserializeCompletionsRecord(habit.completions)
   );
 

@@ -27,14 +27,14 @@ export const HabitsList = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full max-h-90">
       <HabitCreator
         onDelete={handleDeleteClick}
         onHabitCreate={handleHabitCreated}
         onHabitUpdate={handleHabitUpdate}
         startOpen={habits.length < 1}
       />
-      <div className="w-full grid md:grid-cols-2 grid-rows-1 max-md:gap-3 gap-5 mt-3">
+      <div className="w-full grid md:grid-cols-1 grid-rows-1 max-md:gap-3 gap-5 mt-3 h-full">
         {habits.map((item) => (
           <HabitDetails
             onEditClick={() => dispatch(setSelectedHabit(item))}
