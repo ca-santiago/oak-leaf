@@ -285,28 +285,29 @@ export const HabitCreator = ({
       />
       <Modal open={showModal || !!selectedHabit} onClose={handleOnClose}>
         <div className="w-full mx-auto h-fit flex flex-col gap-3 p-3">
-          <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-xl">
+          <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-2xl">
             {isEditing ? "Let's configure it" : "Let's start a new habit"}
           </h4>
           <div className="mt-2">
-            <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
-              Name
+            <h4 className="text-sm font-semibold text-slate-700 mb-0 select-none">
+              Name <span className="text-red-600">*</span>
             </h4>
             <input
+              className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-600 p-1 px-2 w-full mt-1"
               type="text"
               name="habitName"
               value={habitName}
               onChange={(e) =>
                 setState((prev) => ({ ...prev, habitName: e.target.value }))
               }
-              className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 p-1 px-2 w-full mt-1"
             />
           </div>
           <div>
-            <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
+            <h4 className="text-sm font-semibold text-slate-700 mb-0 select-none">
               Description
             </h4>
             <textarea
+              className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-600 text-sm p-1 px-2 min-h-[32px] max-h-72 w-full mt-1"
               name="habitDescription"
               value={description || ''}
               onChange={(e) =>
@@ -315,12 +316,11 @@ export const HabitCreator = ({
                   description: e.target.value,
                 }))
               }
-              className="rounded-md outline-none border border-slate-200 bg-slate-50 text-slate-400 text-sm p-1 px-2 min-h-[32px] max-h-72 w-full mt-1"
             />
           </div>
 
           <div>
-            <div className="text-sm text-slate-400 font-normal mb-0 select-none">Remind on days</div>
+            <div className="text-sm text-slate-700 font-semibold mb-0 select-none">Remind on days</div>
             <DayOfWeekSelector
               initialSelection={ initialDaysOfWeekSelected }
               onSelectionChange={ (selectedDays) => {
@@ -352,8 +352,8 @@ export const HabitCreator = ({
           </div>
 
           <div>
-            <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
-              Icons
+            <h4 className="text-sm text-slate-700 font-semibold mb-0 select-none">
+              Icons <span className="text-red-500">*</span>
             </h4>
             <div className="flex gap-2 flex-wrap mt-2">
               {IconList.map(([key, { Icon, size }]) => {
@@ -381,8 +381,8 @@ export const HabitCreator = ({
           </div>
 
           <div>
-            <h4 className="text-sm text-slate-400 font-normal mb-0 select-none">
-              Colors
+            <h4 className="text-sm text-slate-700 font-semibold mb-0 select-none">
+              Colors <span className="text-red-500">*</span>
             </h4>
             <div className="flex gap-2 flex-wrap mt-2">
               {ColorList.map(([key, { active }]) => {
