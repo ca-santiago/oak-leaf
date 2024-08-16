@@ -18,14 +18,16 @@ import { useManagerContext } from "@/context/manager";
 import { cleanSelectedHabit } from "@/context/manager/actions";
 import DayOfWeekSelector from "./habits/day-of-wee-selector";
 
+// TODO: Commented lines are under planning to identify if we need to replace them with Zustand actions
+// or we can get ride of them completely bt recalculating path.
 
 const IconList = Object.entries(IconMapping);
 const ColorList = Object.entries(ColorsMapping);
 
 interface HabitCreatorProps {
   startOpen: boolean;
-  onHabitCreate: (habit: Habit) => any;
-  onHabitUpdate: (habit: Habit) => any;
+  // onHabitCreate?: (habit: Habit) => any;
+  // onHabitUpdate?: (habit: Habit) => any;
   onDelete?: (habit: Habit) => any;
 }
 
@@ -38,7 +40,6 @@ interface HabitCreatorState {
   isBusy: boolean;
   daysOfWeekToRemind: string;
   hourToRemind: string;
-  // periodicity: ReminderConfig;
 }
 
 const _INITIAL_STATE: HabitCreatorState = {
@@ -59,12 +60,14 @@ const getInitialState = (override: Partial<HabitCreatorState>): HabitCreatorStat
   });
 }
 
-export const HabitCreator = ({
-  startOpen,
-  onHabitCreate,
-  onHabitUpdate,
-  onDelete,
-}: HabitCreatorProps) => {
+export const HabitCreator = (props: HabitCreatorProps) => {
+  const {
+    startOpen,
+    // onHabitCreate,
+    // onHabitUpdate,
+    onDelete,
+  } = props;
+
   const {
     state: {
       account,
@@ -114,16 +117,16 @@ export const HabitCreator = ({
       })
         .then(({ data, success }) => {
           if (success) {
-            onHabitUpdate({
-              ...data,
-              // habitName,
-              // id: selectedHabit.id,
-              // createdAt: selectedHabit.createdAt,
-              // completions: selectedHabit.completions,
-              // colorKey,
-              // iconKey,
-              // description,
-            });
+            // onHabitUpdate({
+            //   ...data,
+            //   // habitName,
+            //   // id: selectedHabit.id,
+            //   // createdAt: selectedHabit.createdAt,
+            //   // completions: selectedHabit.completions,
+            //   // colorKey,
+            //   // iconKey,
+            //   // description,
+            // });
             restoreState();
             return;
           }
@@ -153,7 +156,7 @@ export const HabitCreator = ({
     })
       .then((data) => {
         const newHabit: Habit = { ...data };
-        onHabitCreate(newHabit);
+        // onHabitCreate(newHabit);
         restoreState();
       })
       .catch((err) => {

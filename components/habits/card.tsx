@@ -33,7 +33,6 @@ import { useManagerContext } from "@/context/manager";
 
 interface HabitDetailsProps {
   habit: Habit;
-  token: string;
   onEditClick: () => any;
   onDelete: () => any;
 }
@@ -42,12 +41,13 @@ const TZ = moment.tz.guess();
 const TODAY = moment().tz(TZ).format(DATE_FORMAT);
 const TODAY_MOMENT = moment().tz(TZ);
 
-export const HabitDetails = ({
-  habit,
-  token,
-  onEditClick,
-  onDelete,
-}: HabitDetailsProps) => {
+export const HabitDetails = (props: HabitDetailsProps) => {
+  const {
+    habit,
+    onEditClick,
+    onDelete,
+  } = props;
+
   const { state: { account } } = useManagerContext();
   const [year] = React.useState(moment().year().toString());
   const [rangeLimit] = React.useState(
@@ -258,12 +258,12 @@ export const HabitDetails = ({
         >
           <Icon.Icon size={Icon.size} />
           <h4 className="font-semibold text-lg notranslate hover:underline">
-            {habit.habitName}
+            { habit.habitName }
           </h4>
         </div>
         {habit.description && (
           <p className="text-slate-400 text-xs font-medium notranslate">
-            {habit.description}
+            { habit.description }
           </p>
         )}
       </div>

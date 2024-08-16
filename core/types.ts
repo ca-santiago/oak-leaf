@@ -1,3 +1,6 @@
+import { Account, Habit } from '@prisma/client';
+import { Moment } from 'moment';
+
 export type {
   Habit,
   Account,
@@ -20,6 +23,40 @@ interface FlaggedFailure<T> extends FlaggedResponse<T> {
 }
 
 export type FlaggedResult<T> = FlaggedSuccess<T> | FlaggedFailure<T>;
+
+export type HabitsCollection = Habit[];
+
+export interface AuthState {
+  account: Account;
+  token: string;
+  userId: string;
+}
+
+export interface HabitsStoreState {
+  today: {
+    moment: Moment;
+    formatted: string;
+  };
+  habits: {
+    all: HabitsCollection;
+    allCompleted: HabitsCollection,
+    otherHabitsNoReminder: HabitsCollection,
+    otherHabitsNoReminderUncompleted: HabitsCollection,
+    todayHabits: HabitsCollection,
+    todayUncompletedHabits: HabitsCollection,
+  }
+}
+
+export interface HabitsStoreActions {
+  init: (args: HabitsStoreState) => any;
+  setHabits: (habits: HabitsStoreState['habits']) => any;
+  setToday: (m: Moment) => any;
+}
+
+export type HabitsStore = HabitsStoreState & HabitsStoreActions;
+
+
+
 
 // export interface Habit {
 //   id: string;
