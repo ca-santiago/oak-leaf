@@ -198,7 +198,7 @@ export const HabitDetails = ({
     })
       .then(({ deleted }) => {
         if (deleted) onDelete();
-        toast.error("Could not delete habit, please try again");
+        else toast.error("Could not delete habit, please try again");
       })
       .finally(() => {
         setSaving(false);
