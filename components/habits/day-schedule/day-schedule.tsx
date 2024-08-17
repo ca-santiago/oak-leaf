@@ -3,71 +3,15 @@
 import React from "react";
 import moment from "moment";
 
-import { Habit } from "@prisma/client";
 import HabitDayCard from "./habit-day-card";
-import { useManagerContext } from "@/context/manager";
 import { BsCalendar2, BsClock } from "react-icons/bs";
 
 import './day-schedule.css';
+import { useHabitsStore } from "@/context/habits";
 
-interface Props {
-
-}
-
-function HabitsDaySchedule(props: Props) {
-  const {
-    state: {
-      habits
-    },
-  } = useManagerContext();
-
-  const [today, setToday] = React.useState(moment());
- 
-  const {
-    // allCompleted,
-    otherHabitsNoReminder,
-    otherHabitsNoReminderUncompleted,
-    todayHabits,
-    todayUncompletedHabits,
-  } = React.useMemo(() => {
-    const allCompleted: Habit[] = [];
-    const otherHabitsNoReminder: Habit[] = [];
-    const otherHabitsNoReminderUncompleted: Habit[] = [];
-    const todayHabits: Habit[] = [];
-    const todayUncompletedHabits: Habit[] = [];
-
-    habits.forEach(h => {
-      const isCompleted = h.completions.includes(today.format('MM-DD'));
-
-      if(isCompleted) allCompleted.push(h);
-
-      if (!h.daysOfWeek) {
-        otherHabitsNoReminder.push(h);
-
-        if (!isCompleted) {
-          otherHabitsNoReminderUncompleted.push(h);
-        }
-      }
-
-      if (h.daysOfWeek) {
-        const todayHasReminder = h.daysOfWeek.includes(`${today.day()}`)
-
-        if (todayHasReminder) {
-          todayHabits.push(h);
-
-          if (!isCompleted) todayUncompletedHabits.push(h);
-        }
-      }
-    });
-
-    return {
-      allCompleted,
-      otherHabitsNoReminder,
-      otherHabitsNoReminderUncompleted,
-      todayHabits,
-      todayUncompletedHabits,
-    }
-  }, [habits, today]);
+function HabitsDaySchedule() {
+  const habits = useHabitsStore(s => s.habits);
+  const [today, setToday] = useHabitsStore(s => [s.today.moment, s.setToday]);
 
   React.useEffect(() => {
     const timeout = setTimeout(() => {
@@ -76,6 +20,12 @@ function HabitsDaySchedule(props: Props) {
 
     return () => clearTimeout(timeout);
   });
+
+  const {
+    otherHabitsNoReminderUncompleted,
+    todayHabits,
+    todayUncompletedHabits
+  } = habits;
 
   const calendarInfo = (
     <div className="flex justify-between mx-2 items-center">

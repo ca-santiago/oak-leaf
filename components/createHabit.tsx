@@ -15,17 +15,19 @@ import { createHabit, deleteHabit, updateHabit } from "@/services/habits";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { PLANS, defaultPlan } from "@/core/constants";
 import { useManagerContext } from "@/context/manager";
-import { cleanSelectedHabit } from "@/context/manager/actions";
 import DayOfWeekSelector from "./habits/day-of-wee-selector";
+import { useHabitsStore } from "@/context/habits";
 
+// TODO: Commented lines are under planning to identify if we need to replace them with Zustand actions
+// or we can get ride of them completely bt recalculating path.
 
 const IconList = Object.entries(IconMapping);
 const ColorList = Object.entries(ColorsMapping);
 
 interface HabitCreatorProps {
   startOpen: boolean;
-  onHabitCreate: (habit: Habit) => any;
-  onHabitUpdate: (habit: Habit) => any;
+  // onHabitCreate?: (habit: Habit) => any;
+  // onHabitUpdate?: (habit: Habit) => any;
   onDelete?: (habit: Habit) => any;
 }
 
@@ -38,7 +40,6 @@ interface HabitCreatorState {
   isBusy: boolean;
   daysOfWeekToRemind: string;
   hourToRemind: string;
-  // periodicity: ReminderConfig;
 }
 
 const _INITIAL_STATE: HabitCreatorState = {
@@ -59,20 +60,25 @@ const getInitialState = (override: Partial<HabitCreatorState>): HabitCreatorStat
   });
 }
 
-export const HabitCreator = ({
-  startOpen,
-  onHabitCreate,
-  onHabitUpdate,
-  onDelete,
-}: HabitCreatorProps) => {
+export const HabitCreator = (props: HabitCreatorProps) => {
+  const {
+    startOpen,
+    // onHabitCreate,
+    // onHabitUpdate,
+    onDelete,
+  } = props;
+
   const {
     state: {
       account,
-      selectedHabit,
-      habits
+      // selectedHabit,
     },
     dispatch,
   } = useManagerContext();
+
+  const habitsLen = useHabitsStore(s => s.habits.all.length);
+  const selectedHabit = useHabitsStore(s => s.selectedHabit);
+  const removeSelectedHabit = useHabitsStore(s => s.removeSelectedHabit);
 
   const isEditing = !!selectedHabit;
 
@@ -86,7 +92,7 @@ export const HabitCreator = ({
 
   const restoreState = () => {
     setState(_INITIAL_STATE);
-    dispatch(cleanSelectedHabit());
+    removeSelectedHabit();
   };
 
   const handleSaveUpdate = () => {
@@ -114,19 +120,19 @@ export const HabitCreator = ({
       })
         .then(({ data, success }) => {
           if (success) {
-            onHabitUpdate({
-              ...data,
-              // habitName,
-              // id: selectedHabit.id,
-              // createdAt: selectedHabit.createdAt,
-              // completions: selectedHabit.completions,
-              // colorKey,
-              // iconKey,
-              // description,
-            });
+            // onHabitUpdate({
+            //   ...data,
+            //   // habitName,
+            //   // id: selectedHabit.id,
+            //   // createdAt: selectedHabit.createdAt,
+            //   // completions: selectedHabit.completions,
+            //   // colorKey,
+            //   // iconKey,
+            //   // description,
+            // });
             restoreState();
             return;
-          }
+          } 
 
           setState((prev) => ({
             ...prev,
@@ -151,9 +157,9 @@ export const HabitCreator = ({
       daysOfWeekToRemind,
       hourToRemind,
     })
-      .then((data) => {
-        const newHabit: Habit = { ...data };
-        onHabitCreate(newHabit);
+      .then(() => {
+        // const newHabit: Habit = { ...data };
+        // onHabitCreate(newHabit);
         restoreState();
       })
       .catch((err) => {
@@ -206,7 +212,7 @@ export const HabitCreator = ({
   const handleOnClose = () => {
     if (isBusy) return;
 
-    dispatch(cleanSelectedHabit());
+    removeSelectedHabit();
     restoreState();
   };
 
@@ -257,7 +263,7 @@ export const HabitCreator = ({
 
   const plan = PLANS[account.planType] || defaultPlan;
 
-  const onHabitsLimit = habits.length >= plan.maxHabits;
+  const onHabitsLimit = habitsLen >= plan.maxHabits;
   const isValidHabit = habitName.length > 2 && colorKey && iconKey;
   const canCreate = isValidHabit && (isEditing ? true : !onHabitsLimit);
 
