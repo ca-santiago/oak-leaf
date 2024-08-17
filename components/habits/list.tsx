@@ -1,19 +1,15 @@
 "use client";
+
 import React from "react";
 import { HabitDetails } from "./card";
 import { HabitCreator } from "../createHabit";
-import { useManagerContext } from "../../context/manager";
-import {
-  removeHabit,
-  setSelectedHabit,
-} from "@/context/manager/actions";
 import { useHabitsStore } from "@/context/habits";
 
 // TODO: Commented lines are because we are moving off dispatch actions on managerContext
 // Those will be replaced by useHabitsStore functions
 
 export const HabitsList = () => {
-  const { dispatch } = useManagerContext();
+  const setSelectedHabit = useHabitsStore(s => s.setSelectedHabit);
   const habits = useHabitsStore(s => s.habits.all);
 
   // const handleHabitCreated = (h: Habit) => {
@@ -39,8 +35,7 @@ export const HabitsList = () => {
       <div className="w-full grid md:grid-cols-1 grid-rows-1 max-md:gap-3 gap-5 mt-3 h-full">
         { habits.map(item => (
           <HabitDetails
-            onEditClick={ () => dispatch(setSelectedHabit(item)) }
-            onDelete={ () => dispatch(removeHabit(item.id)) }
+            onEditClick={ () => setSelectedHabit(item) }
             key={ item.id }
             habit={ item }
           />

@@ -1,6 +1,5 @@
 'use server';
 
-import { API_CONFIG } from "./api";
 import { FlaggedResult, Habit } from "../core/types";
 import prisma from "@/prisma/db";
 import { revalidatePath } from "next/cache";
@@ -201,6 +200,7 @@ export const createHabit = async (args: CreateHabitArgs): Promise<Habit> => {
         periodicity: periodicity,
       }
     });
+    revalidatePath('/manager');
     return instance;
   } catch (err) {
     console.error('createHabit', err);
@@ -253,7 +253,7 @@ export const updateHabit = async (args: UpdateHabitArgs): Promise<FlaggedResult<
         userId,
       }
     });
-    revalidatePath('/');
+    revalidatePath('/manager');
     return {
       success: true,
       data: updated as Habit,
@@ -284,6 +284,9 @@ export const deleteHabit = async ({
         userId,
       },
     });
+    // TODO: Planning moving away from path revalidation. Leaving as it is right now
+    // - Creating habitsStore operations to update, remove or add habits on context is a pre requisite
+    revalidatePath('/manager');
     return {
       deleted: true,
     }
@@ -305,12 +308,3 @@ export const getHabitById = async (userId: string, habitId: string): Promise<Hab
   
   return habit || null;
 }
-
-// const HabitsService = {
-//   getAll: getAllHabits,
-//   create: createHabit,
-//   save: updateHabit,
-//   delete: deleteHabit,
-// }
-
-// export default HabitsService;

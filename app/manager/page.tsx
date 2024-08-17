@@ -10,10 +10,14 @@ import { HabitsContextProvider } from "@/context/habits";
 
 async function ManagerPage() {
   const session = await getSession();
-  const { accessToken, user } = session!;
+  const {
+    accessToken,
+    user
+  } = session!;
 
   const account = await getAccountData({ userId: user.sub });
 
+  // TODO: Not needed at the moment, account creation happens on Auth0 registration. Working fine for now
   if (!account) return redirect('/account-creation-fallback');
 
   const habits = await getAllHabits({ userId: account.id });
@@ -24,7 +28,6 @@ async function ManagerPage() {
         <AccountHeader session={session!} />
         <ManagerContextWrapper
           account={account}
-          habits={habits}
           token={accessToken!}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-8 2xl:grid-cols-12 h-full w-full flex-1 pt-6 lg:pt-8 px-2 lg:px-8 gap-6 md:gap-4 lg:gap-8">

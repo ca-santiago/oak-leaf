@@ -33,6 +33,7 @@ export interface AuthState {
 }
 
 export interface HabitsStoreState {
+  selectedHabit: Habit | null;
   today: {
     moment: Moment;
     formatted: string;
@@ -51,6 +52,8 @@ export interface HabitsStoreActions {
   init: (args: HabitsStoreState) => any;
   setHabits: (habits: HabitsStoreState['habits']) => any;
   setToday: (m: Moment) => any;
+  setSelectedHabit: (h: Habit) => any;
+  removeSelectedHabit: () => any;
 }
 
 export type HabitsStore = HabitsStoreState & HabitsStoreActions;

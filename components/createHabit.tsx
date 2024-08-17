@@ -15,8 +15,8 @@ import { createHabit, deleteHabit, updateHabit } from "@/services/habits";
 import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { PLANS, defaultPlan } from "@/core/constants";
 import { useManagerContext } from "@/context/manager";
-import { cleanSelectedHabit } from "@/context/manager/actions";
 import DayOfWeekSelector from "./habits/day-of-wee-selector";
+import { useHabitsStore } from "@/context/habits";
 
 // TODO: Commented lines are under planning to identify if we need to replace them with Zustand actions
 // or we can get ride of them completely bt recalculating path.
@@ -71,11 +71,14 @@ export const HabitCreator = (props: HabitCreatorProps) => {
   const {
     state: {
       account,
-      selectedHabit,
-      habits
+      // selectedHabit,
     },
     dispatch,
   } = useManagerContext();
+
+  const habitsLen = useHabitsStore(s => s.habits.all.length);
+  const selectedHabit = useHabitsStore(s => s.selectedHabit);
+  const removeSelectedHabit = useHabitsStore(s => s.removeSelectedHabit);
 
   const isEditing = !!selectedHabit;
 
@@ -89,7 +92,7 @@ export const HabitCreator = (props: HabitCreatorProps) => {
 
   const restoreState = () => {
     setState(_INITIAL_STATE);
-    dispatch(cleanSelectedHabit());
+    removeSelectedHabit();
   };
 
   const handleSaveUpdate = () => {
@@ -129,7 +132,7 @@ export const HabitCreator = (props: HabitCreatorProps) => {
             // });
             restoreState();
             return;
-          }
+          } 
 
           setState((prev) => ({
             ...prev,
@@ -154,8 +157,8 @@ export const HabitCreator = (props: HabitCreatorProps) => {
       daysOfWeekToRemind,
       hourToRemind,
     })
-      .then((data) => {
-        const newHabit: Habit = { ...data };
+      .then(() => {
+        // const newHabit: Habit = { ...data };
         // onHabitCreate(newHabit);
         restoreState();
       })
@@ -209,7 +212,7 @@ export const HabitCreator = (props: HabitCreatorProps) => {
   const handleOnClose = () => {
     if (isBusy) return;
 
-    dispatch(cleanSelectedHabit());
+    removeSelectedHabit();
     restoreState();
   };
 
@@ -260,7 +263,7 @@ export const HabitCreator = (props: HabitCreatorProps) => {
 
   const plan = PLANS[account.planType] || defaultPlan;
 
-  const onHabitsLimit = habits.length >= plan.maxHabits;
+  const onHabitsLimit = habitsLen >= plan.maxHabits;
   const isValidHabit = habitName.length > 2 && colorKey && iconKey;
   const canCreate = isValidHabit && (isEditing ? true : !onHabitsLimit);
 

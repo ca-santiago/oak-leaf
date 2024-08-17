@@ -34,7 +34,7 @@ import { useManagerContext } from "@/context/manager";
 interface HabitDetailsProps {
   habit: Habit;
   onEditClick: () => any;
-  onDelete: () => any;
+  // onDelete: () => any;
 }
 
 const TZ = moment.tz.guess();
@@ -45,7 +45,7 @@ export const HabitDetails = (props: HabitDetailsProps) => {
   const {
     habit,
     onEditClick,
-    onDelete,
+    // onDelete,
   } = props;
 
   const { state: { account } } = useManagerContext();
@@ -197,8 +197,8 @@ export const HabitDetails = (props: HabitDetailsProps) => {
       userId: account.id,
     })
       .then(({ deleted }) => {
-        if (deleted) onDelete();
-        toast.error("Could not delete habit, please try again");
+        // if (deleted) onDelete();
+        if (!deleted) toast.error("Could not delete habit, please try again");
       })
       .finally(() => {
         setSaving(false);

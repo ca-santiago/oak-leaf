@@ -28,6 +28,7 @@ export const HabitsContextProvider = (props: PropsWithChildren<ProviderProps>) =
   if (!storeRef.current) {
     const today = moment();
     storeRef.current = createHabitsStore({
+      selectedHabit: null,
       habits: computeHabitsInfo(habits, moment()),
       today: {
         moment: today,
