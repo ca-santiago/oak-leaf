@@ -31,7 +31,7 @@ async function ManagerPage() {
           account={account}
           token={accessToken!}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-8 2xl:grid-cols-12 h-full w-full flex-1 pt-6 lg:pt-8 px-2 lg:px-8 gap-6 md:gap-4 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-8 2xl:grid-cols-12 h-full w-full flex-1 pt-6 lg:pt-8 px-2 lg:px-8 gap-6 md:gap-4 lg:gap-8 pb-10">
             <div className="col-span-1 row-span-1 xl:col-start-2 xl:col-span-3 2xl:col-start-4">
               <HabitsDaySchedule />
             </div>
