@@ -67,8 +67,6 @@ function HabitWeekViewCard(props: Props) {
     });
   }, []);
 
-  const completedDays = [0, 1, 6];
-
   const getDayClasses = (dayNumber: number) => cx({
     'text-sm text-slate-600': true,
     'px-1 border-red-600 border rounded-md': dayNumber === monthDayNumber,
@@ -82,7 +80,7 @@ function HabitWeekViewCard(props: Props) {
         <h2>{ habit.habitName }</h2>
       </div>
       <div className="flex w-fit mx-auto gap-2 my-2">
-        { days.map((w, index) =>
+        { days.map((w) =>
           <div key={ w.dayN } className="flex flex-col items-center gap-2" >
             <div
               style={{
