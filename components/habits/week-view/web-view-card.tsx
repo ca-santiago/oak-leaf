@@ -130,30 +130,30 @@ function HabitWeekViewCard(props: Props) {
           <h2 className="font-semibold text-base h-full">{ habit.habitName }</h2>
         </div>
         <div className="flex justify-between text-slate-500 text-xs font-semibold">
-            <ConfirmationModal
-              onCancel={ () => setShowConfirmation(false) } 
-              onConfirm={ triggerDeleteHabit }
-              show={ showConfirmation }
-              title="Borrar este hábito para siempre?"
+          <ConfirmationModal
+            onCancel={ () => setShowConfirmation(false) } 
+            onConfirm={ triggerDeleteHabit }
+            show={ showConfirmation }
+            title="Borrar este hábito para siempre?"
+          />
+          <div className="gap-2 items-center flex">
+            <BsTrash2Fill
+              onClick={(e: React.SyntheticEvent) => {
+                e.stopPropagation();
+                handleDeleteClick();
+              }}
+              size={ 18 }
+              className="text-red-400 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
             />
-            <div className="gap-2 items-center flex">
-              <BsTrash2Fill
-                onClick={(e: React.SyntheticEvent) => {
-                  e.stopPropagation();
-                  handleDeleteClick();
-                }}
-                size={ 18 }
-                className="text-red-400 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
-              />
-              <MdEdit
-                onClick={(e: React.SyntheticEvent) => {
-                  e.stopPropagation();
-                  setSelectedHabit(habit);
-                }}
-                size={ 18 }
-                className="text-slate-500 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
-              />
-            </div>
+            <MdEdit
+              onClick={(e: React.SyntheticEvent) => {
+                e.stopPropagation();
+                setSelectedHabit(habit);
+              }}
+              size={ 18 }
+              className="text-slate-500 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
+            />
+          </div>
         </div>
       </div>
       <div className="flex pt-2 w-fit mx-auto gap-2 my-2">

@@ -290,7 +290,7 @@ export const HabitCreator = (props: HabitCreatorProps) => {
         onClick={() => setState((prev) => ({ ...prev, showModal: true }))}
       />
       <Modal open={showModal || !!selectedHabit} onClose={handleOnClose}>
-        <div className="w-full mx-auto h-[600px] md:h-fit flex flex-col gap-3 p-3 relative overflow-scroll">
+        <div className="w-full mx-auto h-[600px] md:h-fit flex flex-col gap-3 p-3 relative max-md:overflow-scroll">
           <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-2xl">
             {isEditing ? "Let's configure it" : "Let's start a new habit"}
           </h4>

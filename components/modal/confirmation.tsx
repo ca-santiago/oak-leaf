@@ -17,7 +17,7 @@ export const ConfirmationModal = ({
 }: Props) => {
   return (
     <Modal open={show} onClose={onCancel}>
-      <div className={`flex flex-col items-center justify-center p-4 rounded-md bg-white w-72 shadow-md ${className}`}>
+      <div className={`flex flex-col items-center justify-center p-4 w-full mb-2 ${className}`}>
         <h3 className="text-md text-slate-600 font-semibold">{title}</h3>
         <div className="flex flex-row gap-2 mt-8 w-full">
           <button
