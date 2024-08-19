@@ -47,7 +47,7 @@ function HabitWeekViewCard(props: Props) {
     [habitRanges, todayFormatted]
   );
 
-  const Icon = IconMapping[habit.iconKey].Icon;
+  const { Icon, size } = IconMapping[habit.iconKey];
   const Colors = ColorsMapping[habit.colorKey];
 
   const handleDeleteClick = React.useCallback(() => {
@@ -122,39 +122,43 @@ function HabitWeekViewCard(props: Props) {
 
   return (
     <div className="w-full md:w-fit bg-white border border-slate-200 p-2 px-3 rounded-xl">
-      <div className="flex gap-3 items-center text-slate-700">
-        <Icon />
-        <h2 className="font-semibold text-base">{ habit.habitName }</h2>
+      <div className="flex justify-between gap-2">
+        <div className="flex gap-3 items-center text-slate-700">
+          <div className="h-4 w-4">
+            <Icon size={ size } />
+          </div>
+          <h2 className="font-semibold text-base h-full">{ habit.habitName }</h2>
+        </div>
+        <div className="flex justify-between text-slate-500 text-xs font-semibold">
+            <ConfirmationModal
+              onCancel={ () => setShowConfirmation(false) } 
+              onConfirm={ triggerDeleteHabit }
+              show={ showConfirmation }
+              title="Borrar este hábito para siempre?"
+            />
+            <div className="gap-2 items-center max-lg:hidden flex">
+              <BsTrash2Fill
+                onClick={(e: React.SyntheticEvent) => {
+                  e.stopPropagation();
+                  handleDeleteClick();
+                }}
+                size={ 18 }
+                className="text-red-400 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
+              />
+              <MdEdit
+                onClick={(e: React.SyntheticEvent) => {
+                  e.stopPropagation();
+                  setSelectedHabit(habit);
+                }}
+                size={ 18 }
+                className="text-slate-500 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
+              />
+            </div>
+        </div>
       </div>
       <div className="flex pt-2 w-fit mx-auto gap-2 my-2">
         { weekDays.map((w) => renderDay(w)) }
       </div>
-       <div className="flex justify-between pt-3 text-slate-500 text-xs font-semibold">
-          <ConfirmationModal
-            onCancel={ () => setShowConfirmation(false) } 
-            onConfirm={ triggerDeleteHabit }
-            show={ showConfirmation }
-            title="Borrar este hábito para siempre?"
-          />
-          <div className="gap-2 items-center max-lg:hidden flex">
-            <BsTrash2Fill
-              onClick={(e: React.SyntheticEvent) => {
-                e.stopPropagation();
-                handleDeleteClick();
-              }}
-              size={ 18 }
-              className="text-red-400 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
-            />
-            <MdEdit
-              onClick={(e: React.SyntheticEvent) => {
-                e.stopPropagation();
-                setSelectedHabit(habit);
-              }}
-              size={ 18 }
-              className="text-slate-500 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
-            />
-          </div>
-        </div>
     </div>
   );
 }
