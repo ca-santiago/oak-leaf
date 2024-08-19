@@ -6,6 +6,11 @@ import moment from "moment";
 import cx from 'classnames';
 import { deserializeCompletionsRecord, findExistingRangeForADate, findRangesByYearOrCreate, flatYearRange, splitDateRange } from "@/helpers/incidences";
 import { useHabitsStore } from "@/context/habits";
+import { BsTrash2Fill } from "react-icons/bs";
+import { MdEdit } from "react-icons/md";
+import { ConfirmationModal } from "@/components/modal/confirmation";
+import { deleteHabit } from "@/services/habits";
+import { useManagerContext } from "@/context/manager";
 
 interface Props {
   habit: Habit;
@@ -15,7 +20,12 @@ function HabitWeekViewCard(props: Props) {
   const {
     habit
   } = props;
+
+  const { state: { userId } } = useManagerContext();
   const today = useHabitsStore(s => s.todayFormatted);
+  const setSelectedHabit = useHabitsStore(s => s.setSelectedHabit);
+
+  const [showConfirmation, setShowConfirmation] = React.useState(false);
 
   const [habitRanges] = React.useState(deserializeCompletionsRecord(habit.completions));
   const thisYearRanges = findRangesByYearOrCreate(habitRanges, today.split('-')[0]);
@@ -23,6 +33,17 @@ function HabitWeekViewCard(props: Props) {
 
   const Icon = IconMapping[habit.iconKey].Icon;
   const Colors = ColorsMapping[habit.colorKey];
+
+  const handleDeleteClick = React.useCallback(() => {
+    setShowConfirmation(true);
+  }, []);
+
+  const triggerDeleteHabit = () => {
+    deleteHabit({
+      habitId: habit.id,
+      userId,
+    });
+  };
 
   const days = React.useMemo(() => {
     const weekDaysMin = moment.weekdaysMin();
@@ -80,6 +101,32 @@ function HabitWeekViewCard(props: Props) {
           </div>
         ) }
       </div>
+       <div className="flex justify-between pt-3 text-slate-500 text-xs font-semibold">
+          <ConfirmationModal
+            onCancel={ () => setShowConfirmation(false) } 
+            onConfirm={ triggerDeleteHabit }
+            show={ showConfirmation }
+            title="Borrar este hábito para siempre?"
+          />
+          <div className="gap-2 items-center max-lg:hidden flex">
+            <BsTrash2Fill
+              onClick={(e: React.SyntheticEvent) => {
+                e.stopPropagation();
+                handleDeleteClick();
+              }}
+              size={16}
+              className="text-red-400 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
+            />
+            <MdEdit
+              onClick={(e: React.SyntheticEvent) => {
+                e.stopPropagation();
+                setSelectedHabit(habit);
+              }}
+              size={16}
+              className="text-slate-500 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
+            />
+          </div>
+        </div>
     </div>
   );
 }
