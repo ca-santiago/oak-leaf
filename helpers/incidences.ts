@@ -353,7 +353,6 @@ export const findExistingRangeForADate = (
     const start = new Date(`${_start}`).getTime();
     const end = new Date(`${_end}`).getTime();
     const toFind = new Date(dateToFind).getTime();
-    console.log({ start, end });
     return toFind >= start && toFind <= end;
   });
   return exists;
