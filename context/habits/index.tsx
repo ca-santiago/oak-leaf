@@ -23,6 +23,10 @@ export const HabitsContextProvider = (props: PropsWithChildren<ProviderProps>) =
     habits,
   } = props;
 
+  React.useEffect(() => {
+    console.log('Habits has changed on provider');
+  }, [habits]);
+
   const storeRef = useRef<HabitsStoreApi>();
 
   if (!storeRef.current) {

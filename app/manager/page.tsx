@@ -8,6 +8,7 @@ import HabitsDaySchedule from "@/components/habits/day-schedule";
 import { HabitsContextProvider } from "@/context/habits";
 import HabitWeekView from "@/components/habits/week-view";
 import { HabitCreator } from "@/components/createHabit";
+import { HabitsList } from "@/components/habits/list";
 
 async function ManagerPage() {
   const session = await getSession();
