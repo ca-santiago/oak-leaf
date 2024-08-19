@@ -11,8 +11,8 @@ const createHabitsStore = (initialState: HabitsStoreState) => {
     init: ({ habits }) => set(() => ({ habits })),
     setHabits: (hs) => set(() => ({ habits: hs })),
     setToday: (date) => set(produce((s: State) => {
-      s.today.moment = date;
-      s.today.formatted = date.format(DATE_FORMAT);
+      s.currentWeekMetadata.today = date;
+      s.currentWeekMetadata.todayFormatted = date.format(DATE_FORMAT);
     })),
     removeSelectedHabit: () => set(produce((s: State) => {
       s.selectedHabit = null

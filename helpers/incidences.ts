@@ -204,6 +204,16 @@ export const filterAndClampYearRangesByDateLimits = (
   return filteredRanges;
 };
 
+export const flatYearRange = (yearRange: YearRange): string[] => {
+  const { ranges, year } = yearRange;
+  return ranges.map((r) => {
+    const [s, e] = splitDateRange(r);
+    const flatStart = `${year}-${s}`;
+    const flatEnd = `${year}-${e}`;
+    return `${flatStart}:${flatEnd}`
+  });
+}
+
 /**
  * @argument givenDate: A date in the format of YYYY-MM-dd
  */
@@ -343,6 +353,7 @@ export const findExistingRangeForADate = (
     const start = new Date(`${_start}`).getTime();
     const end = new Date(`${_end}`).getTime();
     const toFind = new Date(dateToFind).getTime();
+    console.log({ start, end });
     return toFind >= start && toFind <= end;
   });
   return exists;

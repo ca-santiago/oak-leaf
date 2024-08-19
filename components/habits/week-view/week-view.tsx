@@ -1,22 +1,16 @@
-import { HabitsCollection } from "@/core/types";
+'use client';
 
-interface Props {
-  habits: HabitsCollection;
-}
+import { useHabitsStore } from "@/context/habits";
+import HabitWeekViewCard from "./web-view-card";
 
-const WeekView = (props: Props) => {
-  const {
-    habits,
-  } = props;
+const HabitWeekView = () => {
+  const habits = useHabitsStore(s => s.habits.all);
 
   return (
-    <div>
-      
-      { habits.map(h => (
-        <div key={ h.id }>{ h.habitName }</div>
-      )) }
+    <div className="flex flex-col gap-4 mt-3"> 
+      { habits.map(h => <HabitWeekViewCard key={ h.id } habit={ h } /> ) }
     </div>
   );
 }
 
-export default WeekView;
+export default HabitWeekView;

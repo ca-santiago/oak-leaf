@@ -32,12 +32,22 @@ export interface AuthState {
   userId: string;
 }
 
+export interface WeekMetadataDay {
+  dayNumber: number;
+  dayName: string;
+  dayShortName: string
+}
+
+export type WeekMetadataDayCollection = Array<WeekMetadataDay>;
+
+export interface WeekMetadata {
+  today: Moment;
+  todayFormatted: string;
+  weekDays:  WeekMetadataDayCollection;
+}
+
 export interface HabitsStoreState {
-  selectedHabit: Habit | null;
-  today: {
-    moment: Moment;
-    formatted: string;
-  };
+  currentWeekMetadata: WeekMetadata;
   habits: {
     all: HabitsCollection;
     allCompleted: HabitsCollection,
@@ -45,7 +55,10 @@ export interface HabitsStoreState {
     otherHabitsNoReminderUncompleted: HabitsCollection,
     todayHabits: HabitsCollection,
     todayUncompletedHabits: HabitsCollection,
-  }
+  };
+  today: Moment,
+  todayFormatted: string;
+  selectedHabit: Habit | null;
 }
 
 export interface HabitsStoreActions {

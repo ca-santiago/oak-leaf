@@ -1,5 +1,4 @@
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { HabitsList } from "../../components/habits/list";
 import { AccountHeader } from "@/components/accountHeader";
 import { getAccountData } from "@/services/accounts";
 import { ManagerContextWrapper } from "./context";
@@ -7,6 +6,8 @@ import { redirect } from "next/navigation";
 import { getAllHabits } from "@/services/habits";
 import HabitsDaySchedule from "@/components/habits/day-schedule";
 import { HabitsContextProvider } from "@/context/habits";
+import HabitWeekView from "@/components/habits/week-view";
+import { HabitCreator } from "@/components/createHabit";
 
 async function ManagerPage() {
   const session = await getSession();
@@ -35,9 +36,12 @@ async function ManagerPage() {
               <HabitsDaySchedule />
             </div>
             <div className="col-span-1 row-span-1 xl:col-start-5 xl:col-span-3 2xl:col-start-7">
-              <h3 className="text-slate-700 font-semibold text-xl text-center">Observa tu progreso</h3>
+              <h3 className="text-slate-700 font-semibold text-xl text-center">Observa tu progreso semanal</h3>
+              <div>
+                <HabitCreator startOpen={ false } />
+              </div>
               <div className="mt-2">
-                <HabitsList />
+                <HabitWeekView />
               </div>
             </div>
           </div>

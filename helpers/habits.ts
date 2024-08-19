@@ -1,5 +1,6 @@
-import { HabitsCollection } from "@/core/types";
-import { Moment } from "moment";
+import { DATE_FORMAT } from "@/core/constants";
+import { HabitsCollection, WeekMetadata, WeekMetadataDayCollection } from "@/core/types";
+import moment, { Moment } from "moment";
 
 export const computeHabitsInfo = (habits: HabitsCollection, today: Moment) => {
   const allCompleted: HabitsCollection = [];
@@ -41,3 +42,25 @@ export const computeHabitsInfo = (habits: HabitsCollection, today: Moment) => {
     todayUncompletedHabits,
   };
 };
+
+export function computeWeekMetadata(startDay?: Moment): WeekMetadata {
+  let startingDate = startDay || moment();
+
+  const weekDaysArr = moment.weekdays();
+  const weekDaysMinArr = moment.weekdaysMin();
+
+  const weekDays: WeekMetadataDayCollection = weekDaysArr.map((weekDay, index) => {
+    return {
+      day: weekDay,
+      dayName: weekDay,
+      dayNumber: index,
+      dayShortName: weekDaysMinArr[index],
+    };
+  });
+
+  return {
+    today: startingDate,
+    todayFormatted: startingDate.format(DATE_FORMAT),
+    weekDays,
+  };
+}

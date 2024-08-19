@@ -3,11 +3,11 @@
 import React, { createContext, PropsWithChildren, useContext, useRef } from "react";
 import { createHabitsStore } from "../habitsStore";
 import { HabitsCollection, HabitsStore } from "@/core/types";
+import { DATE_FORMAT } from "@/core/constants";
+import { computeHabitsInfo, computeWeekMetadata } from "@/helpers/habits";
 
 import { useStore } from "zustand";
-import moment, { Moment } from "moment";
-import { DATE_FORMAT } from "@/core/constants";
-import { computeHabitsInfo } from "@/helpers/habits";
+import moment from "moment";
 
 
 export type HabitsStoreApi = ReturnType<typeof createHabitsStore>;
@@ -29,11 +29,10 @@ export const HabitsContextProvider = (props: PropsWithChildren<ProviderProps>) =
     const today = moment();
     storeRef.current = createHabitsStore({
       selectedHabit: null,
-      habits: computeHabitsInfo(habits, moment()),
-      today: {
-        moment: today,
-        formatted: today.format(DATE_FORMAT),
-      }
+      habits: computeHabitsInfo(habits, today),
+      currentWeekMetadata: computeWeekMetadata(today),
+      today,
+      todayFormatted: today.format(DATE_FORMAT),
     });
   }
 
@@ -45,7 +44,7 @@ export const HabitsContextProvider = (props: PropsWithChildren<ProviderProps>) =
 
   return (
     <habitsContext.Provider value={storeRef.current}>
-      {props.children}
+      { props.children }
     </habitsContext.Provider>
   );
 }

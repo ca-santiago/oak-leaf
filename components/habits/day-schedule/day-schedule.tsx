@@ -11,7 +11,7 @@ import { useHabitsStore } from "@/context/habits";
 
 function HabitsDaySchedule() {
   const habits = useHabitsStore(s => s.habits);
-  const [today, setToday] = useHabitsStore(s => [s.today.moment, s.setToday]);
+  const [today, setToday] = useHabitsStore(s => [s.today, s.setToday]);
 
   React.useEffect(() => {
     const timeout = setTimeout(() => {
