@@ -136,7 +136,7 @@ function HabitWeekViewCard(props: Props) {
               show={ showConfirmation }
               title="Borrar este hábito para siempre?"
             />
-            <div className="gap-2 items-center max-lg:hidden flex">
+            <div className="gap-2 items-center flex">
               <BsTrash2Fill
                 onClick={(e: React.SyntheticEvent) => {
                   e.stopPropagation();
