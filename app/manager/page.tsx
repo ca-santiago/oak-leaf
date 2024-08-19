@@ -36,7 +36,8 @@ async function ManagerPage() {
               <HabitsDaySchedule />
             </div>
             <div className="col-span-1 row-span-1 xl:col-start-5 xl:col-span-3 2xl:col-start-7">
-              <h3 className="text-slate-700 font-semibold text-xl text-center">Observa tu progreso semanal</h3>
+              {/* <h3 className="text-slate-700 font-semibold text-xl text-center">Observa tu progreso semanal</h3> */}
+              <h3 className="text-slate-700 font-semibold text-xl text-center">Resumen de la Semana</h3>
               <div>
                 <HabitCreator startOpen={ false } />
               </div>

@@ -45,7 +45,8 @@ function HabitsDaySchedule() {
       { calendarInfo }
       <div className="flex flex-col gap-6 bg-white shadow-sm w-full h-fit rounded-xl p-2 mt-4">
         <div>
-          <h2 className="font-semibold text-2xl text-center text-slate-700">Day schedule</h2>
+          <h2 className="font-semibold text-2xl text-center text-slate-700">Objetivos de Hoy</h2>
+          <p className="text-slate-500 text-sm ml-1">Completa estos hábitos antes de que termine el día</p>
 
           { todayHabits.length < 1 &&
             <p className="text-center text-slate-600 my-4">No tienes habitos establecidos para el día de hoy</p>
@@ -70,7 +71,8 @@ function HabitsDaySchedule() {
         </div>
         { otherHabitsNoReminderUncompleted.length > 0 &&
           <div>
-            <h2 className="font-semibold text-2xl text-center text-slate-700">Other habits</h2>
+            <h2 className="font-semibold text-2xl text-center text-slate-700">Otros objetivos para Hoy</h2>
+            <p className="text-slate-500 text-sm ml-1">No están programados, pero puedes lograrlos hoy si te queda tiempo.</p>
             <div className="flex flex-col gap-2 mt-4">
               { otherHabitsNoReminderUncompleted.map((h) =>
                   <HabitDayCard
