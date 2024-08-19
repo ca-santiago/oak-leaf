@@ -8,6 +8,7 @@ import { BsCalendar2, BsClock } from "react-icons/bs";
 
 import './day-schedule.css';
 import { useHabitsStore } from "@/context/habits";
+import { FaSquareCheck } from "react-icons/fa6";
 
 function HabitsDaySchedule() {
   const habits = useHabitsStore(s => s.habits);
@@ -45,15 +46,22 @@ function HabitsDaySchedule() {
       { calendarInfo }
       <div className="flex flex-col gap-6 bg-white shadow-sm w-full h-fit rounded-xl p-2 mt-4">
         <div>
-          <h2 className="font-semibold text-2xl text-center text-slate-700">Objetivos de Hoy</h2>
-          <p className="text-slate-500 text-sm ml-1">Completa estos hábitos antes de que termine el día</p>
+          {  todayUncompletedHabits.length > 0 && 
+            <>
+              <h2 className="font-semibold text-2xl text-center text-slate-700">Objetivos de Hoy</h2>
+              <p className="text-slate-500 text-sm ml-1">Completa estos hábitos antes de que termine el día</p>
+            </>
+          }
 
           { todayHabits.length < 1 &&
-            <p className="text-center text-slate-600 my-4">No tienes habitos establecidos para el día de hoy</p>
+              <p className="text-center text-slate-600 mb-4 mt-8">No tienes habitos establecidos para el día de hoy</p>
           }
 
           { todayHabits.length > 0 && todayUncompletedHabits.length < 1 &&
-            <p className="text-center text-slate-600 my-4 font-semibold">Completaste todos tus habitos del día de hoy</p>
+            <div className="flex items-center gap-2 flex-col mb-4 mt-8">
+              <p className="text-center text-slate-600 te font-semibold">Completaste todos tus habitos del día de hoy</p>
+              <FaSquareCheck size={ 28 } className="text-green-300"/>
+            </div>
           }
 
           { todayUncompletedHabits.length > 0 &&

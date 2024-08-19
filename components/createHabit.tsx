@@ -290,10 +290,11 @@ export const HabitCreator = (props: HabitCreatorProps) => {
         onClick={() => setState((prev) => ({ ...prev, showModal: true }))}
       />
       <Modal open={showModal || !!selectedHabit} onClose={handleOnClose}>
-        <div className="w-full mx-auto h-fit flex flex-col gap-3 p-3">
+        <div className="w-full mx-auto h-[600px] md:h-fit flex flex-col gap-3 p-3 relative overflow-scroll">
           <h4 className="text-slate-600 font-semibold ml-0.5 text-center text-2xl">
             {isEditing ? "Let's configure it" : "Let's start a new habit"}
           </h4>
+
           <div className="mt-2">
             <h4 className="text-sm font-semibold text-slate-700 mb-0 select-none">
               Name <span className="text-red-600">*</span>
@@ -451,20 +452,22 @@ export const HabitCreator = (props: HabitCreatorProps) => {
             </button>
           </div>
 
-          {onHabitsLimit && !isEditing && (
-            <div className="text-slate-500 text-sm mt-2">
-              <p>
-                Your current plan does not allow more than {plan.maxHabits}{" "}
-                habits at a time
-              </p>
-              <p>
-                Upgrade your plan{" "}
-                <Link className="cursor-pointer text-blue-400" href="/plans">
-                  here
-                </Link>
-              </p>
-            </div>
-          )}
+          <div className="w-full bottom-0 absolute">
+            {onHabitsLimit && !isEditing && (
+              <div className="text-slate-500 text-sm mt-2">
+                <p>
+                  Your current plan does not allow more than {plan.maxHabits}{" "}
+                  habits at a time
+                </p>
+                <p>
+                  Upgrade your plan{" "}
+                  <Link className="cursor-pointer text-blue-400" href="/plans">
+                    here
+                  </Link>
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </Modal>
     </div>
