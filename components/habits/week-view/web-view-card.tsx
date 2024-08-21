@@ -19,6 +19,7 @@ import { useManagerContext } from "@/context/manager";
 
 import { BsTrash2Fill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
+import { DATE_FORMAT } from "@/core/constants";
 
 interface Props {
   habit: Habit;
@@ -30,6 +31,7 @@ function HabitWeekViewCard(props: Props) {
   } = props;
 
   const { state: { userId } } = useManagerContext();
+  const today = useHabitsStore(s => s.today);
   const todayFormatted = useHabitsStore(s => s.todayFormatted);
   const setSelectedHabit = useHabitsStore(s => s.setSelectedHabit);
 
@@ -63,24 +65,22 @@ function HabitWeekViewCard(props: Props) {
 
   const weekDays = React.useMemo(() => {
     const weekDaysMin = moment.weekdaysMin();
-    const currDate = new Date();
+    const weekDate = today
+      .clone()
+      .startOf('week')
+      .subtract(1, 'day');
 
     return weekDaysMin.map((weekDayLabel) => {
-      const weekDayNumber = currDate.getDate();
-      const m = ("0" + (currDate.getMonth() + 1)).slice(-2);
-      const y = currDate.getFullYear();
+      weekDate.add(1, 'day');
+      const exist = findExistingRangeForADate(weekDate.format(DATE_FORMAT), flatYearRange(thisYearRanges));
 
-      const weekDayFormatted = `${y}-${m}-${weekDayNumber}`;
-      const exist = findExistingRangeForADate(weekDayFormatted, flatYearRange(thisYearRanges));
-
-      currDate.setDate(currDate.getDate() + 1);
       return {
-        weekDayLabel,
-        weekDayNumber,
+        weekDayLabel: weekDayLabel,
+        weekDayNumber: weekDate.date(),
         isCompleted: exist !== -1,
       };
     });
-  }, [thisYearRanges]);
+  }, [thisYearRanges, today]);
 
   
   const renderDay = (weekDay: { weekDayNumber: number, isCompleted: boolean, weekDayLabel: string }) => {
