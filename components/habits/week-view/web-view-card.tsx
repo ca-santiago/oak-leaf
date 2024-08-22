@@ -93,12 +93,18 @@ function HabitWeekViewCard(props: Props) {
     const isToday = weekDayNumber === monthDayNumber;
 
     const labelClasses = cx({
-      'text-sm text-slate-400': true,
-      'px-1 border-red-400 border-b-2': isToday,
+      'text-sm text-slate-400 relative': true,
+      'px-1': isToday,
+    });
+
+    const labelDotClasses = cx({
+      'h-1 w-2 absolute top-[-7px] left-1/2 -translate-x-1/2 bg-red-500 rounded-full': true,
+      'block': isToday,
+      'hidden': !isToday,
     });
 
     const chipClasses = cx({
-      'w-10 md:w-12 h-10 md:h-12 rounded-xl bg-slate-100 font-semibold text-sm flex items-center justify-center': true,
+      'w-full md2:w-12 h-10 md:h-12 bg-slate-100 font-semibold text-sm flex items-center justify-center select-none chip': true,
       'text-white': isCompleted,
       'text-slate-600': !isCompleted,
     });
@@ -109,22 +115,23 @@ function HabitWeekViewCard(props: Props) {
     };
 
     return (
-      <div key={ weekDayNumber } className="flex flex-col items-center gap-1" >
+      <div key={ weekDayNumber } className="flex flex-1 flex-col items-center gap-1 select-none rounded-list-child" >
+        <p className={ labelClasses }>
+          { weekDayLabel }
+          <span className={ labelDotClasses } />
+        </p>
         <div style={ chipStyles } className={ chipClasses }>
           { weekDayNumber }
         </div>
-        <p className={ labelClasses }>
-          { weekDayLabel }
-        </p>
       </div>
     );
   }
 
   return (
-    <div className="w-full md:w-fit bg-white border border-slate-200 p-2 px-3 rounded-xl">
+    <div className="w-full md2:w-full bg-white border border-slate-200 p-3 rounded-xl">
       <div className="flex justify-between gap-2">
         <div className="flex gap-3 items-center text-slate-700">
-          <div className="h-4 w-4">
+          <div className="h-5 w-5">
             <Icon size={ size } />
           </div>
           <h2 className="font-semibold text-base h-full">{ habit.habitName }</h2>
@@ -143,7 +150,7 @@ function HabitWeekViewCard(props: Props) {
                 handleDeleteClick();
               }}
               size={ 18 }
-              className="text-red-400 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
+              className="text-red-400 hover:text-red-500/90 rounded-full hover:bg-slate-200 p-1 w-fit h-fit"
             />
             <MdEdit
               onClick={(e: React.SyntheticEvent) => {
@@ -151,12 +158,12 @@ function HabitWeekViewCard(props: Props) {
                 setSelectedHabit(habit);
               }}
               size={ 18 }
-              className="text-slate-500 rounded-full hover:bg-slate-100 p-1 w-fit h-fit"
+              className="text-slate-500 hover:text-slate-600 rounded-full hover:bg-slate-200 p-1 w-fit h-fit"
             />
           </div>
         </div>
       </div>
-      <div className="flex pt-2 w-fit mx-auto gap-2 my-2">
+      <div className="flex pt-2 w-full md2:w-fit mx-auto gap-0 mt-2">
         { weekDays.map((w) => renderDay(w)) }
       </div>
     </div>

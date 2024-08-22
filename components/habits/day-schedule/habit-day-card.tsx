@@ -69,7 +69,7 @@ function HabitDayCard (props: Props) {
 
   const classes = cx({
     'HabitDayCard': true,
-    'w-full border rounded-md flex flex-row justify-between pl-2 pr-1 p-1': true,
+    'w-full border rounded-lg flex flex-row justify-between pl-2 pr-1 p-1': true,
     'cursor-pointer': true,
   });
 

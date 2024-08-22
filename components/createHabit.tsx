@@ -363,27 +363,26 @@ export const HabitCreator = (props: HabitCreatorProps) => {
               Icons <span className="text-red-500">*</span>
             </h4>
             <div className="flex gap-2 flex-wrap mt-2">
-              {IconList.map(([key, { Icon, size }]) => {
+              { IconList.map(([key, { Icon, size }]) => {
                 if (key === "default") return null;
-                const iconKeyCn = cn(
-                  "rounded-md outline-none bg-slate-100 hover:bg-slate-100",
-                  "text-slate-400 flex items-center justify-center w-8 h-8",
-                  {
-                    ["border-slate-400 border text-slate-400"]:
-                      key === iconKey,
-                    ["border-slate-200 bg-slate-100"]: key !== iconKey,
-                  }
-                );
+
+                const iconKeyCn = cn({
+                  "rounded-md outline-none bg-slate-100": true,
+                  "text-slate-400 flex items-center justify-center w-8 h-8": true,
+                  ['border-transparent border text-slate-100 bg-slate-400']: key === iconKey,
+                  ["border-slate-200 bg-slate-100 hover:bg-slate-200"]: key !== iconKey,
+                });
+
                 return (
                   <button
-                    key={key}
-                    className={iconKeyCn}
-                    onClick={() => handleIconClick(key)}
+                    key={ key }
+                    className={ iconKeyCn }
+                    onClick={ () => handleIconClick(key) }
                   >
-                    <Icon size={size} />
+                    <Icon size={ size } />
                   </button>
                 );
-              })}
+              }) }
             </div>
           </div>
 

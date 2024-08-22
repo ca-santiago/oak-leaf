@@ -48,18 +48,18 @@ function HabitsDaySchedule() {
         <div>
           {  todayUncompletedHabits.length > 0 && 
             <>
-              <h2 className="font-semibold text-2xl text-center text-slate-700">Objetivos de Hoy</h2>
-              <p className="text-slate-500 text-sm ml-1">Completa estos hábitos antes de que termine el día</p>
+              <h2 className="font-semibold text-2xl text-center text-slate-700 select-none">Objetivos de Hoy</h2>
+              <p className="text-slate-500 text-sm ml-1 select-none">Completa estos hábitos antes de que termine el día</p>
             </>
           }
 
           { todayHabits.length < 1 &&
-              <p className="text-center text-slate-600 mb-4 mt-8">No tienes habitos establecidos para el día de hoy</p>
+              <p className="text-center text-slate-600 mb-4 mt-8 select-none">No tienes habitos establecidos para el día de hoy</p>
           }
 
           { todayHabits.length > 0 && todayUncompletedHabits.length < 1 &&
             <div className="flex items-center gap-2 flex-col mb-4 mt-8">
-              <p className="text-center text-slate-600 te font-semibold">Completaste todos tus habitos del día de hoy</p>
+              <p className="text-center text-slate-600 te font-semibold select-none">Completaste todos tus habitos del día de hoy</p>
               <FaSquareCheck size={ 28 } className="text-green-300"/>
             </div>
           }
@@ -79,8 +79,8 @@ function HabitsDaySchedule() {
         </div>
         { otherHabitsNoReminderUncompleted.length > 0 &&
           <div>
-            <h2 className="font-semibold text-2xl text-center text-slate-700">Otros objetivos para Hoy</h2>
-            <p className="text-slate-500 text-sm ml-1">No están programados, pero puedes lograrlos hoy si te queda tiempo.</p>
+            <h2 className="font-semibold text-2xl text-center text-slate-700 select-none">Otros objetivos para Hoy</h2>
+            <p className="text-slate-500 text-sm ml-1 select-none">No están programados, pero puedes lograrlos hoy si te queda tiempo.</p>
             <div className="flex flex-col gap-2 mt-4">
               { otherHabitsNoReminderUncompleted.map((h) =>
                   <HabitDayCard

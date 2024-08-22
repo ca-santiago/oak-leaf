@@ -8,7 +8,7 @@ const HabitWeekView = () => {
   const habits = useHabitsStore(s => s.habits.all);
 
   return (
-    <div className="flex flex-col gap-4 mt-3"> 
+    <div className="flex flex-col gap-2 mt-3"> 
       { habits.map(h => <HabitWeekViewCard key={ h.id } habit={ h } /> ) }
     </div>
   );
