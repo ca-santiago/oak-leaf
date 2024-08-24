@@ -76,9 +76,12 @@ export default async function Home() {
                 {/* CTA */}
                 <div className="flex gap-2 mt-6 items-center">
                   {/* <p className="text-slate-600">Empieza tu primer hábito ahora</p> */}
-                  <button className="px-3 py-2 rounded-md bg-blue-500 text-white font-semibold text-lg">
+                  <Link
+                    className="px-3 py-2 rounded-md bg-blue-500 text-white font-semibold text-lg"
+                    href={ session ? "/manager" : "/api/auth/login"}
+                  >
                     Empezar
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
