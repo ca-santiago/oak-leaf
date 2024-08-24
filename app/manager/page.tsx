@@ -7,8 +7,9 @@ import { getAllHabits } from "@/services/habits";
 import HabitsDaySchedule from "@/components/habits/day-schedule";
 import { HabitsContextProvider } from "@/context/habits";
 import HabitWeekView from "@/components/habits/week-view";
-import { HabitCreator } from "@/components/createHabit";
+import { HabitCreatorV1 } from "@/components/createHabitV1";
 import { HabitsList } from "@/components/habits/list";
+import HabitCreationFlow from "@/components/habit-creation-flow/habit-creator-flow";
 
 async function ManagerPage() {
   const session = await getSession();
@@ -37,14 +38,19 @@ async function ManagerPage() {
               <HabitsDaySchedule />
             </div>
             <div className="col-span-1 row-span-1 xl:col-start-5 xl:col-span-3 2xl:col-start-7">
-              {/* <h3 className="text-slate-700 font-semibold text-xl text-center">Observa tu progreso semanal</h3> */}
               <h2 className="text-slate-700 font-semibold text-2xl text-center">Resumen de la Semana</h2>
               <div className="mt-4">
-                <HabitCreator startOpen={ false } />
+                <HabitCreatorV1 startOpen={ false } />
+              </div>
+              <div className="mt-2">
+                <HabitCreationFlow />
               </div>
               <div className="mt-2">
                 <HabitWeekView />
               </div>
+            </div>
+            <div className="col-span-3">
+              <HabitsList />
             </div>
           </div>
         </ManagerContextWrapper>

@@ -13,7 +13,7 @@ export const GET = handleAuth({
           inviteCode: inviteCode || undefined,
           screen_hint: useSignUp === "true" ? "signup" : "login",
         },
-        returnTo: "/",
+        returnTo: "/manager",
       });
     } catch (err) {
       console.log(err);

@@ -104,24 +104,33 @@ function HabitWeekViewCard(props: Props) {
     });
 
     const chipClasses = cx({
-      'w-full md2:w-12 h-10 md:h-12 bg-slate-100 font-semibold text-sm flex items-center justify-center select-none chip': true,
+      'w-full md2:w-12 h-10 md:h-12 bg-slate-100 font-semibold text-sm flex items-center justify-center select-none chip overflow-hidden': true,
       'text-white': isCompleted,
       'text-slate-600': !isCompleted,
     });
 
     const chipStyles: CSSProperties = {
-      backgroundColor: isCompleted ? Colors.active : Colors.base,
-      opacity: isCompleted ? 0.9 : 1,
+      backgroundColor: Colors.base,
     };
+    
+    const chipLabelStyles: CSSProperties = {
+      backgroundColor: isCompleted ? Colors.active : "transparent",
+      opacity: 0.9,
+    }
+
+    const wrapperClasses =  cx({
+      'flex flex-1 flex-col items-center gap-1 select-none rounded-list-child': true,
+      'rounded-list-child--completed': isCompleted,
+    });
 
     return (
-      <div key={ weekDayNumber } className="flex flex-1 flex-col items-center gap-1 select-none rounded-list-child" >
+      <div key={ weekDayNumber } className={ wrapperClasses} >
         <p className={ labelClasses }>
           { weekDayLabel }
           <span className={ labelDotClasses } />
         </p>
         <div style={ chipStyles } className={ chipClasses }>
-          { weekDayNumber }
+          <div style={ chipLabelStyles} className="h-full w-full flex items-center justify-center chipLabel">{ weekDayNumber }</div>
         </div>
       </div>
     );

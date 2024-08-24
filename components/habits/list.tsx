@@ -2,7 +2,7 @@
 
 import React from "react";
 import { HabitDetails } from "./card";
-import { HabitCreator } from "../createHabit";
+import { HabitCreatorV1 } from "../createHabitV1";
 import { useHabitsStore } from "@/context/habits";
 
 // TODO: Commented lines are because we are moving off dispatch actions on managerContext
@@ -26,7 +26,7 @@ export const HabitsList = () => {
 
   return (
     <div className="w-full max-h-90">
-      <HabitCreator
+      <HabitCreatorV1
         // onDelete={handleDeleteClick}
         // onHabitCreate={handleHabitCreated}
         // onHabitUpdate={handleHabitUpdate}
