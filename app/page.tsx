@@ -12,7 +12,7 @@ export default async function Home() {
   return (
     <>
       <nav className="fixed z-50 top-0 left-0 right-0 h-14 w-full shadow bg-white">
-        <div className="mx-auto w-3/4 flex justify-between items-center my-1">
+        <div className="mx-auto w-full md:w-3/4 max-md:px-4 flex justify-between items-center my-1">
           <div className="flex gap-2 items-center">
             <div className="h-full w-12">
               <Image
@@ -23,7 +23,7 @@ export default async function Home() {
                 width={ 48 }
               />
             </div>
-            <span>Habitosca</span>
+            <span className="text-slate-700 font-semibold">Habitosca</span>
           </div>
           <div className="w-fit h-full flex items-center justify-center">
             { !session && 
