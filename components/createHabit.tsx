@@ -367,10 +367,9 @@ export const HabitCreator = (props: HabitCreatorProps) => {
                 if (key === "default") return null;
 
                 const iconKeyCn = cn({
-                  "rounded-md outline-none bg-slate-100": true,
-                  "text-slate-400 flex items-center justify-center w-8 h-8": true,
-                  ['border-transparent border text-slate-100 bg-slate-400']: key === iconKey,
-                  ["border-slate-200 bg-slate-100 hover:bg-slate-200"]: key !== iconKey,
+                  "flex items-center justify-center w-8 h-8 rounded-md outline-none": true,
+                  ['text-slate-100 bg-slate-400']: key === iconKey,
+                  ["text-slate-400 border-slate-200 bg-slate-100 hover:bg-slate-200"]: key !== iconKey,
                 });
 
                 return (

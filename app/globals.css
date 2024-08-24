@@ -72,3 +72,11 @@ body::-webkit-scrollbar-thumb {
 .rounded-list-child:last-child .chip {
   @apply rounded-r-md;
 }
+
+.rounded-list-child:not(.rounded-list-child--completed):has(+ .rounded-list-child--completed) + .rounded-list-child .chipLabel {
+  @apply rounded-l-md;
+}
+
+.rounded-list-child--completed:not(:has(+ .rounded-list-child--completed)) .chipLabel {
+  @apply rounded-r-md;
+}
