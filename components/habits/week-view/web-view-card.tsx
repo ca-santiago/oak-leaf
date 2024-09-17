@@ -138,7 +138,7 @@ function HabitWeekViewCard(props: Props) {
 
   const DeleteComponent = (
     <BsTrash2Fill
-      onClick={ e => {
+      onClick={ (e: React.MouseEvent) => {
         e.stopPropagation();
         handleDeleteClick();
       } }
@@ -149,7 +149,7 @@ function HabitWeekViewCard(props: Props) {
 
   const EditComponent = (
     <MdEdit
-      onClick={ e => {
+      onClick={ (e: React.MouseEvent) => {
         e.stopPropagation();
         setSelectedHabit(habit);
       } }
