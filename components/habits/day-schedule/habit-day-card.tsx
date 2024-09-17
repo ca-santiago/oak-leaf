@@ -1,4 +1,4 @@
-import { ColorsMapping } from "@/core/mappings";
+import { ColorsMapping, IconMapping } from "@/core/mappings";
 import { Habit } from "@prisma/client";
 import { FaSquareCheck } from "react-icons/fa6";
 
@@ -9,7 +9,7 @@ import moment from "moment-timezone";
 import { DATE_FORMAT } from "@/core/constants";
 import React from "react";
 import { deserializeCompletionsRecord, findRangesByYearOrCreate, mergeDateOnYearRangeDataV2, serializeDateRangeData, sortYearRange } from "@/helpers/incidences";
-import { YearRangeCollection, YearRange } from "@/core/types";
+import { YearRangeCollection } from "@/core/types";
 import { BiLoaderAlt } from "react-icons/bi";
 
 const TODAY = moment().format(DATE_FORMAT);
@@ -66,10 +66,11 @@ function HabitDayCard (props: Props) {
   };
 
   const colorSchema = ColorsMapping[habit.colorKey];
+  const Icon = IconMapping[habit.iconKey];
 
   const classes = cx({
     'HabitDayCard': true,
-    'w-full border rounded-lg flex flex-row justify-between pl-2 pr-1 p-1': true,
+    'w-full border rounded-lg flex flex-row gap-3 justify-between p-1 pl-3 pr-1 h-full': true,
     'cursor-pointer': true,
   });
 
@@ -79,28 +80,29 @@ function HabitDayCard (props: Props) {
   };
 
   return (
-    <div key={ habit.id }>
-      <div className={ classes } style={ styles }>
-        <div>
-          <p className="font-semibold text-lg text-inherit text-slate-600">{ habit.habitName }</p>
-          { habit.description && <p className="text-sm text-slate-800 mt-1">{ habit.description }</p> }
+    <div key={ habit.id } className={ classes } style={ styles }>
+      <div className="flex flex-col h-auto justify-center">
+        <div className="flex gap-2 items-center">
+          <Icon.Icon size={ 20 } className="text-slate-800" />
+          <p className="font-semibold text-lg text-inherit text-slate-700">{ habit.habitName }</p>
         </div>
-        <div className="h-full">
-        { state.saving ?
-          <BiLoaderAlt
-            size={ 52 }
-            className="animate-spin opacity-60"
-            color={ colorSchema.active }
-          />
-          :
-          <FaSquareCheck
-            onClick={ handleComplete }
-            className="HabitDayCard-action opacity-60"
-            size={ 52 }
-            color={ colorSchema.active }
-          />
-        }
-        </div>
+        { habit.description && <p className="text-sm text-slate-600 mb-1">{ habit.description }</p> }
+      </div>
+      <div className="h-full">
+      { state.saving ?
+        <BiLoaderAlt
+          size={ 52 }
+          className="animate-spin opacity-60"
+          color={ colorSchema.active }
+        />
+        :
+        <FaSquareCheck
+          onClick={ handleComplete }
+          className="HabitDayCard-action opacity-60"
+          size={ 52 }
+          color={ colorSchema.active }
+        />
+      }
       </div>
     </div>
   );
