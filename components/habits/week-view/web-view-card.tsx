@@ -93,7 +93,7 @@ function HabitWeekViewCard(props: Props) {
     const isToday = weekDayNumber === monthDayNumber;
 
     const labelClasses = cx({
-      'text-sm text-slate-400 relative': true,
+      'text-sm text-slate-600 relative': true,
       'px-1': isToday,
     });
 
@@ -104,7 +104,7 @@ function HabitWeekViewCard(props: Props) {
     });
 
     const chipClasses = cx({
-      'w-full md2:w-12 h-10 md:h-12 bg-slate-100 font-semibold text-sm flex items-center justify-center select-none chip overflow-hidden': true,
+      'w-full h-10 md:h-12 bg-slate-100 font-semibold text-sm flex items-center justify-center select-none chip overflow-hidden': true,
       'text-white': isCompleted,
       'text-slate-600': !isCompleted,
     });
@@ -130,14 +130,36 @@ function HabitWeekViewCard(props: Props) {
           <span className={ labelDotClasses } />
         </p>
         <div style={ chipStyles } className={ chipClasses }>
-          <div style={ chipLabelStyles} className="h-full w-full flex items-center justify-center chipLabel">{ weekDayNumber }</div>
+          <p style={ chipLabelStyles} className="h-full w-full flex items-center justify-center chipLabel">{ weekDayNumber }</p>
         </div>
       </div>
     );
   }
 
+  const DeleteComponent = (
+    <BsTrash2Fill
+      onClick={ e => {
+        e.stopPropagation();
+        handleDeleteClick();
+      } }
+      size={ 18 }
+      className="text-red-400 hover:text-red-500/90 rounded-md bg-slate-200 hover:bg-slate-200 p-1 w-fit h-fit cursor-pointer"
+    />
+  );
+
+  const EditComponent = (
+    <MdEdit
+      onClick={ e => {
+        e.stopPropagation();
+        setSelectedHabit(habit);
+      } }
+      size={ 18 }
+      className="text-slate-500 hover:text-slate-600 rounded-md bg-slate-200 hover:bg-slate-200 p-1 w-fit h-fit cursor-pointer"
+    />
+  );
+
   return (
-    <div className="w-full md2:w-full bg-white border border-slate-200 p-3 rounded-xl">
+    <div className="w-full md2:w-full bg-white border border-slate-200 p-2 rounded-xl">
       <div className="flex justify-between gap-2">
         <div className="flex gap-3 items-center text-slate-700">
           <div className="h-5 w-5">
@@ -145,7 +167,7 @@ function HabitWeekViewCard(props: Props) {
           </div>
           <h2 className="font-semibold text-base h-full">{ habit.habitName }</h2>
         </div>
-        <div className="flex justify-between text-slate-500 text-xs font-semibold">
+        <div className="flex md:hidden justify-between text-slate-500 text-xs font-semibold">
           <ConfirmationModal
             onCancel={ () => setShowConfirmation(false) } 
             onConfirm={ triggerDeleteHabit }
@@ -153,27 +175,27 @@ function HabitWeekViewCard(props: Props) {
             title="Borrar este hábito para siempre?"
           />
           <div className="gap-2 items-center flex">
-            <BsTrash2Fill
-              onClick={(e: React.SyntheticEvent) => {
-                e.stopPropagation();
-                handleDeleteClick();
-              }}
-              size={ 18 }
-              className="text-red-400 hover:text-red-500/90 rounded-full hover:bg-slate-200 p-1 w-fit h-fit"
-            />
-            <MdEdit
-              onClick={(e: React.SyntheticEvent) => {
-                e.stopPropagation();
-                setSelectedHabit(habit);
-              }}
-              size={ 18 }
-              className="text-slate-500 hover:text-slate-600 rounded-full hover:bg-slate-200 p-1 w-fit h-fit"
-            />
+            { DeleteComponent }
+            { EditComponent }
           </div>
         </div>
       </div>
-      <div className="flex pt-2 w-full md2:w-fit mx-auto gap-0 mt-2">
-        { weekDays.map((w) => renderDay(w)) }
+      <div className="flex gap-3">
+        <div className="flex pt-2 w-full md2:w-fit mx-auto gap-0 mt-2">
+          { weekDays.map((w) => renderDay(w)) }
+        </div>
+        <div className="flex justify-between text-slate-500 text-xs font-semibold max-md:hidden">
+          <ConfirmationModal
+            onCancel={ () => setShowConfirmation(false) } 
+            onConfirm={ triggerDeleteHabit }
+            show={ showConfirmation }
+            title="Borrar este hábito para siempre?"
+          />
+          <div className="gap-2 items-center flex flex-col justify-end">
+            { EditComponent } 
+            { DeleteComponent }
+          </div>
+        </div>
       </div>
     </div>
   );
