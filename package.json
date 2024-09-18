@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "2.9.1",
+  "version": "2.10.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.3.0",
+    "@floating-ui/react": "^0.26.24",
     "@prisma/client": "^5.17.0",
     "classnames": "^2.5.1",
     "copy-to-clipboard": "^3.3.3",
@@ -19,7 +20,7 @@
     "joi": "^17.11.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
-    "next": "14.0.3",
+    "next": "^14.2.11",
     "react": "^18",
     "react-activity-calendar": "^2.2.0",
     "react-dom": "^18",

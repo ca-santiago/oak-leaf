@@ -1,5 +1,5 @@
 import { AccountDetails } from "@/components/account/details";
-import { AccountHeader } from "@/components/accountHeader";
+import { AccountHeader } from "@/components/app-header";
 import { getAccountData } from "@/services/accounts";
 import { getUserInviteCode } from "@/services/plans";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";

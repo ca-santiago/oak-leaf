@@ -17,7 +17,7 @@ import { deleteHabit } from "@/services/habits";
 import { useHabitsStore } from "@/context/habits";
 import { useManagerContext } from "@/context/manager";
 
-import { BsTrash2Fill } from "react-icons/bs";
+import { BsThreeDots, BsTrash2Fill } from "react-icons/bs";
 import { MdEdit } from "react-icons/md";
 import { DATE_FORMAT } from "@/core/constants";
 
@@ -64,7 +64,7 @@ function HabitWeekViewCard(props: Props) {
   };
 
   const weekDays = React.useMemo(() => {
-    const weekDaysMin = moment.weekdaysMin();
+    const weekDaysMin = moment.weekdays();
     const weekDate = today
       .clone()
       .startOf('week')
@@ -75,7 +75,7 @@ function HabitWeekViewCard(props: Props) {
       const exist = findExistingRangeForADate(weekDate.format(DATE_FORMAT), flatYearRange(thisYearRanges));
 
       return {
-        weekDayLabel: weekDayLabel,
+        weekDayLabel: weekDayLabel.slice(0, 3),
         weekDayNumber: weekDate.date(),
         isCompleted: exist !== -1,
       };
@@ -90,21 +90,19 @@ function HabitWeekViewCard(props: Props) {
       weekDayNumber,
     } = weekDay;
 
-    const isToday = weekDayNumber === monthDayNumber;
+    // const isToday = weekDayNumber === monthDayNumber;
 
     const labelClasses = cx({
       'text-sm text-slate-600 relative': true,
-      'px-1': isToday,
+      // 'px-1': isToday,
     });
 
     const labelDotClasses = cx({
       'h-1 w-2 absolute top-[-7px] left-1/2 -translate-x-1/2 bg-red-500 rounded-full': true,
-      'block': isToday,
-      'hidden': !isToday,
     });
 
     const chipClasses = cx({
-      'w-full h-10 md:h-12 bg-slate-100 font-semibold text-sm flex items-center justify-center select-none chip overflow-hidden': true,
+      'w-full h-1 rounded-full bg-slate-100 font-semibold text-sm flex items-center justify-center select-none chip overflow-hidden': true,
       'text-white': isCompleted,
       'text-slate-600': !isCompleted,
     });
@@ -127,10 +125,11 @@ function HabitWeekViewCard(props: Props) {
       <div key={ weekDayNumber } className={ wrapperClasses} >
         <p className={ labelClasses }>
           { weekDayLabel }
-          <span className={ labelDotClasses } />
+          {/* { isToday && <span className={ labelDotClasses } /> } */}
         </p>
         <div style={ chipStyles } className={ chipClasses }>
-          <p style={ chipLabelStyles} className="h-full w-full flex items-center justify-center chipLabel">{ weekDayNumber }</p>
+          {/* <p style={ chipLabelStyles} className="h-full w-full flex items-center justify-center chipLabel">{ weekDayNumber }</p> */}
+          <div style={ chipLabelStyles } className="h-full w-full chipLabel" />
         </div>
       </div>
     );
@@ -159,44 +158,36 @@ function HabitWeekViewCard(props: Props) {
   );
 
   return (
-    <div className="w-full md2:w-full bg-white border border-slate-200 p-2 rounded-xl">
+    <div className="w-full bg-white border border-slate-200 p-3 rounded-xl grid grid-rows-[max-content_auto] grid-cols-[1fr_max-content] gap-x-4">
       <div className="flex justify-between gap-2">
-        <div className="flex gap-3 items-center text-slate-700">
+        <div className="flex gap-3 items-center text-slate-700 col-start-1 col-span-1">
           <div className="h-5 w-5">
             <Icon size={ size } />
           </div>
           <h2 className="font-semibold text-base h-full">{ habit.habitName }</h2>
         </div>
-        <div className="flex md:hidden justify-between text-slate-500 text-xs font-semibold">
-          <ConfirmationModal
-            onCancel={ () => setShowConfirmation(false) } 
-            onConfirm={ triggerDeleteHabit }
-            show={ showConfirmation }
-            title="Borrar este hábito para siempre?"
-          />
-          <div className="gap-2 items-center flex">
-            { DeleteComponent }
-            { EditComponent }
-          </div>
-        </div>
       </div>
-      <div className="flex gap-3">
-        <div className="flex pt-2 w-full md2:w-fit mx-auto gap-0 mt-2">
-          { weekDays.map((w) => renderDay(w)) }
-        </div>
-        <div className="flex justify-between text-slate-500 text-xs font-semibold max-md:hidden">
+
+      <div className="flex pt-2 w-full mx-auto gap-2 mt-2 col-start-1 row-start-2 col-span-1 max-md:col-span-2 max-md:col-start-1">
+        { weekDays.map((w) => renderDay(w)) }
+      </div>
+
+      <div className="flex gap-3 col-span-1 col-start-2 row-span-2 max-md:row-span-1 row-start-1 w-fit max-md:col-span-1 max-md:col-start-2">
+        {/* <BsThreeDots className="text-slate-600 mr-1" size={ 22 } /> TODO: Implement floating menu */}
+        <div className="flex justify-between text-slate-500 text-xs font-semibold">
           <ConfirmationModal
             onCancel={ () => setShowConfirmation(false) } 
             onConfirm={ triggerDeleteHabit }
             show={ showConfirmation }
             title="Borrar este hábito para siempre?"
           />
-          <div className="gap-2 items-center flex flex-col justify-end">
+          <div className="gap-2 items-center flex flex-col justify-end max-md:flex-row">
             { EditComponent } 
             { DeleteComponent }
           </div>
         </div>
       </div>
+
     </div>
   );
 }
